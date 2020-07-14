@@ -1,0 +1,16 @@
+{
+  "name": "deduplication-plugin",
+  "version": "0.0.1",
+  "display_name": {
+    "de": "Deduplizierungs plugin",
+    "en": "Deduplication plugin",
+    "fr": "Plugin de déduplication",
+    "zh-cn": "去重插件"
+  },
+  "description": {
+    "de": "Entfernen Sie doppelte Daten in einer Spalte",
+    "en": "Remove duplicate data in a column",
+    "fr": "Supprimer les données en double dans une colonne",
+    "zh-cn": "去除某列中重复的数据"
+  }
+}
