@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "dtable-sdk": "0.0.35",
+    "dtable-sdk": "0.0.38",
     "jszip": "^3.2.2",
     "moment": "^2.27.0",
     "react": "^16.12.0",

@@ -1,6 +1,6 @@
 {
   "name": "deduplication-plugin",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "display_name": {
     "de": "Deduplizierungs plugin",
     "en": "Deduplication plugin",

@@ -180,29 +180,8 @@ class App extends React.Component {
   onRowDelete = (rowId) => {
     const { configSettings } = this.state;
     const tableName = configSettings[0].active;
-    const viewName = configSettings[1].active;
     let currentTable = this.dtable.getTableByName(tableName);
-    const view = this.dtable.getViewByName(currentTable, viewName);
-    const row = currentTable.id_row_map[rowId];
-    const tables = this.dtable.dtableStore.value.tables;
-    const tableIndex = tables.findIndex((table) => {
-      return table._id === currentTable._id;
-    });
-
-    const rows = this.dtable.getViewRows(view, currentTable);
-
-    const rowIndex = rows.findIndex((rowItem) => {
-      return rowItem._id === row._id;
-    });
-
-    const upperRow = rows[rowIndex - 1];
-
-    let upper_row_id = '';
-    if (upperRow) {
-      upper_row_id = upperRow._id;
-    }
-
-    this.dtable.onDeleteRow(tableIndex, rowId, row, upper_row_id);
+    this.dtable.deleteRowById(currentTable, rowId);
   }
 
   getDeduplicationData = (configSettings) => {
