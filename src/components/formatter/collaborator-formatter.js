@@ -5,7 +5,6 @@ import styles from '../../css/plugin-layout.module.css';
 class CollaboratorFormatter extends Component {
   
   getCollaboratorsList = () => {
-    console.log(styles);
     let { value, collaborators } = this.props;
     let validCollaborators = [];
     Array.isArray(value) && value.map((v, i) => {
