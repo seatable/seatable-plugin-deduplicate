@@ -5,10 +5,17 @@ import styles from '../css/plugin-layout.module.css';
 class TableView extends React.Component {
   
   renderHeader = () => {
+    const { configSettings } = this.props;
+    if (!configSettings) return;
+    const columns = [configSettings[2].active, ...configSettings[3].active];
     return (
       <thead>
         <tr>
-          <th>{intl.get('Name')}</th>
+          {
+            columns.map((column, index) => {
+              return  <th key={'head-' + index}>{column}</th>
+            })
+          }
           <th>{intl.get('Count')}</th>
         </tr>
       </thead>
@@ -16,8 +23,11 @@ class TableView extends React.Component {
   }
 
   renderBody = () => {
-    let { duplicationData, selectedItem } = this.props;
+    let { duplicationData, selectedItem, configSettings } = this.props;
     const keys = Object.keys(duplicationData);
+    if (!configSettings) return;
+    const columns = [configSettings[2].active, ...configSettings[3].active];
+
     return keys.map((key, index) => {
       if (duplicationData[key].value > 1) {
         const currentItem = Object.assign({key: key}, duplicationData[key]);
@@ -27,9 +37,13 @@ class TableView extends React.Component {
         }
         return (
           <tr key={'line-' + index}>
-            <td>
-              {content}
-            </td>
+            {
+              columns.map((column, index) => {
+                return <td key={'cell-' + index}>
+                  {content}
+                </td>
+              })
+            }
             <td onClick={(event) => this.props.clickCallback(event, currentItem)} className={styles['value-cell'] + " " + (currentItem.key === selectedItem.key ? styles['selected-cell'] : '')}><span>{currentItem.value}</span></td>
           </tr>
         )
