@@ -65,7 +65,6 @@ class App extends React.Component {
   onDTableConnect = () => {
     const { tableName, viewName, columnName } = this.initPluginSettings();
     const configSettings = this.initSelectedSettings(tableName, viewName, columnName);
-    // this.getDeduplicationData(configSettings);
     this.setState({
       configSettings: configSettings,
     });
