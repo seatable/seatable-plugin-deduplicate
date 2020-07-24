@@ -1,5 +1,5 @@
 const en = {
-  Deduplication_plugin: 'Deduplication plugin',
+  Deduplication: 'Deduplication',
   Table: 'Table',
   View: 'View',
   Column: 'Column',

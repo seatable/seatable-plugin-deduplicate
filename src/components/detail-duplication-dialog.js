@@ -206,7 +206,7 @@ class DetailDuplicationDialog extends React.Component {
     const { showDialog, duplicationData, selectedItem, configSettings } = this.props;
     return (
       <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.props.toggleDetailDialog} className={styles['deduplication-plugin']}  zIndex={2000}>
-        <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.props.toggleDetailDialog}>{intl.get('Deduplication_plugin')}</ModalHeader>
+        <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.props.toggleDetailDialog}>{intl.get('Deduplication')}</ModalHeader>
         <ModalBody className={styles['deduplication-plugin-content']}>
           <div className={styles['deduplication-plugin-wrapper']}>
             {

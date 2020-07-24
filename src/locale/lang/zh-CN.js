@@ -1,5 +1,5 @@
 const zh_CN = {
-  Deduplication_plugin: '数据去重插件',
+  Deduplication: '数据去重',
   Table: '表格',
   View: '视图',
   Column: '列',
