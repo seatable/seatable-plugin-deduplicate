@@ -259,7 +259,7 @@ class App extends React.Component {
     const EqualRows = rows.filter((row) => {
       const selectedColumnValue = row[selectedColumn.key];
       const isEqual = columns.every((column) => {
-        return row[column.key] === selectedColumnValue;
+        return row[column.key] == selectedColumnValue;
       });
       if (isEqual) return row;
     });
