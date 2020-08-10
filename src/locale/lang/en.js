@@ -1,5 +1,5 @@
 const en = {
-  Deduplication_plugin: 'Deduplication plugin',
+  Deduplication: 'Deduplication',
   Table: 'Table',
   View: 'View',
   Column: 'Column',
@@ -8,7 +8,10 @@ const en = {
   Empty: 'Empty',
   No_duplication: 'No duplication',
   Delete: 'Delete',
-  Settings: 'Settings'
+  Settings: 'Settings',
+  Select_a_column: 'Select a column',
+  Not_use: 'Not use',
+  Add_new_column: 'Add new column'
 };
 
 export default en;

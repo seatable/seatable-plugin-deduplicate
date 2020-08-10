@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SettingItem from './setting-item';
+import AddColumn from './add-new-column';
+import DeDuplicationColumns from './dedupication-columns';
 import intl from 'react-intl-universal';
 import styles from '../css/plugin-layout.module.css';
 
@@ -11,8 +13,8 @@ const propTypes = {
 
 class Settings extends Component {
 
-  onSelectChange = (option, type) => {
-    this.props.onSelectChange(option, type);
+  onSelectChange = (option, type, index) => {
+    this.props.onSelectChange(option, type, index);
   }
 
   render() {
@@ -24,6 +26,25 @@ class Settings extends Component {
         </div>
         <div className={styles['dtable-plugin-settings-parameter']}>
           {configSettings && configSettings.map(configSetting => {
+            if (configSetting.type === 'add_column') {
+              return (
+                <AddColumn
+                  onSelectChange={this.onSelectChange}
+                  key={configSetting.type}
+                  configSettings={configSettings}
+                  configSetting={configSetting}
+                />
+              )
+            }
+            if (configSetting.type === 'multi_deduplication_column') {
+              return (
+                <DeDuplicationColumns
+                  key={configSetting.type}
+                  onSelectChange={this.onSelectChange}
+                  configSetting={configSetting}
+                />
+              );
+            }
             return (
               <SettingItem
                 key={configSetting.type}

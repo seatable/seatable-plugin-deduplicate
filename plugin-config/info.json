@@ -1,16 +1,16 @@
 {
-  "name": "deduplication-plugin",
-  "version": "0.0.4",
+  "name": "deduplication",
+  "version": "0.0.6",
   "display_name": {
-    "de": "Deduplizierungs plugin",
-    "en": "Deduplication plugin",
-    "fr": "Plugin de déduplication",
-    "zh-cn": "去重插件"
+    "de": "Datendeduplizierung",
+    "en": "Deduplication",
+    "fr": "Déduplication des données",
+    "zh-cn": "数据去重"
   },
   "description": {
-    "de": "Entfernen Sie doppelte Daten in einer Spalte",
-    "en": "Remove duplicate data in a column",
-    "fr": "Supprimer les données en double dans une colonne",
-    "zh-cn": "去除某列中重复的数据"
+    "de": "Entfernen Sie doppelte Datensätze in einer Tabelle",
+    "en": "Remove duplicated records in a table",
+    "fr": "Supprimer les enregistrements dupliqués dans une table",
+    "zh-cn": "删除表格中的重复数据"
   }
 }

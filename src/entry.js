@@ -11,4 +11,4 @@ class TaskList {
 
 export default TaskList;
 
-window.app.registerPluginItemCallback('deduplication-plugin', TaskList.execute);
+window.app.registerPluginItemCallback('deduplication', TaskList.execute);

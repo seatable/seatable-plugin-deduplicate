@@ -4,7 +4,7 @@ const config = {
   server: "https://dev.seafile.com/dtable-web",
   workspaceID: "6",
   dtableName: "ert",
-  lang: "en"
+  lang: "zh-CN"
 };
 
 const dtablePluginConfig = Object.assign({}, config, {server: config.server.replace(/\/+$/, "")}) ;

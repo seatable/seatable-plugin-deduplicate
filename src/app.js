@@ -65,7 +65,6 @@ class App extends React.Component {
   onDTableConnect = () => {
     const { tableName, viewName, columnName } = this.initPluginSettings();
     const configSettings = this.initSelectedSettings(tableName, viewName, columnName);
-    this.getDeduplicationData(configSettings);
     this.setState({
       configSettings: configSettings,
     });
@@ -74,8 +73,7 @@ class App extends React.Component {
   initPluginSettings = () => {
     let activeTable = this.dtable.getActiveTable();
     let activeView = this.dtable.getActiveView();
-    let columns = this.dtable.getShownColumns(activeTable, activeView);
-    return  {tableName: activeTable.name, viewName: activeView.name, columnName: columns[0].name};
+    return  {tableName: activeTable.name, viewName: activeView.name, columnName: null};
   }
 
   initSelectedSettings = (tableName, viewName, columnName) => {
@@ -90,12 +88,13 @@ class App extends React.Component {
 
     let activeColumn = this.dtable.getColumnByName(activeTable, columnName);
     let columnSettings = this.getColumnSettings(activeTable, activeView, activeColumn);
-    configSettings.push(columnSettings);
-
+    let multiColumnSettings = this.initMuiltiDeduplicationColumnSetting(activeTable, activeView, activeColumn);
+    let addColumnSetting = this.getAddColumnSetting();
+    configSettings.push(columnSettings, multiColumnSettings, addColumnSetting);
     return configSettings;
   }
 
-  updateSelectedSettings = (type, option) => {
+  updateSelectedSettings = (type, option, multiColumnIndex) => {
     if (type === 'table') {
       let currentTable = this.dtable.getTableByName(option.name);
       let currentView = this.dtable.getViews(currentTable)[0];
@@ -103,7 +102,9 @@ class App extends React.Component {
       let tableSettings = this.getTableSettings(currentTable);
       let viewSettings = this.getViewSettings(currentTable);
       let columnSettings = this.getColumnSettings(currentTable, currentView);
-      let configSettings = [tableSettings, viewSettings, columnSettings];
+      let multiColumnSettings = this.initMuiltiDeduplicationColumnSetting(currentTable, currentView);
+      let addColumnSetting = this.getAddColumnSetting();
+      let configSettings = [tableSettings, viewSettings, columnSettings, multiColumnSettings, addColumnSetting];
       return configSettings;
     }
 
@@ -114,7 +115,9 @@ class App extends React.Component {
       let currentView = this.dtable.getViewByName(currentTable, option.name);
       let viewSettings = this.getViewSettings(currentTable, currentView);
       let columnSettings = this.getColumnSettings(currentTable, currentView);
-      configSettings.splice(1, 2, viewSettings, columnSettings);
+      let multiColumnSettings = this.initMuiltiDeduplicationColumnSetting(currentTable, currentView, );
+      let addColumnSetting = this.getAddColumnSetting();
+      configSettings.splice(1, 4, viewSettings, columnSettings, multiColumnSettings, addColumnSetting);
       return configSettings;
     }
     
@@ -122,11 +125,46 @@ class App extends React.Component {
       let { configSettings } = this.state;
       const tableName = configSettings[0].active;
       const viewName = configSettings[1].active;
+      const selectedColumns = configSettings[3];
       let currentTable = this.dtable.getTableByName(tableName);
       let currentView = this.dtable.getViewByName(currentTable, viewName);
       let currentColumn = this.dtable.getColumnByName(currentTable, option.name);
       let columnSettings = this.getColumnSettings(currentTable, currentView, currentColumn);
-      configSettings.splice(2, 1, columnSettings);
+      const columnSelections = this.getMuiltiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
+      let activeColumns = selectedColumns.active;
+      if (option.name === intl.get('Not_use')) {
+        activeColumns = [];
+      } else {
+        activeColumns = activeColumns.filter((column) => {
+          return column !== option.name;
+        });
+      }
+      selectedColumns.active = activeColumns;
+      selectedColumns.settings = columnSelections;
+      configSettings.splice(2, 2, columnSettings, selectedColumns);
+      return configSettings;
+    }
+
+    if (type === 'add_column') {
+      let { configSettings } = this.state;
+      const tableName = configSettings[0].active;
+      const viewName = configSettings[1].active;
+      const columnName = configSettings[2].active;
+      let currentTable = this.dtable.getTableByName(tableName);
+      let currentView = this.dtable.getViewByName(currentTable, viewName);
+      let currentColumn = this.dtable.getColumnByName(currentTable, columnName);
+      const deduplicationColumnSetting = configSettings[3];
+      const activeDeduplicationColumns = deduplicationColumnSetting.active;
+      const newDeduplicationColumnSetting = this.getMuiltiDeduplicationColumnSetting(currentTable, currentView, currentColumn, activeDeduplicationColumns);
+      configSettings.splice(3, 1, newDeduplicationColumnSetting);
+      return configSettings;
+    }
+
+    if (type === 'multi_deduplication_column') {
+      let { configSettings } = this.state;
+      const multiDeduplicationColumns = configSettings[3].active;
+      multiDeduplicationColumns.splice(multiColumnIndex, 1, option.name);
+      configSettings[3].active = multiDeduplicationColumns;
       return configSettings;
     }
   }
@@ -161,17 +199,50 @@ class App extends React.Component {
       return {id: column.key, name: column.name};
     });
     
+    columnSettings.unshift({id: '', name: intl.get('Not_use')});
     // need options: checkout map column
-    let active = activeColumn ? activeColumn.name : columns[0].name;
+    let active = activeColumn ? activeColumn.name : columnSettings[0].name;
+    // need options: checkout map column
     return {type: 'column', name: intl.get('Column'), active: active, settings: columnSettings};
   }
 
-  onSelectChange = (type, option) => {
+  getAddColumnSetting = () => {
+    return { type: 'add_column' };
+  }
+
+  getMuiltiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}, activeColumns = []) => {
+  
+    let columnSettings = this.getMuiltiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
+    
+    const currentActiveColumns = [...activeColumns];
+
+    const option = columnSettings.find((column) => {
+      return !currentActiveColumns.includes(column.name);
+    });
+    
+    currentActiveColumns.push(option.name);
+    return {type: 'multi_deduplication_column', active: currentActiveColumns, settings: columnSettings};
+  }
+
+  getMuiltiDeduplicationColumnSelections = (currentTable, currentView, currentColumn = {}) => {
+    let columns = this.dtable.getShownColumns(currentTable, currentView);
+    // need options: checkout map column
+    return columns.filter(column => {
+      if (DEDUPLICATION_LIST.includes(column.type) && currentColumn.key !== column.key) {
+        return {id: column.key, name: column.name};
+      }
+    });
+  }
+
+  initMuiltiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}) => {
+    let columnSettings = this.getMuiltiDeduplicationColumnSelections(currentTable, currentView, currentColumn = {});
+    return {type: 'multi_deduplication_column', active: [], settings: columnSettings};
+  }
+
+  onSelectChange = (type, option, multiColumnIndex) => {
     let configSettings = [];
-    configSettings = this.updateSelectedSettings(type, option);
-
+    configSettings = this.updateSelectedSettings(type, option, multiColumnIndex);
     this.getDeduplicationData(configSettings);
-
     this.setState({
       configSettings: configSettings
     });
@@ -184,16 +255,56 @@ class App extends React.Component {
     this.dtable.deleteRowById(currentTable, rowId);
   }
 
+  getEqualRows = (selectedColumn, columns, rows) => {
+    const EqualRows = rows.filter((row) => {
+      const selectedColumnValue = row[selectedColumn.key];
+      const isEqual = columns.every((column) => {
+        return row[column.key] == selectedColumnValue;
+      });
+      if (isEqual) return row;
+    });
+    return EqualRows;
+  }
+
+  getColumnsByName = (table, columns) => {
+    return columns.map((column) => {
+      return this.dtable.getColumnByName(table, column);
+    });
+  }
+
   getDeduplicationData = (configSettings) => {
     const table = this.dtable.getTableByName(configSettings[0].active);
     const view = this.dtable.getViewByName(table, configSettings[1].active);
-    const rows = this.dtable.getViewRows(view, table);
     const selectedColumn = this.dtable.getColumnByName(table, configSettings[2].active);
+    
+    if (!selectedColumn) {
+      this.setState({
+        duplicationData: {},
+        selectedItem: {}
+      });
+      return;
+    }
+
+    let rows = this.dtable.getViewRows(view, table);
+    const deDuplicationColumnNames = [...configSettings[3].active];
+
+    if (deDuplicationColumnNames.length > 0) {
+      const deDuplicationColumns = this.getColumnsByName(table, deDuplicationColumnNames);
+      rows = this.getEqualRows(selectedColumn, deDuplicationColumns, rows);
+      if (rows.length === 0) {
+        this.setState({
+          duplicationData: {},
+          selectedItem: {}
+        });
+        return;
+      }
+    }
+
     const columnKey = selectedColumn.key;
     let statData = {};
-
     rows.map((item) => {
-      const value = item[columnKey];
+      let value = item[columnKey];
+      if (!value) value = 'null';
       if (!statData[value]) {
         statData[value] = {};
         statData[value].value = 1;
@@ -209,7 +320,6 @@ class App extends React.Component {
     const duplicationData = {};
 
     const keys = Object.keys(statData).sort();
-    
     keys.forEach((key) => {
       if (statData[key].value > 1) {
         duplicationData[key] = statData[key];
@@ -224,7 +334,7 @@ class App extends React.Component {
         selectedItem = {};
       }
     }
-    
+
     this.setState({
       duplicationData,
       selectedItem
@@ -256,6 +366,9 @@ class App extends React.Component {
 
   onPluginToggle = () => {
     this.setState({showDialog: false});
+    if (window.app.onClosePlugin) {
+      window.app.onClosePlugin();
+    }
   }
 
   setDetailData = (selectedItem) => {
@@ -269,7 +382,7 @@ class App extends React.Component {
     return (
       <Fragment>
         <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.onPluginToggle} className={styles['deduplication-plugin']} size="lg">
-          <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>{intl.get('Deduplication_plugin')}</ModalHeader>
+          <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>{intl.get('Deduplication')}</ModalHeader>
           <ModalBody className={styles['deduplication-plugin-content']}>
             <div className={styles['deduplication-plugin-wrapper']}>
               {
@@ -279,6 +392,7 @@ class App extends React.Component {
                       duplicationData={duplicationData}
                       clickCallback={this.showDetailDialog}
                       selectedItem={selectedItem}
+                      configSettings={configSettings}
                     />
                   </div>
                 </div>
