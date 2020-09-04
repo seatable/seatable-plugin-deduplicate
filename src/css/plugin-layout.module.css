@@ -71,8 +71,9 @@
 
  .dtable-plugin-settings {
   height: 100%;
-  width: 298px;
+  width: 30%;
   background-color: #f8f8f8;
+  border-left: 1px solid #e9ecef;
   color: #000000;
   overflow: hidden;
 }
@@ -114,13 +115,44 @@
 }
 
 .detail-view-settings {
+  width: 30%;
   height: 100%;
-  width: 298px;
+  flex-shrink: 0;
+  padding: 2px 0;
   background-color: #f8f8f8;
-  color: #000000;
-  overflow: hidden;
-  padding: 0 20px;
+  border-left: 1px solid #e9ecef;
   overflow: auto;
+}
+
+.column-name-list {
+  display: flex;
+  background: #fff;
+  box-shadow: -1px 0 2px 0 #ccc;
+  padding: 10px 32px 7px 20px;
+  width: fit-content;
+  min-width: 100%;
+  margin: 0;
+}
+
+.column-name {
+  width: 120px;
+  margin: 0 8px;
+  flex-shrink: 0;
+  color: #999;
+  font-weight: 500;
+  font-size: .875rem;
+}
+
+.column-name:first-child {
+  margin: 0;
+}
+
+.record-list {
+  padding: 10px;
+  margin-top: 3px;
+  width: fit-content;
+  overflow-y: auto;
+  min-width: 100%;
 }
 
 .deduplication-record {
@@ -135,6 +167,10 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
+}
+
+.deduplication-record:first-child {
+  margin: 0;
 }
 
 .deduplication-record-title {
@@ -164,19 +200,20 @@
 
 .row-cell-value {
   display: flex;
-  justify-content: center;
   align-items: center;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
   flex-shrink: 0;
-  text-align: center;
   margin: 0 8px;
   position: relative;
 }
 
+.row-cell-value:first-child {
+  margin: 0;
+}
 
-.deduplication-single-select{
+.deduplication-single-select {
   display: inline-block;
   padding: 0px 10px;
   height: 20px;

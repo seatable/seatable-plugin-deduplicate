@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import TableView from './table-view';
 import intl from 'react-intl-universal';
@@ -6,17 +6,20 @@ import moment from 'moment';
 import DeleteRowDropdownMenu from './delete-component';
 import styles from '../css/plugin-layout.module.css';
 import CollaboratorFormatter from '../components/formatter/collaborator-formatter';
+import SingleSelectOption from '../components/formatter/SingleSelectOption';
 
-const UnShowColumnKeyList = ['0000', ''];
-const UNSHOW_COLUME_TYPE = ['image', 'file', 'mutiple-select', 'long-text', 'geolocation', 'link']
+import fileIcon from '../image/file.png';
+
+const UNSHOWN_COLUMN_KEY_LIST = ['0000', ''];
+const UNSHOWN_COLUMN_TYPE_LIST = ['long-text', 'geolocation', 'link'];
 
 class DetailDuplicationDialog extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      showDialog: false,
-    }
+      showDialog: false
+    };
   }
 
   toggle = () => {
@@ -36,49 +39,63 @@ class DetailDuplicationDialog extends React.Component {
   renderDetailData = () => {
     const { dtable, configSettings, selectedItem } = this.props;
     const table = dtable.getTableByName(configSettings[0].active);
-    if (selectedItem.rows) {
-      return selectedItem.rows.map((row, index, rows) => {
+    return (
+      <Fragment>
+      <ol className={styles["column-name-list"]}>
+      {table.columns.map((item, index) => {
+        if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
+          !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
+          return <li key={`column-name-${index}`}
+          className={`${styles['column-name']} text-truncate`}
+          style={{'width': this.getCellRecordWidth(item)}}
+          title={item.name}
+            >{item.name}</li>;
+        }
+      })}
+      </ol>
+      <div className={styles["record-list"]}>
+      {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index, rows) => {
         return (
           <div key={'deduplication-record-' + index} className={styles["deduplication-record"]}>
-            <div className={styles["deduplication-record-title"]}><div className={styles["deduplication-record-name"]}>{this.getRowName(row, table, index)}</div> <DeleteRowDropdownMenu row={row} onRowDelete={() => this.onRowDelete(row)}/></div>
-            <div className={styles["deduplication-record-value"]}>{this.getRecord(row, table)}</div>
+          <div className={styles["deduplication-record-title"]}><div className={styles["deduplication-record-name"]}>{this.getRowName(row, table, index)}</div> <DeleteRowDropdownMenu row={row} onRowDelete={() => this.onRowDelete(row)}/></div>
+          <div className={styles["deduplication-record-value"]}>{this.getRecord(row, table)}</div>
           </div>
         );
-      });
-    }
-
-    return null;
+      })}
+      </div>
+      </Fragment>
+    );
   }
 
   getRowName = (rowId, table, index) => {
     const row = table['id_row_map'][rowId];
     let rowName = row['0000'] || '';
-    return `${(index + 1) + '. '}${rowName}`;
+    return rowName;
   }
 
   getRecord = (rowIdx, table) => {
     let { columns } = table;
     const row = table['id_row_map'][rowIdx];
-    return this.getRowRecord(row, columns, UnShowColumnKeyList);
+    return this.getRowRecord(row, columns, UNSHOWN_COLUMN_KEY_LIST);
   }
 
-  getRowRecord = (row, columns, unShowColumnKeyList) => {
+  getRowRecord = (row, columns, unshownColumnKeyList) => {
     let displayRow = [];
     columns.forEach((column) => {
       displayRow.push(
-        this.getFormattedCell(column, row, unShowColumnKeyList)
+        this.getFormattedCell(column, row, unshownColumnKeyList)
       );
     });
     return displayRow;
   };
 
-  getFormattedCell = (column, row, unShowColumnKeyList) => {
+  getFormattedCell = (column, row, unshownColumnKeyList) => {
     let { key, name, type, data } = column;
     let { _id: rowId } = row;
     let value = row[key];
     let displayValue;
     let isNonEmptyArray = Array.isArray(value) && value.length > 0;
-    if (!unShowColumnKeyList.includes(key) && !UNSHOW_COLUME_TYPE.includes(type)) {
+    if (!unshownColumnKeyList.includes(key) && !UNSHOWN_COLUMN_TYPE_LIST.includes(type)) {
       switch(type) {
         case 'text': { 
           if (value && typeof value === 'string') {
@@ -125,6 +142,47 @@ class DetailDuplicationDialog extends React.Component {
             let options = data && data.options ? data.options : [];
             let option = options.find(option => option.id === value);
             displayValue = option ? <span className={styles['deduplication-single-select']} style={{backgroundColor: option.color}}>{option.name}</span> : '';
+          }
+          break;
+        }
+
+        case 'multiple-select': {
+          if (value && isNonEmptyArray) {
+            let options = data && data.options ? data.options : []; 
+            let validValue = value.filter((item) => {
+              return options.find(option => option.id === item);
+            }); 
+            displayValue = validValue.length > 0 ? 
+              <span className="multiple-select-formatter">
+                {validValue.map((item, index) => {
+                  return <SingleSelectOption column={column} value={item} key={`row-operation-multiple-select-${index}`}/>;
+                })} 
+              </span> 
+              : ''; 
+          }   
+          break;
+        }
+
+        case 'file': {
+          if (value && isNonEmptyArray) {
+            let { name, type } = value[0];
+            let amount = value.length;
+            displayValue = <div className="image-cell-value">
+              <img alt='' src={fileIcon} width="24" />
+              {amount > 1 && <span className="cell-value-size">{`+${amount - 1}`}</span>}
+              </div>;
+          }
+          break;
+        }
+
+        case 'image': {
+          if (value && isNonEmptyArray) {
+            let imgSrc = value[0];
+            let amount = value.length;
+            displayValue = <div className="image-cell-value h-100">
+              <img alt='' src={imgSrc} className="mh-100" />
+              {amount > 1 && <span className="cell-value-size">{`+${amount - 1}`}</span>}
+              </div>;
           }
           break;
         }
