@@ -280,7 +280,7 @@ class DetailDuplicationDialog extends React.Component {
               </div>
             }
             {
-              <div className={styles['detail-view-settings']}>
+              <div className={`${styles['detail-view-settings']} d-flex flex-column`}>
                 {this.renderDetailData()}
               </div>
             }
