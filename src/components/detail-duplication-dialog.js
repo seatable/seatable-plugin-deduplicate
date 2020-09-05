@@ -3,10 +3,10 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import TableView from './table-view';
 import intl from 'react-intl-universal';
 import moment from 'moment';
-import DeleteRowDropdownMenu from './delete-component';
 import styles from '../css/plugin-layout.module.css';
 import CollaboratorFormatter from '../components/formatter/collaborator-formatter';
 import SingleSelectOption from '../components/formatter/SingleSelectOption';
+import RecordItem from './record';
 
 import fileIcon from '../image/file.png';
 
@@ -20,6 +20,12 @@ class DetailDuplicationDialog extends React.Component {
     this.state = {
       showDialog: false
     };
+    this.recordItems = []; 
+    this.scrollLeft = 0;
+  }
+
+  componentWillUnmount() {
+    this.recordItems = null;
   }
 
   toggle = () => {
@@ -34,6 +40,15 @@ class DetailDuplicationDialog extends React.Component {
 
   onRowDelete = (rowId) => {
     this.props.onRowDelete(rowId);
+  }
+
+  handleVerticalScroll = (e) => {
+    // to keep the value of `this.scrollLeft`
+    e.stopPropagation(); // important!
+  }
+
+  onRef = (ref, rowIdx) => {
+    this.recordItems[rowIdx] = ref;
   }
 
   renderDetailData = () => {
@@ -53,13 +68,18 @@ class DetailDuplicationDialog extends React.Component {
         }
       })}
       </ol>
-      <div className={styles["record-list"]}>
+      <div className={styles["record-list"]} onScroll={this.handleVerticalScroll}>
       {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index, rows) => {
         return (
-          <div key={'deduplication-record-' + index} className={styles["deduplication-record"]}>
-          <div className={styles["deduplication-record-title"]}><div className={styles["deduplication-record-name"]}>{this.getRowName(row, table, index)}</div> <DeleteRowDropdownMenu row={row} onRowDelete={() => this.onRowDelete(row)}/></div>
-          <div className={styles["deduplication-record-value"]}>{this.getRecord(row, table)}</div>
-          </div>
+          <RecordItem
+            key={'deduplication-record-' + index}
+            rowName={this.getRowName(row, table, index)}
+            row={row}
+            onRowDelete={() => this.onRowDelete(row)}
+            values={this.getRecord(row, table)}
+            onRef={this.onRef}
+            rowIdx={index}
+          />
         );
       })}
       </div>
@@ -260,6 +280,13 @@ class DetailDuplicationDialog extends React.Component {
     }
   };
 
+  handleHorizontalScroll = (e) => {
+    this.scrollLeft = e.target.scrollLeft;
+    this.recordItems.forEach(item => {
+      item.updateRowNameStyles(this.scrollLeft);
+    });
+  }
+
   render() {
     const { showDialog, duplicationData, selectedItem, configSettings } = this.props;
     return (
@@ -280,7 +307,7 @@ class DetailDuplicationDialog extends React.Component {
               </div>
             }
             {
-              <div className={`${styles['detail-view-settings']} d-flex flex-column`}>
+              <div className={`${styles['detail-view-settings']} d-flex flex-column`} onScroll={this.handleHorizontalScroll}>
                 {this.renderDetailData()}
               </div>
             }
