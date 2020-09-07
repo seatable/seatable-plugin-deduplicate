@@ -66,6 +66,7 @@ class DetailDuplicationDialog extends React.Component {
           title={item.name}
             >{item.name}</li>;
         }
+        return null;
       })}
       </ol>
       <div className={styles["record-list"]} onScroll={this.handleVerticalScroll}>
@@ -185,7 +186,6 @@ class DetailDuplicationDialog extends React.Component {
 
         case 'file': {
           if (value && isNonEmptyArray) {
-            let { name, type } = value[0];
             let amount = value.length;
             displayValue = <div className="image-cell-value">
               <img alt='' src={fileIcon} width="24" />
