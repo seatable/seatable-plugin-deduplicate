@@ -219,7 +219,7 @@ class App extends React.Component {
     const option = columnSettings.find((column) => {
       return !currentActiveColumns.includes(column.name);
     });
-    
+    if (!option) return {type: 'multi_deduplication_column', active: currentActiveColumns, settings: columnSettings};
     currentActiveColumns.push(option.name);
     return {type: 'multi_deduplication_column', active: currentActiveColumns, settings: columnSettings};
   }
