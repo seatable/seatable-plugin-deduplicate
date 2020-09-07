@@ -7,7 +7,7 @@ class CollaboratorFormatter extends Component {
   getCollaboratorsList = () => {
     let { value, collaborators } = this.props;
     let validCollaborators = [];
-    Array.isArray(value) && value.map((v, i) => {
+    Array.isArray(value) && value.map((v, i) => { //eslint-disable-line
       let collaborator = collaborators && collaborators.find(c => c.email === v);
       if (collaborator) {
         validCollaborators.push(

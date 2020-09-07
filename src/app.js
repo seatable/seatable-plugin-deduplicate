@@ -227,7 +227,7 @@ class App extends React.Component {
   getMuiltiDeduplicationColumnSelections = (currentTable, currentView, currentColumn = {}) => {
     let columns = this.dtable.getShownColumns(currentTable, currentView);
     // need options: checkout map column
-    return columns.filter(column => {
+    return columns.filter(column => { //eslint-disable-line
       if (DEDUPLICATION_LIST.includes(column.type) && currentColumn.key !== column.key) {
         return {id: column.key, name: column.name};
       }
@@ -256,10 +256,10 @@ class App extends React.Component {
   }
 
   getEqualRows = (selectedColumn, columns, rows) => {
-    const EqualRows = rows.filter((row) => {
+    const EqualRows = rows.filter((row) => { //eslint-disable-line
       const selectedColumnValue = row[selectedColumn.key];
       const isEqual = columns.every((column) => {
-        return row[column.key] == selectedColumnValue;
+        return row[column.key] == selectedColumnValue; //eslint-disable-line
       });
       if (isEqual) return row;
     });
@@ -302,7 +302,7 @@ class App extends React.Component {
 
     const columnKey = selectedColumn.key;
     let statData = {};
-    rows.map((item) => {
+    rows.map((item) => { //eslint-disable-line
       let value = item[columnKey];
       if (!value) value = 'null';
       if (!statData[value]) {
@@ -310,7 +310,7 @@ class App extends React.Component {
         statData[value].value = 1;
         statData[value].rows = [];
         statData[value].rows.push(item._id);
-        return;
+        return; //eslint-disable-line
       };
       const count = statData[value].value;
       statData[value].value = count + 1;

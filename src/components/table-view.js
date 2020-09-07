@@ -28,7 +28,7 @@ class TableView extends React.Component {
     if (!configSettings) return;
     const columns = [configSettings[2].active, ...configSettings[3].active];
 
-    return keys.map((key, index) => {
+    return keys.map((key, index) => { //eslint-disable-line
       if (duplicationData[key].value > 1) {
         const currentItem = Object.assign({key: key}, duplicationData[key]);
         let content = key;
