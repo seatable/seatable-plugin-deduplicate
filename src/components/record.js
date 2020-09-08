@@ -4,8 +4,12 @@ import styles from '../css/plugin-layout.module.css';
 import DeleteRowDropdownMenu from './delete-component';
 
 const propTypes = {
+  rowName: PropTypes.string.isRequired,
+  row: PropTypes.string.isRequired,
+  onRowDelete: PropTypes.func.isRequired,
   rowIdx: PropTypes.number.isRequired,
-  onRef: PropTypes.func
+  values: PropTypes.array.isRequired,
+  onRef: PropTypes.func.isRequired
 };
 
 class RecordItem extends PureComponent {
