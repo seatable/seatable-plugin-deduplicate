@@ -103,7 +103,6 @@ class DetailDuplicationDialog extends React.Component {
         case 'number': {
           if (Object.prototype.toString.call(value) === '[object Number]') {
             displayValue = <div className={styles["number-formatter"]}>
-              <span className={styles["column-name"]}>{name}</span>
               {value}
             </div>;
           }
