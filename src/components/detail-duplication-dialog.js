@@ -163,7 +163,7 @@ class DetailDuplicationDialog extends React.Component {
           if (value && typeof value === 'string') {
             let options = data && data.options ? data.options : [];
             let option = options.find(option => option.id === value);
-            displayValue = option ? <span className={styles['deduplication-single-select']} style={{backgroundColor: option.color}}>{option.name}</span> : '';
+            displayValue = option ? <SingleSelectFormatter options={options} value={value} /> : '';
           }
           break;
         }
