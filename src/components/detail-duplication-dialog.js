@@ -3,15 +3,15 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import TableView from './table-view';
 import intl from 'react-intl-universal';
 import moment from 'moment';
+import { SingleSelectFormatter } from 'dtable-ui-component';
 import { getImageThumbnailUrl } from '../utils';
 import styles from '../css/plugin-layout.module.css';
 import CollaboratorFormatter from '../components/formatter/collaborator-formatter';
-import SingleSelectOption from '../components/formatter/SingleSelectOption';
 import RecordItem from './record';
 
 import fileIcon from '../image/file.png';
 
-const UNSHOWN_COLUMN_KEY_LIST = ['0000', ''];
+const UNSHOWN_COLUMN_KEY_LIST = ['0000'];
 const UNSHOWN_COLUMN_TYPE_LIST = ['long-text', 'geolocation', 'link'];
 
 class DetailDuplicationDialog extends React.Component {
@@ -175,11 +175,11 @@ class DetailDuplicationDialog extends React.Component {
               return options.find(option => option.id === item);
             }); 
             displayValue = validValue.length > 0 ? 
-              <span className="multiple-select-formatter">
+              <div className="multiple-select-formatter d-flex">
                 {validValue.map((item, index) => {
-                  return <SingleSelectOption column={column} value={item} key={`row-operation-multiple-select-${index}`}/>;
+                  return <SingleSelectFormatter options={options} value={item} key={`row-operation-multiple-select-${index}`} />;
                 })} 
-              </span> 
+              </div> 
               : ''; 
           }   
           break;
