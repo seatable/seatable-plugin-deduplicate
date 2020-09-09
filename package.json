@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "dtable-sdk": "0.0.38",
+    "dtable-ui-component": "^0.1.7",
     "moment": "^2.27.0",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",

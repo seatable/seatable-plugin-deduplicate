@@ -1,22 +1,32 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import TableView from './table-view';
 import intl from 'react-intl-universal';
 import moment from 'moment';
-import DeleteRowDropdownMenu from './delete-component';
+import { SingleSelectFormatter } from 'dtable-ui-component';
+import { getImageThumbnailUrl } from '../utils';
 import styles from '../css/plugin-layout.module.css';
 import CollaboratorFormatter from '../components/formatter/collaborator-formatter';
+import RecordItem from './record';
 
-const UnShowColumnKeyList = ['0000', ''];
-const UNSHOW_COLUME_TYPE = ['image', 'file', 'mutiple-select', 'long-text', 'geolocation', 'link']
+import fileIcon from '../image/file.png';
+
+const UNSHOWN_COLUMN_KEY_LIST = ['0000'];
+const UNSHOWN_COLUMN_TYPE_LIST = ['long-text', 'geolocation', 'link'];
 
 class DetailDuplicationDialog extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      showDialog: false,
-    }
+      showDialog: false
+    };
+    this.recordItems = []; 
+    this.scrollLeft = 0;
+  }
+
+  componentWillUnmount() {
+    this.recordItems = null;
   }
 
   toggle = () => {
@@ -33,52 +43,81 @@ class DetailDuplicationDialog extends React.Component {
     this.props.onRowDelete(rowId);
   }
 
+  handleVerticalScroll = (e) => {
+    // to keep the value of `this.scrollLeft`
+    e.stopPropagation(); // important!
+  }
+
+  onRef = (ref, rowIdx) => {
+    this.recordItems[rowIdx] = ref;
+  }
+
   renderDetailData = () => {
     const { dtable, configSettings, selectedItem } = this.props;
     const table = dtable.getTableByName(configSettings[0].active);
-    if (selectedItem.rows) {
-      return selectedItem.rows.map((row, index, rows) => {
+    return (
+      <Fragment>
+      <ol className={styles["column-name-list"]}>
+      {table.columns.map((item, index) => {
+        if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
+          !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
+          return <li key={`column-name-${index}`}
+          className={`${styles['column-name']} text-truncate`}
+          style={{'width': this.getCellRecordWidth(item)}}
+          title={item.name}
+            >{item.name}</li>;
+        }
+        return null;
+      })}
+      </ol>
+      <div className={styles["record-list"]} onScroll={this.handleVerticalScroll}>
+      {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index, rows) => {
         return (
-          <div key={'deduplication-record-' + index} className={styles["deduplication-record"]}>
-            <div className={styles["deduplication-record-title"]}><div className={styles["deduplication-record-name"]}>{this.getRowName(row, table, index)}</div> <DeleteRowDropdownMenu row={row} onRowDelete={() => this.onRowDelete(row)}/></div>
-            <div className={styles["deduplication-record-value"]}>{this.getRecord(row, table)}</div>
-          </div>
+          <RecordItem
+            key={'deduplication-record-' + index}
+            rowName={this.getRowName(row, table, index)}
+            row={row}
+            onRowDelete={() => this.onRowDelete(row)}
+            values={this.getRecord(row, table)}
+            onRef={this.onRef}
+            rowIdx={index}
+          />
         );
-      });
-    }
-
-    return null;
+      })}
+      </div>
+      </Fragment>
+    );
   }
 
   getRowName = (rowId, table, index) => {
     const row = table['id_row_map'][rowId];
     let rowName = row['0000'] || '';
-    return `${(index + 1) + '. '}${rowName}`;
+    return rowName;
   }
 
   getRecord = (rowIdx, table) => {
     let { columns } = table;
     const row = table['id_row_map'][rowIdx];
-    return this.getRowRecord(row, columns, UnShowColumnKeyList);
+    return this.getRowRecord(row, columns, UNSHOWN_COLUMN_KEY_LIST);
   }
 
-  getRowRecord = (row, columns, unShowColumnKeyList) => {
+  getRowRecord = (row, columns, unshownColumnKeyList) => {
     let displayRow = [];
     columns.forEach((column) => {
       displayRow.push(
-        this.getFormattedCell(column, row, unShowColumnKeyList)
+        this.getFormattedCell(column, row, unshownColumnKeyList)
       );
     });
     return displayRow;
   };
 
-  getFormattedCell = (column, row, unShowColumnKeyList) => {
+  getFormattedCell = (column, row, unshownColumnKeyList) => {
     let { key, name, type, data } = column;
     let { _id: rowId } = row;
     let value = row[key];
     let displayValue;
     let isNonEmptyArray = Array.isArray(value) && value.length > 0;
-    if (!unShowColumnKeyList.includes(key) && !UNSHOW_COLUME_TYPE.includes(type)) {
+    if (!unshownColumnKeyList.includes(key) && !UNSHOWN_COLUMN_TYPE_LIST.includes(type)) {
       switch(type) {
         case 'text': { 
           if (value && typeof value === 'string') {
@@ -123,7 +162,47 @@ class DetailDuplicationDialog extends React.Component {
           if (value && typeof value === 'string') {
             let options = data && data.options ? data.options : [];
             let option = options.find(option => option.id === value);
-            displayValue = option ? <span className={styles['deduplication-single-select']} style={{backgroundColor: option.color}}>{option.name}</span> : '';
+            displayValue = option ? <SingleSelectFormatter options={options} value={value} /> : '';
+          }
+          break;
+        }
+
+        case 'multiple-select': {
+          if (value && isNonEmptyArray) {
+            let options = data && data.options ? data.options : []; 
+            let validValue = value.filter((item) => {
+              return options.find(option => option.id === item);
+            }); 
+            displayValue = validValue.length > 0 ? 
+              <div className="multiple-select-formatter d-flex">
+                {validValue.map((item, index) => {
+                  return <SingleSelectFormatter options={options} value={item} key={`row-operation-multiple-select-${index}`} />;
+                })} 
+              </div> 
+              : ''; 
+          }   
+          break;
+        }
+
+        case 'file': {
+          if (value && isNonEmptyArray) {
+            let amount = value.length;
+            displayValue = <div className="image-cell-value">
+              <img alt='' src={fileIcon} width="24" />
+              {amount > 1 && <span className="cell-value-size">{`+${amount - 1}`}</span>}
+              </div>;
+          }
+          break;
+        }
+
+        case 'image': {
+          if (value && isNonEmptyArray) {
+            let imgSrc = getImageThumbnailUrl(value[0]);
+            let amount = value.length;
+            displayValue = <div className="image-cell-value h-100">
+              <img alt='' src={imgSrc} className="mh-100" />
+              {amount > 1 && <span className="cell-value-size">{`+${amount - 1}`}</span>}
+              </div>;
           }
           break;
         }
@@ -201,6 +280,13 @@ class DetailDuplicationDialog extends React.Component {
     }
   };
 
+  handleHorizontalScroll = (e) => {
+    this.scrollLeft = e.target.scrollLeft;
+    this.recordItems.forEach(item => {
+      item.updateRowNameStyles(this.scrollLeft);
+    });
+  }
+
   render() {
     const { showDialog, duplicationData, selectedItem, configSettings } = this.props;
     return (
@@ -221,7 +307,7 @@ class DetailDuplicationDialog extends React.Component {
               </div>
             }
             {
-              <div className={styles['detail-view-settings']}>
+              <div className={`${styles['detail-view-settings']} d-flex flex-column`} onScroll={this.handleHorizontalScroll}>
                 {this.renderDetailData()}
               </div>
             }
