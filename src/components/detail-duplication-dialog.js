@@ -3,6 +3,7 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import TableView from './table-view';
 import intl from 'react-intl-universal';
 import moment from 'moment';
+import { getImageThumbnailUrl } from '../utils';
 import styles from '../css/plugin-layout.module.css';
 import CollaboratorFormatter from '../components/formatter/collaborator-formatter';
 import SingleSelectOption from '../components/formatter/SingleSelectOption';
@@ -197,7 +198,7 @@ class DetailDuplicationDialog extends React.Component {
 
         case 'image': {
           if (value && isNonEmptyArray) {
-            let imgSrc = value[0];
+            let imgSrc = getImageThumbnailUrl(value[0]);
             let amount = value.length;
             displayValue = <div className="image-cell-value h-100">
               <img alt='' src={imgSrc} className="mh-100" />
