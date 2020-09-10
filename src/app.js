@@ -132,7 +132,7 @@ class App extends React.Component {
       let columnSettings = this.getColumnSettings(currentTable, currentView, currentColumn);
       const columnSelections = this.getMuiltiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
       let activeColumns = selectedColumns.active;
-      if (option.name === intl.get('Not_use')) {
+      if (option.name === intl.get('Select_a_column')) {
         activeColumns = [];
       } else {
         activeColumns = activeColumns.filter((column) => {
@@ -199,7 +199,11 @@ class App extends React.Component {
       return {id: column.key, name: column.name};
     });
     
-    columnSettings.unshift({id: '', name: intl.get('Not_use')});
+    columnSettings.unshift({
+      id: '', 
+      name: intl.get('Select_a_column'),
+      style: { color: 'rgba(0, 0, 0, .25)'}
+    });
     // need options: checkout map column
     let active = activeColumn ? activeColumn.name : columnSettings[0].name;
     // need options: checkout map column

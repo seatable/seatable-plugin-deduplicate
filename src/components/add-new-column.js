@@ -14,7 +14,7 @@ class AddColumn extends React.Component {
 
   isActive = () => {
     const activeColumn = this.props.configSettings[2].active;
-    return activeColumn !== intl.get('Not_use');
+    return activeColumn !== intl.get('Select_a_column');
   }
 
   render() {

@@ -10,7 +10,6 @@ const en = {
   Delete: 'Delete',
   Settings: 'Settings',
   Select_a_column: 'Select a column',
-  Not_use: 'Not use',
   Add_new_column: 'Add new column'
 };
 

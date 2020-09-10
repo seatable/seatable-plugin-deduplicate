@@ -19,7 +19,7 @@ class SettingItem extends Component {
 
   createOption = (option) => {
     return ({
-      label: (<span className='select-option-name'>{option.name}</span>),
+      label: (<span className='select-option-name' style={option.style || {}}>{option.name}</span>),
       value: { name: option.name },
     });
   }

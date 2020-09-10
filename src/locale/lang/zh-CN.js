@@ -9,8 +9,7 @@ const zh_CN = {
   No_duplication: '无重复项',
   Delete: '删除',
   Settings: '设置',
-  Select_a_column: '选择一个去重列',
-  Not_use: '不使用列去重',
+  Select_a_column: '选择一个列',
   Add_new_column: '添加新去重列'
 };
 
