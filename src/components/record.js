@@ -17,10 +17,16 @@ class RecordItem extends PureComponent {
   constructor(props) {
     super(props);
     this.recordName = React.createRef();
+    this.state = {
+      marginX: 'auto'
+    };
   }
 
   componentDidMount() {
     this.props.onRef(this, this.props.rowIdx);
+    this.setState({
+      marginX: 258 - this.recordName.current.clientWidth
+    });
   }
 
   updateRowNameStyles = (scrollLeft) => {
@@ -31,11 +37,12 @@ class RecordItem extends PureComponent {
   }
 
   render() {
+    const { marginX } = this.state;
     return (
       <div className={styles["deduplication-record"]}>
         <div className={styles["deduplication-record-title"]}>
           <div className={styles["deduplication-record-name"]} ref={this.recordName}>{this.props.rowName}</div>
-          <DeleteRowDropdownMenu row={this.props.row} onRowDelete={this.props.onRowDelete} />
+          <DeleteRowDropdownMenu style={{marginLeft: marginX}} row={this.props.row} onRowDelete={this.props.onRowDelete} />
         </div>
         <div className={styles["deduplication-record-value"]}>{this.props.values}</div>
       </div>

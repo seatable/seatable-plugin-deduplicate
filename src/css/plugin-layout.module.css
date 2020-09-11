@@ -174,19 +174,14 @@
   margin: 0;
 }
 
-.deduplication-record-title {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .deduplication-record-name {
+  display: inline-block;
   max-width: 200px;
   overflow: hidden;
   height: 22px;
   white-space: nowrap;
   text-overflow: ellipsis;
+  vertical-align: middle;
 }
 
 .deduplication-record-value {
