@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import TableView from './table-view';
 import intl from 'react-intl-universal';
 import moment from 'moment';
@@ -19,9 +19,10 @@ class DetailDuplicationDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showDialog: false
+      showDialog: false,
+      isCheckboxesShown: false
     };
-    this.recordItems = []; 
+    this.recordItems = [];
     this.scrollLeft = 0;
   }
 
@@ -54,6 +55,7 @@ class DetailDuplicationDialog extends React.Component {
 
   renderDetailData = () => {
     const { dtable, configSettings, selectedItem } = this.props;
+    const { isCheckboxesShown } = this.state;
     const table = dtable.getTableByName(configSettings[0].active);
     return (
       <Fragment>
@@ -287,14 +289,20 @@ class DetailDuplicationDialog extends React.Component {
     });
   }
 
+  toggleShowCheckboxes = () => {
+    this.setState({
+      isCheckboxesShown: !this.state.isCheckboxesShown
+    });
+  }
+
   render() {
     const { showDialog, duplicationData, selectedItem, configSettings } = this.props;
+    const { isCheckboxesShown } = this.state;
     return (
       <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.props.toggleDetailDialog} className={styles['deduplication-plugin']}  zIndex={2000}>
         <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.props.toggleDetailDialog}>{intl.get('Deduplication')}</ModalHeader>
         <ModalBody className={styles['deduplication-plugin-content']}>
           <div className={styles['deduplication-plugin-wrapper']}>
-            {
               <div className={styles['deduplication-plugin-show']}>
                 <div className={styles['table-wrapper']}>
                   <TableView
@@ -305,13 +313,19 @@ class DetailDuplicationDialog extends React.Component {
                   />
                 </div>
               </div>
-            }
-            {
-              <div className={`${styles['detail-view-settings']} d-flex flex-column`} onScroll={this.handleHorizontalScroll}>
-                {this.renderDetailData()}
+              <div className={`${styles['detail-view-settings']} d-flex flex-column`}>
+                <div className={`${styles['records-amount']} d-flex justify-content-between align-items-center`}>
+                  <p className="m-0">{intl.get('amount_records', {amount: selectedItem.rows.length})}</p>
+                  {selectedItem.rows.length > 0 && <Button
+                    className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
+                    onClick={this.toggleShowCheckboxes}
+                    >{isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}</Button>}
+                </div>
+                <div className={`${styles['records-container']} d-flex flex-column`} onScroll={this.handleHorizontalScroll}>
+                  {this.renderDetailData()}
+                </div>
               </div>
-            }
-          </div>
+            </div>
         </ModalBody>
       </Modal>
     );
