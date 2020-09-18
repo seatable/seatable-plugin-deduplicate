@@ -346,9 +346,12 @@ class App extends React.Component {
   }
 
   showDetailDialog = (e, selectedItem) => {
+    let obj = selectedItem;
+    obj.rowsSelected = selectedItem.rows.map(item => false);
+    obj.isAllSelected = false;
     this.setState({
       isShowDetailDialog: true,
-      selectedItem
+      selectedItem: obj
     })
   }
 
@@ -379,6 +382,29 @@ class App extends React.Component {
     this.setState({
       selectedItem: selectedItem
     });
+  }
+
+  toggleRowSelected = (index) => {
+    let selectedItem = this.state.selectedItem;
+    let rowsSelected = selectedItem.rowsSelected;
+    rowsSelected[index] = !rowsSelected[index];
+    selectedItem.isAllSelected = !rowsSelected.some(item => item === false);
+    this.setState({
+      selectedItem: selectedItem
+    });
+  }
+
+  toggleAllSelected = () => {
+    let selectedItem = this.state.selectedItem;
+    let rowsSelected = selectedItem.rowsSelected;
+    selectedItem.isAllSelected = !selectedItem.isAllSelected;
+    selectedItem.rowsSelected = rowsSelected.map(item => selectedItem.isAllSelected);
+    this.setState({
+      selectedItem: selectedItem
+    });
+  }
+
+  deleteSelected = () => {
   }
 
   render() {
@@ -421,6 +447,9 @@ class App extends React.Component {
             setDetailData={this.setDetailData}
             collaborators={this.collaborators}
             onRowDelete={this.onRowDelete}
+            toggleRowSelected={this.toggleRowSelected}
+            toggleAllSelected={this.toggleAllSelected}
+            deleteSelected={this.deleteSelected}
           />
         }
       </Fragment>

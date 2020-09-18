@@ -60,7 +60,11 @@ class DetailDuplicationDialog extends React.Component {
     return (
       <Fragment>
       <ol className={`${styles["column-name-list"]} align-items-center`}>
-      {isCheckboxesShown && <li className="o-hidden mr-3"><input type="checkbox" /></li>}
+      {isCheckboxesShown && <li className="o-hidden mr-3">
+        <input type="checkbox"
+          checked={selectedItem.isAllSelected}
+          onChange={this.props.toggleAllSelected}
+        /></li>}
       {table.columns.map((item, index) => {
         if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
           !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
@@ -74,13 +78,17 @@ class DetailDuplicationDialog extends React.Component {
       })}
       </ol>
       <div className={styles["record-list"]} onScroll={this.handleVerticalScroll}>
-      {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index, rows) => {
+      {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index) => {
         return (
           <div
             className={`${styles['record-container']} d-flex align-items-center`}
             key={'deduplication-record-' + index}
           >
-          {isCheckboxesShown && <input type="checkbox" className="mr-2" />}
+          {isCheckboxesShown &&
+            <input type="checkbox" className="mr-2"
+            checked={selectedItem.rowsSelected[index]}
+            onChange={this.props.toggleRowSelected.bind(this, index)}
+            />}
           <RecordItem
             rowName={this.getRowName(row, table, index)}
             row={row}
@@ -329,10 +337,16 @@ class DetailDuplicationDialog extends React.Component {
               <div className={`${styles['detail-view-settings']} d-flex flex-column`}>
                 <div className={`${styles['records-amount']} d-flex justify-content-between align-items-center`}>
                   <p className="m-0">{intl.get('amount_records', {amount: selectedItem.rows.length})}</p>
+                  <div>
+                  {selectedItem.rowsSelected.some(item => item === true) && <Button
+                    className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
+                    onClick={this.props.deleteSelected}
+                    >{intl.get('Delete')}</Button>}
                   {selectedItem.rows.length > 0 && <Button
                     className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
                     onClick={this.toggleShowCheckboxes}
                     >{isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}</Button>}
+                  </div>
                 </div>
                 <div
                   className={`${styles['records-container']} d-flex flex-column`}
