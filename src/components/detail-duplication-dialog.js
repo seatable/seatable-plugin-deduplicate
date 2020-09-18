@@ -59,7 +59,8 @@ class DetailDuplicationDialog extends React.Component {
     const table = dtable.getTableByName(configSettings[0].active);
     return (
       <Fragment>
-      <ol className={styles["column-name-list"]}>
+      <ol className={`${styles["column-name-list"]} align-items-center`}>
+      {isCheckboxesShown && <li className="o-hidden mr-3"><input type="checkbox" /></li>}
       {table.columns.map((item, index) => {
         if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
           !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
@@ -67,7 +68,7 @@ class DetailDuplicationDialog extends React.Component {
           className={`${styles['column-name']} text-truncate`}
           style={{'width': this.getCellRecordWidth(item)}}
           title={item.name}
-            >{item.name}</li>;
+          >{item.name}</li>;
         }
         return null;
       })}
@@ -75,8 +76,12 @@ class DetailDuplicationDialog extends React.Component {
       <div className={styles["record-list"]} onScroll={this.handleVerticalScroll}>
       {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index, rows) => {
         return (
-          <RecordItem
+          <div
+            className={`${styles['record-container']} d-flex align-items-center`}
             key={'deduplication-record-' + index}
+          >
+          {isCheckboxesShown && <input type="checkbox" className="mr-2" />}
+          <RecordItem
             rowName={this.getRowName(row, table, index)}
             row={row}
             onRowDelete={() => this.onRowDelete(row)}
@@ -84,6 +89,7 @@ class DetailDuplicationDialog extends React.Component {
             onRef={this.onRef}
             rowIdx={index}
           />
+          </div>
         );
       })}
       </div>
@@ -292,6 +298,13 @@ class DetailDuplicationDialog extends React.Component {
   toggleShowCheckboxes = () => {
     this.setState({
       isCheckboxesShown: !this.state.isCheckboxesShown
+    }, () => {
+      if (this.state.isCheckboxesShown) {
+        this.recordsContainer.scrollTo({left: 0});
+        this.recordsContainer.style.overflowX = 'hidden';
+      } else {
+        this.recordsContainer.style.overflowX = 'auto';
+      }
     });
   }
 
@@ -321,7 +334,11 @@ class DetailDuplicationDialog extends React.Component {
                     onClick={this.toggleShowCheckboxes}
                     >{isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}</Button>}
                 </div>
-                <div className={`${styles['records-container']} d-flex flex-column`} onScroll={this.handleHorizontalScroll}>
+                <div
+                  className={`${styles['records-container']} d-flex flex-column`}
+                  onScroll={this.handleHorizontalScroll}
+                  ref={(ref) => this.recordsContainer = ref}
+                  >
                   {this.renderDetailData()}
                 </div>
               </div>
