@@ -40,8 +40,8 @@ class DetailDuplicationDialog extends React.Component {
     this.props.setDetailData(selectedItem);
   }
 
-  onRowDelete = (rowId) => {
-    this.props.onRowDelete(rowId);
+  onRowDelete = (rowId, index) => {
+    this.props.onRowDelete(rowId, index);
   }
 
   handleVerticalScroll = (e) => {
@@ -92,7 +92,7 @@ class DetailDuplicationDialog extends React.Component {
           <RecordItem
             rowName={this.getRowName(row, table, index)}
             row={row}
-            onRowDelete={() => this.onRowDelete(row)}
+            onRowDelete={() => this.onRowDelete(row, index)}
             values={this.getRecord(row, table)}
             onRef={this.onRef}
             rowIdx={index}
