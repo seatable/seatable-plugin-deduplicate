@@ -10,7 +10,10 @@ const fr = {
   Delete: 'Effacer',
   Settings: 'Réglage',
   Select_a_column: 'Sélectionnez une colonne',
-  Add_new_column: 'Ajouter une nouvelle colonne'
+  Add_new_column: 'Ajouter une nouvelle colonne',
+  amount_records: '',
+  Select: '',
+  Cancel: ''
 };
 
 export default fr; 

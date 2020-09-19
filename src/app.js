@@ -252,11 +252,15 @@ class App extends React.Component {
     });
   }
 
-  onRowDelete = (rowId) => {
-    const { configSettings } = this.state;
+  onRowDelete = (rowId, index) => {
+    let { configSettings, selectedItem } = this.state;
     const tableName = configSettings[0].active;
     let currentTable = this.dtable.getTableByName(tableName);
     this.dtable.deleteRowById(currentTable, rowId);
+    selectedItem.rowsSelected.splice(index, 1);
+    this.setState({
+      selectedItem: selectedItem
+    });
   }
 
   getEqualRows = (selectedColumn, columns, rows) => {
@@ -346,9 +350,13 @@ class App extends React.Component {
   }
 
   showDetailDialog = (e, selectedItem) => {
+    let obj = selectedItem;
+    // rowsSelected: the 'selected' state of each row
+    obj.rowsSelected = selectedItem.rows.map(item => false);
+    obj.isAllSelected = false;
     this.setState({
       isShowDetailDialog: true,
-      selectedItem
+      selectedItem: obj
     })
   }
 
@@ -376,6 +384,54 @@ class App extends React.Component {
   }
 
   setDetailData = (selectedItem) => {
+    this.setState({
+      selectedItem: selectedItem
+    });
+  }
+
+  toggleRowSelected = (index) => {
+    let selectedItem = this.state.selectedItem;
+    let rowsSelected = selectedItem.rowsSelected;
+    rowsSelected[index] = !rowsSelected[index];
+    selectedItem.isAllSelected = !rowsSelected.some(item => item === false);
+    this.setState({
+      selectedItem: selectedItem
+    });
+  }
+
+  toggleAllSelected = () => {
+    let selectedItem = this.state.selectedItem;
+    let rowsSelected = selectedItem.rowsSelected;
+    selectedItem.isAllSelected = !selectedItem.isAllSelected;
+    selectedItem.rowsSelected = rowsSelected.map(item => selectedItem.isAllSelected);
+    this.setState({
+      selectedItem: selectedItem
+    });
+  }
+
+  deleteSelected = () => {
+    const { configSettings } = this.state;
+    const tableName = configSettings[0].active;
+    const currentTable = this.dtable.getTableByName(tableName);
+
+    let selectedItem = this.state.selectedItem;
+    let rowsSelected = selectedItem.rowsSelected;
+    const rows = selectedItem.rows;
+    let selectedRowIDs = [];
+    let newRowsSelected = [];
+    for (let i = 0, len = rows.length; i < len; i++) {
+      if (rowsSelected[i] === true) {
+        selectedRowIDs.push(rows[i]);
+      } else {
+        newRowsSelected.push(false);
+      }
+    }
+
+    this.dtable.deleteRowsByIds(currentTable, selectedRowIDs);
+
+    // update 'selected' state
+    selectedItem.rowsSelected = newRowsSelected;
+    selectedItem.isAllSelected = false;
     this.setState({
       selectedItem: selectedItem
     });
@@ -421,6 +477,9 @@ class App extends React.Component {
             setDetailData={this.setDetailData}
             collaborators={this.collaborators}
             onRowDelete={this.onRowDelete}
+            toggleRowSelected={this.toggleRowSelected}
+            toggleAllSelected={this.toggleAllSelected}
+            deleteSelected={this.deleteSelected}
           />
         }
       </Fragment>

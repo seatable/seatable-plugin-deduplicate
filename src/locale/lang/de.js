@@ -10,7 +10,10 @@ const de = {
   Delete: 'Löschen',
   Settings: 'Rahmen',
   Select_a_column: 'Wählen Sie eine Spalte aus',
-  Add_new_column: 'Neue Spalte hinzufügen'
+  Add_new_column: 'Neue Spalte hinzufügen',
+  amount_records: '',
+  Select: '',
+  Cancel: ''
 };
 
 export default de; 
