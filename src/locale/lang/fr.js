@@ -13,7 +13,8 @@ const fr = {
   Add_new_column: 'Ajouter une nouvelle colonne',
   amount_records: '',
   Select: '',
-  Cancel: ''
+  Cancel: '',
+  This_plugin_is_not_available_now: 'This plugin is not available now as your permission is read-only.'
 };
 
 export default fr; 

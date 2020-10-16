@@ -444,6 +444,8 @@ class App extends React.Component {
         <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.onPluginToggle} className={styles['deduplication-plugin']} size="lg">
           <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>{intl.get('Deduplication')}</ModalHeader>
           <ModalBody className={styles['deduplication-plugin-content']}>
+            {(window.dtable && window.dtable.permission == 'r') ?
+            <p className="h-100 d-flex align-items-center justify-content-center text-red">{intl.get('This_plugin_is_not_available_now')}</p> : (
             <div className={styles['deduplication-plugin-wrapper']}>
               {
                 <div className={styles['deduplication-plugin-show']}>
@@ -464,6 +466,7 @@ class App extends React.Component {
                 />
               }
             </div>
+            )}
           </ModalBody>
         </Modal>
         {
