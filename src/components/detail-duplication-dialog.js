@@ -330,7 +330,7 @@ class DetailDuplicationDialog extends React.Component {
                     duplicationData={duplicationData}
                     selectedItem={selectedItem}
                     configSettings={configSettings}
-                    clickCallback={this.showDetailData}
+                    // clickCallback={this.showDetailData}
                   />
                 </div>
               </div>
