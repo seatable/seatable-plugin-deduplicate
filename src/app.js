@@ -258,9 +258,6 @@ class App extends React.Component {
     let currentTable = this.dtable.getTableByName(tableName);
     this.dtable.deleteRowById(currentTable, rowId);
     selectedItem.rowsSelected.splice(index, 1);
-    this.setState({
-      selectedItem: selectedItem
-    });
   }
 
   getEqualRows = (selectedColumn, columns, rows) => {
@@ -339,7 +336,7 @@ class App extends React.Component {
       if (duplicationData[selectedItem.key]) {
         selectedItem = Object.assign(selectedItem, duplicationData[selectedItem.key]);
       } else {
-        selectedItem = {};
+        selectedItem = Object.assign(selectedItem, {rowsSelected: [], rows: []});
       }
     }
 
