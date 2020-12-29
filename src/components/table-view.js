@@ -44,7 +44,7 @@ class TableView extends React.Component {
                 </td>
               })
             }
-            <td onClick={(event) => this.props.clickCallback(event, currentItem)} className={styles['value-cell'] + " " + (currentItem.key === selectedItem.key ? styles['selected-cell'] : '')}><span>{currentItem.value}</span></td>
+            <td onClick={(event) => this.props.clickCallback && this.props.clickCallback(event, currentItem)} className={styles['value-cell'] + " " + (currentItem.key === selectedItem.key ? styles['selected-cell'] : '')}><span>{currentItem.value}</span></td>
           </tr>
         )
       }
