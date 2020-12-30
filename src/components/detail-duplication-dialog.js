@@ -1,14 +1,13 @@
 import React, { Fragment } from 'react';
-import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
-import TableView from './table-view';
+import { Button } from 'reactstrap';
 import intl from 'react-intl-universal';
 import moment from 'moment';
 import { SingleSelectFormatter } from 'dtable-ui-component';
 import { getImageThumbnailUrl } from '../utils';
-import styles from '../css/plugin-layout.module.css';
 import CollaboratorFormatter from '../components/formatter/collaborator-formatter';
 import RecordItem from './record';
 
+import styles from '../css/plugin-layout.module.css';
 import fileIcon from '../image/file.png';
 
 const UNSHOWN_COLUMN_KEY_LIST = ['0000'];
@@ -19,7 +18,6 @@ class DetailDuplicationDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showDialog: false,
       isCheckboxesShown: false
     };
     this.recordItems = [];
@@ -28,12 +26,6 @@ class DetailDuplicationDialog extends React.Component {
 
   componentWillUnmount() {
     this.recordItems = null;
-  }
-
-  toggle = () => {
-    this.setState({
-      showDialog: !this.state.showDialog
-    });
   }
 
   showDetailData = (e, selectedItem) => {
@@ -317,24 +309,10 @@ class DetailDuplicationDialog extends React.Component {
   }
 
   render() {
-    const { showDialog, duplicationData, selectedItem, configSettings } = this.props;
+    const { selectedItem } = this.props;
     const { isCheckboxesShown } = this.state;
     return (
-      <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.props.toggleDetailDialog} className={styles['deduplication-plugin']}  zIndex={2000}>
-        <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.props.toggleDetailDialog}>{intl.get('Deduplication')}</ModalHeader>
-        <ModalBody className={styles['deduplication-plugin-content']}>
-          <div className={styles['deduplication-plugin-wrapper']}>
-              <div className={styles['deduplication-plugin-show']}>
-                <div className={styles['table-wrapper']}>
-                  <TableView
-                    duplicationData={duplicationData}
-                    selectedItem={selectedItem}
-                    configSettings={configSettings}
-                    // clickCallback={this.showDetailData}
-                  />
-                </div>
-              </div>
-              <div className={`${styles['detail-view-settings']} d-flex flex-column`}>
+              <div className={`${styles['details-container']} d-flex flex-column`}>
                 <div className={`${styles['records-amount']} d-flex justify-content-between align-items-center`}>
                   <p className="m-0">{intl.get('amount_records', {amount: selectedItem.rows.length})}</p>
                   <div>
@@ -356,9 +334,6 @@ class DetailDuplicationDialog extends React.Component {
                   {this.renderDetailData()}
                 </div>
               </div>
-            </div>
-        </ModalBody>
-      </Modal>
     );
   }
 }

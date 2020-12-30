@@ -20,7 +20,7 @@ class Settings extends Component {
   render() {
     const { configSettings, } = this.props;
     return (
-      <div className={styles['dtable-plugin-settings']}>
+      <div className={styles['dtable-plugin-settings']} onClick={this.props.hideDetailDialog}>
         <div className={styles['dtable-plugin-settings-header']}>
           <span>{intl.get('Settings')}</span>
         </div>

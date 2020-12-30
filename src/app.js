@@ -363,6 +363,12 @@ class App extends React.Component {
     });
   }
 
+  hideDetailDialog = () => {
+    if (this.state.isShowDetailDialog) {
+      this.toggleDetailDialog();
+    }
+  }
+
   onDTableChanged = () => {
     this.resetData();
   }
@@ -439,13 +445,12 @@ class App extends React.Component {
     return (
       <Fragment>
         <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.onPluginToggle} className={styles['deduplication-plugin']} size="lg">
-          <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>{intl.get('Deduplication')}</ModalHeader>
+          <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle} onClick={this.hideDetailDialog}>{intl.get('Deduplication')}</ModalHeader>
           <ModalBody className={styles['deduplication-plugin-content']}>
             {(window.dtable && window.dtable.permission == 'r') ?
             <p className="h-100 d-flex align-items-center justify-content-center text-red">{intl.get('This_plugin_is_not_available_now')}</p> : (
             <div className={styles['deduplication-plugin-wrapper']}>
-              {
-                <div className={styles['deduplication-plugin-show']}>
+                <div className={styles['deduplication-plugin-show']} onClick={this.hideDetailDialog}>
                   <div className={styles['table-wrapper']}>                
                     <TableView
                       duplicationData={duplicationData}
@@ -455,22 +460,13 @@ class App extends React.Component {
                     />
                   </div>
                 </div>
-              }
-              {
                 <Settings
                   configSettings={configSettings}
                   onSelectChange={this.onSelectChange}
+                  hideDetailDialog={this.hideDetailDialog}
                 />
-              }
-            </div>
-            )}
-          </ModalBody>
-        </Modal>
-        {
-          isShowDetailDialog && <DetailDuplicationDialog
+        {isShowDetailDialog && <DetailDuplicationDialog
             toggleDetailDialog={this.toggleDetailDialog}
-            showDialog={isShowDetailDialog}
-            duplicationData={duplicationData}
             selectedItem={selectedItem}
             configSettings={configSettings}
             dtable={this.dtable}
@@ -482,6 +478,10 @@ class App extends React.Component {
             deleteSelected={this.deleteSelected}
           />
         }
+            </div>
+            )}
+          </ModalBody>
+        </Modal>
       </Fragment>
     );
   }
