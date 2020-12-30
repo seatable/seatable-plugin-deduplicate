@@ -51,48 +51,48 @@ class DetailDuplicationDialog extends React.Component {
     const table = dtable.getTableByName(configSettings[0].active);
     return (
       <Fragment>
-      <ol className={`${styles["column-name-list"]} align-items-center`}>
-      {isCheckboxesShown && <li className="o-hidden mr-3">
-        <input type="checkbox"
-          checked={selectedItem.isAllSelected}
-          onChange={this.props.toggleAllSelected}
-        /></li>}
-      {table.columns.map((item, index) => {
-        if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
+        <ol className={`${styles['column-name-list']} align-items-center`}>
+          {isCheckboxesShown && <li className="o-hidden mr-3">
+            <input type="checkbox"
+              checked={selectedItem.isAllSelected}
+              onChange={this.props.toggleAllSelected}
+            /></li>}
+          {table.columns.map((item, index) => {
+            if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
           !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
-          return <li key={`column-name-${index}`}
-          className={`${styles['column-name']} text-truncate`}
-          style={{'width': this.getCellRecordWidth(item)}}
-          title={item.name}
-          >{item.name}</li>;
-        }
-        return null;
-      })}
-      </ol>
-      <div className={styles["record-list"]} onScroll={this.handleVerticalScroll}>
-      {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index) => {
-        return (
-          <div
-            className={`${styles['record-container']} d-flex align-items-center`}
-            key={'deduplication-record-' + index}
-          >
-          {isCheckboxesShown &&
+              return <li key={`column-name-${index}`}
+                className={`${styles['column-name']} text-truncate`}
+                style={{'width': this.getCellRecordWidth(item)}}
+                title={item.name}
+              >{item.name}</li>;
+            }
+            return null;
+          })}
+        </ol>
+        <div className={styles['record-list']} onScroll={this.handleVerticalScroll}>
+          {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index) => {
+            return (
+              <div
+                className={`${styles['record-container']} d-flex align-items-center`}
+                key={'deduplication-record-' + index}
+              >
+                {isCheckboxesShown &&
             <input type="checkbox" className="mr-2"
-            checked={selectedItem.rowsSelected[index]}
-            onChange={this.props.toggleRowSelected.bind(this, index)}
+              checked={selectedItem.rowsSelected[index]}
+              onChange={this.props.toggleRowSelected.bind(this, index)}
             />}
-          <RecordItem
-            rowName={this.getRowName(row, table, index)}
-            row={row}
-            onRowDelete={() => this.onRowDelete(row, index)}
-            values={this.getRecord(row, table)}
-            onRef={this.onRef}
-            rowIdx={index}
-          />
-          </div>
-        );
-      })}
-      </div>
+                <RecordItem
+                  rowName={this.getRowName(row, table, index)}
+                  row={row}
+                  onRowDelete={() => this.onRowDelete(row, index)}
+                  values={this.getRecord(row, table)}
+                  onRef={this.onRef}
+                  rowIdx={index}
+                />
+              </div>
+            );
+          })}
+        </div>
       </Fragment>
     );
   }
@@ -127,9 +127,9 @@ class DetailDuplicationDialog extends React.Component {
     let isNonEmptyArray = Array.isArray(value) && value.length > 0;
     if (!unshownColumnKeyList.includes(key) && !UNSHOWN_COLUMN_TYPE_LIST.includes(type)) {
       switch(type) {
-        case 'text': { 
+        case 'text': {
           if (value && typeof value === 'string') {
-            displayValue = <span className={styles["cell-value-ellipsis"]}>{value}</span>;
+            displayValue = <span className={styles['cell-value-ellipsis']}>{value}</span>;
           }
           break;
         }
@@ -140,7 +140,7 @@ class DetailDuplicationDialog extends React.Component {
           }
           break;
         }
-        case 'ctime': 
+        case 'ctime':
         case 'mtime': {
           if (value && typeof value === 'string') {
             displayValue = moment(value).format('YYYY-MM-DD HH:mm:ss');
@@ -149,13 +149,13 @@ class DetailDuplicationDialog extends React.Component {
         }
         case 'number': {
           if (Object.prototype.toString.call(value) === '[object Number]') {
-            displayValue = <div className={styles["number-formatter"]}>
+            displayValue = <div className={styles['number-formatter']}>
               {value}
             </div>;
           }
           break;
         }
-        
+
         case 'collaborator': {
           if (value && isNonEmptyArray) {
             let { collaborators } = this.props;
@@ -177,18 +177,18 @@ class DetailDuplicationDialog extends React.Component {
 
         case 'multiple-select': {
           if (value && isNonEmptyArray) {
-            let options = data && data.options ? data.options : []; 
+            let options = data && data.options ? data.options : [];
             let validValue = value.filter((item) => {
               return options.find(option => option.id === item);
-            }); 
-            displayValue = validValue.length > 0 ? 
+            });
+            displayValue = validValue.length > 0 ?
               <div className="multiple-select-formatter d-flex">
                 {validValue.map((item, index) => {
                   return <SingleSelectFormatter options={options} value={item} key={`row-operation-multiple-select-${index}`} />;
-                })} 
-              </div> 
-              : ''; 
-          }   
+                })}
+              </div>
+              : '';
+          }
           break;
         }
 
@@ -198,7 +198,7 @@ class DetailDuplicationDialog extends React.Component {
             displayValue = <div className="image-cell-value">
               <img alt='' src={fileIcon} width="24" />
               {amount > 1 && <span className="cell-value-size">{`+${amount - 1}`}</span>}
-              </div>;
+            </div>;
           }
           break;
         }
@@ -210,16 +210,16 @@ class DetailDuplicationDialog extends React.Component {
             displayValue = <div className="image-cell-value h-100">
               <img alt='' src={imgSrc} className="mh-100" />
               {amount > 1 && <span className="cell-value-size">{`+${amount - 1}`}</span>}
-              </div>;
+            </div>;
           }
           break;
         }
-       
+
         case 'checkbox': {
           displayValue = <input className={styles['"checkbox"']} type='checkbox' readOnly checked={value ? true : false}/>;
           break;
         }
-        
+
         case 'creator':
         case 'modifier': {
           if (value) {
@@ -227,13 +227,13 @@ class DetailDuplicationDialog extends React.Component {
             const collaborator = collaborators.find((item) => {
               return item.email === value;
             });
-            displayValue = <div className={styles["collaborators-formatter"]}>
-              <div className={styles["formatter-show"]}>
-                <div className={styles["collaborator"]}>
-                  <span className={styles["collaborator-avatar-container"]}>
-                    <img className={styles["collaborator-avatar"]} alt={collaborator.name} src={collaborator.avatar_url} />
+            displayValue = <div className={styles['collaborators-formatter']}>
+              <div className={styles['formatter-show']}>
+                <div className={styles['collaborator']}>
+                  <span className={styles['collaborator-avatar-container']}>
+                    <img className={styles['collaborator-avatar']} alt={collaborator.name} src={collaborator.avatar_url} />
                   </span>
-                  <span className={styles["collaborator-name"]}>{collaborator.name}</span>
+                  <span className={styles['collaborator-name']}>{collaborator.name}</span>
                 </div>
               </div>
             </div>;
@@ -242,7 +242,7 @@ class DetailDuplicationDialog extends React.Component {
         }
         default:
           if (value && typeof value === 'string') {
-            displayValue = <span className={styles["cell-value-ellipsis"]}>{value}</span>;
+            displayValue = <span className={styles['cell-value-ellipsis']}>{value}</span>;
           }
           break;
       }
@@ -254,8 +254,8 @@ class DetailDuplicationDialog extends React.Component {
     let { key } = column;
     let width = this.getCellRecordWidth(column);
     return (
-      <div className={styles["row-cell-value"]} key={rowId + '_' + key} style={{width}}>
-        {displayValue ? displayValue : <span className={styles["row-cell-value-empty"]}></span>}
+      <div className={styles['row-cell-value']} key={rowId + '_' + key} style={{width}}>
+        {displayValue ? displayValue : <span className={styles['row-cell-value-empty']}></span>}
       </div>
     );
   };
@@ -312,28 +312,28 @@ class DetailDuplicationDialog extends React.Component {
     const { selectedItem } = this.props;
     const { isCheckboxesShown } = this.state;
     return (
-              <div className={`${styles['details-container']} d-flex flex-column`}>
-                <div className={`${styles['records-amount']} d-flex justify-content-between align-items-center`}>
-                  <p className="m-0">{intl.get('amount_records', {amount: selectedItem.rows.length})}</p>
-                  <div>
-                  {selectedItem.rowsSelected.some(item => item === true) && <Button
-                    className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
-                    onClick={this.props.deleteSelected}
-                    >{intl.get('Delete')}</Button>}
-                  {selectedItem.rows.length > 0 && <Button
-                    className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
-                    onClick={this.toggleShowCheckboxes}
-                    >{isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}</Button>}
-                  </div>
-                </div>
-                <div
-                  className={`${styles['records-container']} d-flex flex-column`}
-                  onScroll={this.handleHorizontalScroll}
-                  ref={(ref) => this.recordsContainer = ref}
-                  >
-                  {this.renderDetailData()}
-                </div>
-              </div>
+      <div className={`${styles['details-container']} d-flex flex-column`}>
+        <div className={`${styles['records-amount']} d-flex justify-content-between align-items-center`}>
+          <p className="m-0">{intl.get('amount_records', {amount: selectedItem.rows.length})}</p>
+          <div>
+            {selectedItem.rowsSelected.some(item => item === true) && <Button
+              className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
+              onClick={this.props.deleteSelected}
+            >{intl.get('Delete')}</Button>}
+            {selectedItem.rows.length > 0 && <Button
+              className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
+              onClick={this.toggleShowCheckboxes}
+            >{isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}</Button>}
+          </div>
+        </div>
+        <div
+          className={`${styles['records-container']} d-flex flex-column`}
+          onScroll={this.handleHorizontalScroll}
+          ref={(ref) => this.recordsContainer = ref}
+        >
+          {this.renderDetailData()}
+        </div>
+      </div>
     );
   }
 }

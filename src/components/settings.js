@@ -34,7 +34,7 @@ class Settings extends Component {
                   configSettings={configSettings}
                   configSetting={configSetting}
                 />
-              )
+              );
             }
             if (configSetting.type === 'multi_deduplication_column') {
               return (

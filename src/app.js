@@ -5,7 +5,7 @@ import Settings from './components/settings';
 import TableView from './components/table-view';
 import DTable from 'dtable-sdk';
 import intl from 'react-intl-universal';
-import './locale/index.js'
+import './locale/index.js';
 
 import styles from './css/plugin-layout.module.css';
 
@@ -38,7 +38,7 @@ class App extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({showDialog: nextProps.showDialog});
-  } 
+  }
 
   componentWillUnmount() {
     this.unsubscribeLocalDtableChanged();
@@ -52,7 +52,7 @@ class App extends React.Component {
       await this.dtable.init(window.dtablePluginConfig);
       await this.dtable.syncWithServer();
       this.dtable.subscribe('dtable-connect', () => { this.onDTableConnect(); });
-    } else { 
+    } else {
       this.dtable.initInBrowser(window.app.dtableStore);
       this.onDTableConnect();
     }
@@ -120,7 +120,7 @@ class App extends React.Component {
       configSettings.splice(1, 4, viewSettings, columnSettings, multiColumnSettings, addColumnSetting);
       return configSettings;
     }
-    
+
     if (type === 'column') {
       let { configSettings } = this.state;
       const tableName = configSettings[0].active;
@@ -175,7 +175,7 @@ class App extends React.Component {
       return {id: table._id, name: table.name};
     });
     let active = activeTable ? activeTable.name : tables[0].name;
-    return {type: 'table', name: intl.get('Table'), active: active, settings: tableSettings}
+    return {type: 'table', name: intl.get('Table'), active: active, settings: tableSettings};
   }
 
   getViewSettings = (currentTable, activeView = null) => {
@@ -194,13 +194,13 @@ class App extends React.Component {
     columns = columns.filter(column => {
       return DEDUPLICATION_LIST.includes(column.type);
     });
-    
+
     let columnSettings = columns.map(column => {
       return {id: column.key, name: column.name};
     });
-    
+
     columnSettings.unshift({
-      id: '', 
+      id: '',
       name: intl.get('Select_a_column'),
       style: { color: 'rgba(0, 0, 0, .25)'}
     });
@@ -215,9 +215,9 @@ class App extends React.Component {
   }
 
   getMuiltiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}, activeColumns = []) => {
-  
+
     let columnSettings = this.getMuiltiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
-    
+
     const currentActiveColumns = [...activeColumns];
 
     const option = columnSettings.find((column) => {
@@ -281,7 +281,7 @@ class App extends React.Component {
     const table = this.dtable.getTableByName(configSettings[0].active);
     const view = this.dtable.getViewByName(table, configSettings[1].active);
     const selectedColumn = this.dtable.getColumnByName(table, configSettings[2].active);
-    
+
     if (!selectedColumn) {
       this.setState({
         duplicationData: {},
@@ -316,7 +316,7 @@ class App extends React.Component {
         statData[value].rows = [];
         statData[value].rows.push(item._id);
         return; //eslint-disable-line
-      };
+      }
       const count = statData[value].value;
       statData[value].value = count + 1;
       statData[value].rows.push(item._id);
@@ -354,7 +354,7 @@ class App extends React.Component {
     this.setState({
       isShowDetailDialog: true,
       selectedItem: obj
-    })
+    });
   }
 
   toggleDetailDialog = () => {
@@ -448,38 +448,38 @@ class App extends React.Component {
           <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle} onClick={this.hideDetailDialog}>{intl.get('Deduplication')}</ModalHeader>
           <ModalBody className={styles['deduplication-plugin-content']}>
             {(window.dtable && window.dtable.permission == 'r') ?
-            <p className="h-100 d-flex align-items-center justify-content-center text-red">{intl.get('This_plugin_is_not_available_now')}</p> : (
-            <div className={styles['deduplication-plugin-wrapper']}>
-                <div className={styles['deduplication-plugin-show']} onClick={this.hideDetailDialog}>
-                  <div className={styles['table-wrapper']}>                
-                    <TableView
-                      duplicationData={duplicationData}
-                      clickCallback={this.showDetailDialog}
-                      selectedItem={selectedItem}
-                      configSettings={configSettings}
-                    />
+              <p className="h-100 d-flex align-items-center justify-content-center text-red">{intl.get('This_plugin_is_not_available_now')}</p> : (
+                <div className={styles['deduplication-plugin-wrapper']}>
+                  <div className={styles['deduplication-plugin-show']} onClick={this.hideDetailDialog}>
+                    <div className={styles['table-wrapper']}>
+                      <TableView
+                        duplicationData={duplicationData}
+                        clickCallback={this.showDetailDialog}
+                        selectedItem={selectedItem}
+                        configSettings={configSettings}
+                      />
+                    </div>
                   </div>
+                  <Settings
+                    configSettings={configSettings}
+                    onSelectChange={this.onSelectChange}
+                    hideDetailDialog={this.hideDetailDialog}
+                  />
+                  {isShowDetailDialog && <DetailDuplicationDialog
+                    toggleDetailDialog={this.toggleDetailDialog}
+                    selectedItem={selectedItem}
+                    configSettings={configSettings}
+                    dtable={this.dtable}
+                    setDetailData={this.setDetailData}
+                    collaborators={this.collaborators}
+                    onRowDelete={this.onRowDelete}
+                    toggleRowSelected={this.toggleRowSelected}
+                    toggleAllSelected={this.toggleAllSelected}
+                    deleteSelected={this.deleteSelected}
+                  />
+                  }
                 </div>
-                <Settings
-                  configSettings={configSettings}
-                  onSelectChange={this.onSelectChange}
-                  hideDetailDialog={this.hideDetailDialog}
-                />
-        {isShowDetailDialog && <DetailDuplicationDialog
-            toggleDetailDialog={this.toggleDetailDialog}
-            selectedItem={selectedItem}
-            configSettings={configSettings}
-            dtable={this.dtable}
-            setDetailData={this.setDetailData}
-            collaborators={this.collaborators}
-            onRowDelete={this.onRowDelete}
-            toggleRowSelected={this.toggleRowSelected}
-            toggleAllSelected={this.toggleAllSelected}
-            deleteSelected={this.deleteSelected}
-          />
-        }
-            </div>
-            )}
+              )}
           </ModalBody>
         </Modal>
       </Fragment>
