@@ -465,18 +465,17 @@ class App extends React.Component {
                     onSelectChange={this.onSelectChange}
                     hideDetailDialog={this.hideDetailDialog}
                   />
-                  {isShowDetailDialog && <DetailDuplicationDialog
-                    toggleDetailDialog={this.toggleDetailDialog}
-                    selectedItem={selectedItem}
-                    configSettings={configSettings}
-                    dtable={this.dtable}
-                    setDetailData={this.setDetailData}
-                    collaborators={this.collaborators}
-                    onRowDelete={this.onRowDelete}
-                    toggleRowSelected={this.toggleRowSelected}
-                    toggleAllSelected={this.toggleAllSelected}
-                    deleteSelected={this.deleteSelected}
-                  />
+                  {isShowDetailDialog &&
+                    <DetailDuplicationDialog
+                      selectedItem={selectedItem}
+                      configSettings={configSettings}
+                      dtable={this.dtable}
+                      collaborators={this.collaborators}
+                      onRowDelete={this.onRowDelete}
+                      toggleRowSelected={this.toggleRowSelected}
+                      toggleAllSelected={this.toggleAllSelected}
+                      deleteSelected={this.deleteSelected}
+                    />
                   }
                 </div>
               )}

@@ -145,14 +145,20 @@
   overflow-y: hidden;
 }
 
-.column-name-list {
-  display: flex;
+.column-names-container {
+  width: 100%;
+  padding: 10px 10px 7px 10px;
   background: #fff;
   box-shadow: 0 1px 6px rgba(0,0,0, 0.1);
-  padding: 10px 32px 7px 10px;
-  width: fit-content;
-  min-width: 100%;
   margin: 0 0 3px;
+}
+.column-name-list {
+  overflow-x: auto;
+  scrollbar-width: none;
+  ms-overflow-style: none;  /* IE and Edge */
+}
+.column-name-list::-webkit-scrollbar {
+  display: none;
 }
 
 .column-name {
@@ -169,9 +175,7 @@
 }
 
 .record-list {
-  padding: 10px 20px 10px 10px;
-  min-width: 100%;
-  width: fit-content;
+  padding: 10px;
   background-color: #f8f8f8;
   overflow-y: auto;
 }

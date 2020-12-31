@@ -28,10 +28,6 @@ class DetailDuplicationDialog extends React.Component {
     this.recordItems = null;
   }
 
-  showDetailData = (e, selectedItem) => {
-    this.props.setDetailData(selectedItem);
-  }
-
   onRowDelete = (rowId, index) => {
     this.props.onRowDelete(rowId, index);
   }
@@ -51,24 +47,29 @@ class DetailDuplicationDialog extends React.Component {
     const table = dtable.getTableByName(configSettings[0].active);
     return (
       <Fragment>
-        <ol className={`${styles['column-name-list']} align-items-center`}>
-          {isCheckboxesShown && <li className="o-hidden mr-3">
-            <input type="checkbox"
-              checked={selectedItem.isAllSelected}
-              onChange={this.props.toggleAllSelected}
-            /></li>}
-          {table.columns.map((item, index) => {
-            if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
+        <div className={`${styles['column-names-container']}`}>
+          <ol className={`${styles['column-name-list']} d-flex align-items-center m-0 p-0`}
+            onScroll={this.handleHorizontalScroll}
+            ref={ref => this.columnNameList = ref}
+          >
+            {isCheckboxesShown && <li className="o-hidden mr-3">
+              <input type="checkbox"
+                checked={selectedItem.isAllSelected}
+                onChange={this.props.toggleAllSelected}
+              /></li>}
+            {table.columns.map((item, index) => {
+              if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
           !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
-              return <li key={`column-name-${index}`}
-                className={`${styles['column-name']} text-truncate`}
-                style={{'width': this.getCellRecordWidth(item)}}
-                title={item.name}
-              >{item.name}</li>;
-            }
-            return null;
-          })}
-        </ol>
+                return <li key={`column-name-${index}`}
+                  className={`${styles['column-name']} text-truncate`}
+                  style={{'width': this.getCellRecordWidth(item)}}
+                  title={item.name}
+                >{item.name}</li>;
+              }
+              return null;
+            })}
+          </ol>
+        </div>
         <div className={styles['record-list']} onScroll={this.handleVerticalScroll}>
           {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index) => {
             return (
@@ -88,6 +89,7 @@ class DetailDuplicationDialog extends React.Component {
                   values={this.getRecord(row, table)}
                   onRef={this.onRef}
                   rowIdx={index}
+                  scrollLeftAll={this.scrollLeftAll}
                 />
               </div>
             );
@@ -120,7 +122,7 @@ class DetailDuplicationDialog extends React.Component {
   };
 
   getFormattedCell = (column, row, unshownColumnKeyList) => {
-    let { key, name, type, data } = column;
+    let { key, type, data } = column;
     let { _id: rowId } = row;
     let value = row[key];
     let displayValue;
@@ -289,9 +291,19 @@ class DetailDuplicationDialog extends React.Component {
   };
 
   handleHorizontalScroll = (e) => {
-    this.scrollLeft = e.target.scrollLeft;
+    let scrollLeft = e.target.scrollLeft;
+    this.scrollLeft = scrollLeft;
+    this.scrollLeftAllItems(scrollLeft);
+  }
+
+  scrollLeftAll = (scrollLeft) => {
+    this.columnNameList.scrollLeft = scrollLeft;
+    this.scrollLeftAllItems(scrollLeft);
+  }
+
+  scrollLeftAllItems = (scrollLeft) => {
     this.recordItems.forEach(item => {
-      item.updateRowNameStyles(this.scrollLeft);
+      item.scrollLeftItem(scrollLeft);
     });
   }
 
@@ -328,7 +340,6 @@ class DetailDuplicationDialog extends React.Component {
         </div>
         <div
           className={`${styles['records-container']} d-flex flex-column`}
-          onScroll={this.handleHorizontalScroll}
           ref={(ref) => this.recordsContainer = ref}
         >
           {this.renderDetailData()}
