@@ -78,11 +78,13 @@ class DetailDuplicationDialog extends React.Component {
                 key={'deduplication-record-' + index}
               >
                 {isCheckboxesShown &&
-            <input type="checkbox" className="mr-2"
-              checked={selectedItem.rowsSelected[index]}
-              onChange={this.props.toggleRowSelected.bind(this, index)}
-            />}
+                  <input type="checkbox" className="mr-2"
+                    checked={selectedItem.rowsSelected[index]}
+                    onChange={this.props.toggleRowSelected.bind(this, index)}
+                  />
+                }
                 <RecordItem
+                  width={isCheckboxesShown ? 'calc(100% - 21px)' : '100%'}
                   rowName={this.getRowName(row, table, index)}
                   row={row}
                   onRowDelete={() => this.onRowDelete(row, index)}
@@ -310,13 +312,6 @@ class DetailDuplicationDialog extends React.Component {
   toggleShowCheckboxes = () => {
     this.setState({
       isCheckboxesShown: !this.state.isCheckboxesShown
-    }, () => {
-      if (this.state.isCheckboxesShown) {
-        this.recordsContainer.scrollTo({left: 0});
-        this.recordsContainer.style.overflowX = 'hidden';
-      } else {
-        this.recordsContainer.style.overflowX = 'auto';
-      }
     });
   }
 

@@ -141,7 +141,6 @@
 }
 
 .records-container {
-  overflow-x: auto; /* allow horizontal scroll */
   overflow-y: hidden;
 }
 
@@ -189,7 +188,6 @@
 }
 
 .deduplication-record {
-  width: 100%;
   height: 88px;
   background-color: #fff;
   border-radius: 4px;

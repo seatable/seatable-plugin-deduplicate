@@ -37,7 +37,7 @@ class RecordItem extends PureComponent {
 
   render() {
     return (
-      <div className={styles['deduplication-record']}>
+      <div className={styles['deduplication-record']} style={{'width': this.props.width}}>
         <div className="d-flex justify-content-between w-100">
           <div className={styles['deduplication-record-name']}>{this.props.rowName}</div>
           <DeleteRowDropdownMenu row={this.props.row} onRowDelete={this.props.onRowDelete} />
