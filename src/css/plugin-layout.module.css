@@ -23,6 +23,7 @@
   flex-direction: row;
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 .deduplication-plugin-show {
@@ -114,11 +115,15 @@
   position: relative;
 }
 
-.detail-view-settings {
-  width: 30%;
+.details-container {
+  position: absolute;
+  z-index: 10;
+  left: 25%;
+  width: 50%;
   height: 100%;
   flex-shrink: 0;
-  border-left: 1px solid #e9ecef;
+  box-shadow: 0 0 5px #ccc;
+  background: #fff;
 }
 
 .records-amount {
@@ -136,18 +141,23 @@
 }
 
 .records-container {
-  overflow-x: auto; /* allow horizontal scroll */
   overflow-y: hidden;
 }
 
-.column-name-list {
-  display: flex;
+.column-names-container {
+  width: 100%;
+  padding: 10px 10px 7px 10px;
   background: #fff;
   box-shadow: 0 1px 6px rgba(0,0,0, 0.1);
-  padding: 10px 32px 7px 10px;
-  width: fit-content;
-  min-width: 100%;
   margin: 0 0 3px;
+}
+.column-name-list {
+  overflow-x: auto;
+  scrollbar-width: none;
+  ms-overflow-style: none;  /* IE and Edge */
+}
+.column-name-list::-webkit-scrollbar {
+  display: none;
 }
 
 .column-name {
@@ -164,9 +174,7 @@
 }
 
 .record-list {
-  padding: 10px 20px 10px 10px;
-  min-width: 100%;
-  width: fit-content;
+  padding: 10px;
   background-color: #f8f8f8;
   overflow-y: auto;
 }
@@ -180,7 +188,6 @@
 }
 
 .deduplication-record {
-  width: 100%;
   height: 88px;
   background-color: #fff;
   border-radius: 4px;

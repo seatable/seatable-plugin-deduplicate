@@ -16,35 +16,33 @@ class RecordItem extends PureComponent {
 
   constructor(props) {
     super(props);
-    this.recordName = React.createRef();
-    this.state = {
-      marginX: 'auto'
-    };
+    this.recordValue = React.createRef();
   }
 
   componentDidMount() {
     this.props.onRef(this, this.props.rowIdx);
-    this.setState({
-      marginX: 258 - this.recordName.current.clientWidth
-    });
   }
 
-  updateRowNameStyles = (scrollLeft) => {
-    let el = this.recordName.current;
+  scrollLeftItem = (scrollLeft) => {
+    let el = this.recordValue.current;
     if (el) {
-      el.style.marginLeft = scrollLeft + 'px';
+      el.scrollLeft = scrollLeft;
     }
   }
 
+  handleHorizontalScroll = (e) => {
+    this.scrollLeft = e.target.scrollLeft;
+    this.props.scrollLeftAll(this.scrollLeft);
+  }
+
   render() {
-    const { marginX } = this.state;
     return (
-      <div className={styles["deduplication-record"]}>
-        <div className={styles["deduplication-record-title"]}>
-          <div className={styles["deduplication-record-name"]} ref={this.recordName}>{this.props.rowName}</div>
-          <DeleteRowDropdownMenu style={{marginLeft: marginX}} row={this.props.row} onRowDelete={this.props.onRowDelete} />
+      <div className={styles['deduplication-record']} style={{'width': this.props.width}}>
+        <div className="d-flex justify-content-between w-100">
+          <div className={styles['deduplication-record-name']}>{this.props.rowName}</div>
+          <DeleteRowDropdownMenu row={this.props.row} onRowDelete={this.props.onRowDelete} />
         </div>
-        <div className={styles["deduplication-record-value"]}>{this.props.values}</div>
+        <div className={styles['deduplication-record-value']} ref={this.recordValue} onScroll={this.handleHorizontalScroll}>{this.props.values}</div>
       </div>
     );
   }
