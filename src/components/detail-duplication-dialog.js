@@ -73,7 +73,7 @@ class DetailDuplicationDialog extends React.Component {
             })}
           </ol>
         </div>
-        <div className={styles['record-list']} onScroll={this.handleVerticalScroll}>
+        <div className={`${styles['record-list']} flex-fill`} onScroll={this.handleVerticalScroll}>
           {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index) => {
             return (
               <div
@@ -337,7 +337,7 @@ class DetailDuplicationDialog extends React.Component {
           </div>
         </div>
         <div
-          className={`${styles['records-container']} d-flex flex-column`}
+          className={`${styles['records-container']} flex-fill d-flex flex-column`}
           ref={(ref) => this.recordsContainer = ref}
         >
           {this.renderDetailData()}
