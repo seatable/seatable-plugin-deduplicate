@@ -52,11 +52,14 @@ class DetailDuplicationDialog extends React.Component {
             onScroll={this.handleHorizontalScroll}
             ref={ref => this.columnNameList = ref}
           >
-            {isCheckboxesShown && <li className="o-hidden mr-3">
-              <input type="checkbox"
-                checked={selectedItem.isAllSelected}
-                onChange={this.props.toggleAllSelected}
-              /></li>}
+            {isCheckboxesShown &&
+              <li className="mr-3">
+                <input type="checkbox"
+                  checked={selectedItem.isAllSelected}
+                  onChange={this.props.toggleAllSelected}
+                />
+              </li>
+            }
             {table.columns.map((item, index) => {
               if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
           !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
