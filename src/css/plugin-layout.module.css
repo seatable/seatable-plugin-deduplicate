@@ -215,7 +215,9 @@
   width: 100%;
   height: 34px;
   display: flex;
-  overflow-x: scroll;
+  overflow-x: auto;
+  scrollbar-width: none;
+  ms-overflow-style: none;  /* IE and Edge */
 }
 
 .deduplication-record-value::-webkit-scrollbar {
