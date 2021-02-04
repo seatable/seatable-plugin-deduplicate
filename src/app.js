@@ -1,15 +1,14 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import intl from 'react-intl-universal';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import DTable from 'dtable-sdk';
 import Settings from './components/settings';
 import TableView from './components/table-view';
-import DTable from 'dtable-sdk';
-import intl from 'react-intl-universal';
+import DetailDuplicationDialog from './components/detail-duplication-dialog';
 import './locale/index.js';
 
 import styles from './css/plugin-layout.module.css';
-
-import DetailDuplicationDialog from './components/detail-duplication-dialog';
 
 const DEDUPLICATION_LIST = ['text', 'date', 'number'];
 

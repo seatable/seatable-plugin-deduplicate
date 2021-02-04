@@ -18,10 +18,25 @@ class DetailDuplicationDialog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isArrowShown: false,
+      canScrollViaClick: false,
       isCheckboxesShown: false
     };
     this.recordItems = [];
     this.scrollLeft = 0;
+  }
+
+  componentDidMount() {
+    this.checkArrows();
+  }
+
+  checkArrows = () => {
+    const { offsetWidth, scrollWidth } = this.columnNameList;
+    const isScrollable = scrollWidth > offsetWidth;
+    this.setState({
+      isArrowShown: isScrollable,
+      canScrollViaClick: isScrollable
+    });
   }
 
   componentWillUnmount() {
@@ -41,13 +56,51 @@ class DetailDuplicationDialog extends React.Component {
     this.recordItems[rowIdx] = ref;
   }
 
+  scrollViaClick = (direction) => {
+    const { offsetWidth, scrollWidth, scrollLeft } = this.columnNameList;
+    const minScrollLeft = 0, // minimum scrollLeft
+      maxScrollLeft = scrollWidth - offsetWidth; // maximum scrollLeft
+    let targetScrollLeft; // the scrollLeft to achieve
+    if (direction == 'left') {
+      // already at the leftmost
+      if (scrollLeft == 0) {
+        return;
+      }
+      // scroll offset: less than or equal to `offsetWidth`
+      targetScrollLeft = scrollLeft > offsetWidth ? scrollLeft - offsetWidth : minScrollLeft;
+    }
+
+    if (direction == 'right') {
+      // already at the rightmost
+      if (scrollLeft + offsetWidth == scrollWidth) {
+        return;
+      }
+      targetScrollLeft = scrollLeft + offsetWidth;
+      targetScrollLeft = targetScrollLeft > maxScrollLeft ? maxScrollLeft : targetScrollLeft;
+    }
+    if (this.state.canScrollViaClick) {
+      this.setState({canScrollViaClick: false});
+      let step = (targetScrollLeft - scrollLeft) / 10;
+      step = step > 0 ? Math.ceil(step) : Math.floor(step);
+      let timer = setInterval(() => {
+        this.scrollLeftAll(this.columnNameList.scrollLeft + step);
+        if (Math.abs(targetScrollLeft - this.columnNameList.scrollLeft) <= Math.abs(step)) {
+          this.scrollLeftAll(targetScrollLeft);
+          clearInterval(timer);
+          this.setState({canScrollViaClick: true});
+        }
+      }, 15);
+    }
+  }
+
   renderDetailData = () => {
     const { dtable, configSettings, selectedItem } = this.props;
-    const { isCheckboxesShown } = this.state;
+    const { isArrowShown, isCheckboxesShown } = this.state;
     const table = dtable.getTableByName(configSettings[0].active);
     return (
       <Fragment>
-        <div className={`${styles['column-names-container']}`}>
+        <div className={`${styles['column-names-container']} position-relative`}>
+          {isArrowShown && <span className={`dtable-font dtable-icon-left position-absolute ${styles['scroll-arrow']} ${styles['scroll-left']} ${this.columnNameList.scrollLeft > 0 ? styles['scroll-arrow-active'] : ''}`} onClick={this.scrollViaClick.bind(this, 'left')}></span>}
           <ol className={`${styles['column-name-list']} d-flex align-items-center m-0 p-0`}
             onScroll={this.handleHorizontalScroll}
             ref={ref => this.columnNameList = ref}
@@ -72,6 +125,7 @@ class DetailDuplicationDialog extends React.Component {
               return null;
             })}
           </ol>
+          {isArrowShown && <span className={`dtable-font dtable-icon-right position-absolute ${styles['scroll-arrow']} ${styles['scroll-right']} ${this.columnNameList.scrollLeft + this.columnNameList.offsetWidth < this.columnNameList.scrollWidth ? styles['scroll-arrow-active'] : ''}`} onClick={this.scrollViaClick.bind(this, 'right')}></span>}
         </div>
         <div className={`${styles['record-list']} flex-fill`} onScroll={this.handleVerticalScroll}>
           {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index) => {
@@ -315,7 +369,7 @@ class DetailDuplicationDialog extends React.Component {
   toggleShowCheckboxes = () => {
     this.setState({
       isCheckboxesShown: !this.state.isCheckboxesShown
-    });
+    }, this.checkArrows);
   }
 
   render() {

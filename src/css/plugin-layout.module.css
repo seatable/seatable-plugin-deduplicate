@@ -129,8 +129,7 @@
 }
 
 .records-amount {
-  margin: 0 10px;
-  padding: 10px 0 7px;
+  padding: 10px 20px 7px;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -148,10 +147,34 @@
 
 .column-names-container {
   width: 100%;
-  padding: 10px 10px 7px 10px;
+  padding: 10px 20px 7px;
   background: #fff;
   box-shadow: 0 1px 6px rgba(0,0,0, 0.1);
   margin: 0 0 3px;
+}
+.scroll-arrow {
+  display: inline-block;
+  top: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 2px;
+  font-size: 10px;
+  line-height: 20px;
+  color: #bdbdbd;
+  text-align: center;
+}
+.scroll-arrow-active {
+  color: #333333;
+  cursor: pointer;
+}
+.scroll-arrow-active:hover {
+  background: #f0f0f0;
+}
+.scroll-left {
+  left: 3px;
+}
+.scroll-right {
+  right: 3px;
 }
 .column-name-list {
   overflow-x: auto;
@@ -176,7 +199,7 @@
 }
 
 .record-list {
-  padding: 10px;
+  padding: 10px 20px;
   background-color: #f8f8f8;
   overflow-y: auto;
 }
@@ -215,7 +238,9 @@
   width: 100%;
   height: 34px;
   display: flex;
-  overflow-x: scroll;
+  overflow-x: auto;
+  scrollbar-width: none;
+  ms-overflow-style: none;  /* IE and Edge */
 }
 
 .deduplication-record-value::-webkit-scrollbar {
