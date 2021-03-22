@@ -401,10 +401,10 @@ class App extends React.Component {
     });
   }
 
-  toggleAllSelected = () => {
+  toggleAllSelected = (selected) => {
     let selectedItem = this.state.selectedItem;
     let rowsSelected = selectedItem.rowsSelected;
-    selectedItem.isAllSelected = !selectedItem.isAllSelected;
+    selectedItem.isAllSelected = selected != undefined ? selected : !selectedItem.isAllSelected;
     selectedItem.rowsSelected = rowsSelected.map(item => selectedItem.isAllSelected);
     this.setState({
       selectedItem: selectedItem
