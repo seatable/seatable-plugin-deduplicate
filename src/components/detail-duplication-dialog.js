@@ -367,6 +367,7 @@ class DetailDuplicationDialog extends React.Component {
   }
 
   toggleShowCheckboxes = () => {
+    this.props.toggleAllSelected(false);
     this.setState({
       isCheckboxesShown: !this.state.isCheckboxesShown
     }, this.checkArrows);
@@ -385,7 +386,7 @@ class DetailDuplicationDialog extends React.Component {
               onClick={this.props.deleteSelected}
             >{intl.get('Delete')}</Button>}
             {selectedItem.rows.length > 0 && <Button
-              className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
+              className={`border-0 p-0 ml-2 text-primary ${styles['records-op-btn']}`}
               onClick={this.toggleShowCheckboxes}
             >{isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}</Button>}
           </div>
