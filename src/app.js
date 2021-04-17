@@ -5,7 +5,8 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import DTable from 'dtable-sdk';
 import Settings from './components/settings';
 import TableView from './components/table-view';
-import DetailDuplicationDialog from './components/detail-duplication-dialog';
+import { compareString } from  './utils';
+
 import './locale/index.js';
 
 import styles from './css/plugin-layout.module.css';
@@ -214,7 +215,6 @@ class App extends React.Component {
   }
 
   getMuiltiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}, activeColumns = []) => {
-
     let columnSettings = this.getMuiltiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
 
     const currentActiveColumns = [...activeColumns];
@@ -251,25 +251,6 @@ class App extends React.Component {
     });
   }
 
-  onRowDelete = (rowId, index) => {
-    let { configSettings, selectedItem } = this.state;
-    const tableName = configSettings[0].active;
-    let currentTable = this.dtable.getTableByName(tableName);
-    this.dtable.deleteRowById(currentTable, rowId);
-    selectedItem.rowsSelected.splice(index, 1);
-  }
-
-  getEqualRows = (selectedColumn, columns, rows) => {
-    const EqualRows = rows.filter((row) => { //eslint-disable-line
-      const selectedColumnValue = row[selectedColumn.key];
-      const isEqual = columns.every((column) => {
-        return row[column.key] == selectedColumnValue; //eslint-disable-line
-      });
-      if (isEqual) return row;
-    });
-    return EqualRows;
-  }
-
   getColumnsByName = (table, columns) => {
     return columns.map((column) => {
       return this.dtable.getColumnByName(table, column);
@@ -280,92 +261,61 @@ class App extends React.Component {
     const table = this.dtable.getTableByName(configSettings[0].active);
     const view = this.dtable.getViewByName(table, configSettings[1].active);
     const selectedColumn = this.dtable.getColumnByName(table, configSettings[2].active);
-
     if (!selectedColumn) {
       this.setState({
-        duplicationData: {},
-        selectedItem: {}
+        duplicationRows: [],
+        allDeDuplicationColumns: [],
       });
       return;
     }
 
-    let rows = this.dtable.getViewRows(view, table);
+    const rows = this.dtable.getViewRows(view, table);
     const deDuplicationColumnNames = [...configSettings[3].active];
-
-    if (deDuplicationColumnNames.length > 0) {
-      const deDuplicationColumns = this.getColumnsByName(table, deDuplicationColumnNames);
-      rows = this.getEqualRows(selectedColumn, deDuplicationColumns, rows);
-      if (rows.length === 0) {
-        this.setState({
-          duplicationData: {},
-          selectedItem: {}
-        });
-        return;
-      }
-    }
-
-    const columnKey = selectedColumn.key;
-    let statData = {};
-    rows.map((item) => { //eslint-disable-line
-      let value = item[columnKey];
-      if (!value) value = 'null';
-      if (!statData[value]) {
-        statData[value] = {};
-        statData[value].value = 1;
-        statData[value].rows = [];
-        statData[value].rows.push(item._id);
-        return; //eslint-disable-line
-      }
-      const count = statData[value].value;
-      statData[value].value = count + 1;
-      statData[value].rows.push(item._id);
-    });
-
-    const duplicationData = {};
-
-    const keys = Object.keys(statData).sort();
-    keys.forEach((key) => {
-      if (statData[key].value > 1) {
-        duplicationData[key] = statData[key];
-      }
-    });
-
-    let selectedItem = this.state.selectedItem;
-    if (selectedItem) {
-      if (duplicationData[selectedItem.key]) {
-        selectedItem = Object.assign(selectedItem, duplicationData[selectedItem.key]);
+    const deDuplicationColumns = this.getColumnsByName(table, deDuplicationColumnNames);
+    const allDeDuplicationColumns = [selectedColumn, ...deDuplicationColumns];
+    let duplicationRows = [];
+    rows.forEach((item) => {
+      const statRowIndex = this.findExistStatRowIndex(item, duplicationRows, allDeDuplicationColumns);
+      if (statRowIndex > -1) {
+        duplicationRows[statRowIndex].count = duplicationRows[statRowIndex].count + 1;
+        duplicationRows[statRowIndex].rows.push(item._id);
       } else {
-        selectedItem = Object.assign(selectedItem, {rowsSelected: [], rows: []});
+        const cells = {};
+        allDeDuplicationColumns.forEach((column) => cells[column.key] = item[column.key]);
+        duplicationRows.push({
+          count: 1,
+          rows: [item._id],
+          cells
+        });
       }
-    }
-
+    });
+    duplicationRows = duplicationRows.filter((statRow) => statRow.count > 1);
+    this.sortDuplicationRows(duplicationRows, selectedColumn);
     this.setState({
-      duplicationData,
-      selectedItem
+      duplicationRows,
+      allDeDuplicationColumns,
     });
   }
 
-  showDetailDialog = (e, selectedItem) => {
-    let obj = selectedItem;
-    // rowsSelected: the 'selected' state of each row
-    obj.rowsSelected = selectedItem.rows.map(item => false);
-    obj.isAllSelected = false;
-    this.setState({
-      isShowDetailDialog: true,
-      selectedItem: obj
+  findExistStatRowIndex(rawRow, duplicationRows, columns) {
+    return duplicationRows.findIndex((statRow) => {
+      return columns.every((column) => statRow.cells[column.key] === rawRow[column.key]);
     });
   }
 
-  toggleDetailDialog = () => {
-    this.setState({
-      isShowDetailDialog: !this.state.isShowDetailDialog
+  sortDuplicationRows = (duplicationRows, selectedColumn) => {
+    duplicationRows.sort((currRow, nextRow) => {
+      const currCellValue = currRow.cells[selectedColumn.key];
+      const nextCellValue = nextRow.cells[selectedColumn.key];
+      if (!currCellValue && currCellValue !== 0) {
+        return -1;
+      }
+      if (!nextCellValue && nextCellValue !== 0) {
+        return 1;
+      }
+      if (currCellValue === nextCellValue) return 0;
+      return compareString(currCellValue, nextCellValue);
     });
-  }
-
-  hideDetailDialog = () => {
-    if (this.state.isShowDetailDialog) {
-      this.toggleDetailDialog();
-    }
   }
 
   onDTableChanged = () => {
@@ -385,97 +335,47 @@ class App extends React.Component {
     }
   }
 
-  setDetailData = (selectedItem) => {
-    this.setState({
-      selectedItem: selectedItem
-    });
-  }
-
-  toggleRowSelected = (index) => {
-    let selectedItem = this.state.selectedItem;
-    let rowsSelected = selectedItem.rowsSelected;
-    rowsSelected[index] = !rowsSelected[index];
-    selectedItem.isAllSelected = !rowsSelected.some(item => item === false);
-    this.setState({
-      selectedItem: selectedItem
-    });
-  }
-
-  toggleAllSelected = (selected) => {
-    let selectedItem = this.state.selectedItem;
-    let rowsSelected = selectedItem.rowsSelected;
-    selectedItem.isAllSelected = selected != undefined ? selected : !selectedItem.isAllSelected;
-    selectedItem.rowsSelected = rowsSelected.map(item => selectedItem.isAllSelected);
-    this.setState({
-      selectedItem: selectedItem
-    });
-  }
-
-  deleteSelected = () => {
+  onDeleteRow = (rowId) => {
     const { configSettings } = this.state;
     const tableName = configSettings[0].active;
     const currentTable = this.dtable.getTableByName(tableName);
+    this.dtable.deleteRowById(currentTable, rowId);
+  }
 
-    let selectedItem = this.state.selectedItem;
-    let rowsSelected = selectedItem.rowsSelected;
-    const rows = selectedItem.rows;
-    let selectedRowIDs = [];
-    let newRowsSelected = [];
-    for (let i = 0, len = rows.length; i < len; i++) {
-      if (rowsSelected[i] === true) {
-        selectedRowIDs.push(rows[i]);
-      } else {
-        newRowsSelected.push(false);
-      }
-    }
-
-    this.dtable.deleteRowsByIds(currentTable, selectedRowIDs);
-
-    // update 'selected' state
-    selectedItem.rowsSelected = newRowsSelected;
-    selectedItem.isAllSelected = false;
-    this.setState({
-      selectedItem: selectedItem
-    });
+  deleteSelectedRows = (rowIds) => {
+    const { configSettings } = this.state;
+    const tableName = configSettings[0].active;
+    const currentTable = this.dtable.getTableByName(tableName);
+    this.dtable.deleteRowsByIds(currentTable, rowIds);
   }
 
   render() {
-    let { showDialog, configSettings, isShowDetailDialog, duplicationData, selectedItem } = this.state;
+    let { showDialog, configSettings, duplicationRows, allDeDuplicationColumns } = this.state;
     return (
       <Fragment>
         <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.onPluginToggle} className={styles['deduplication-plugin']} size="lg">
-          <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle} onClick={this.hideDetailDialog}>{intl.get('Deduplication')}</ModalHeader>
+          <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>{intl.get('Deduplication')}</ModalHeader>
           <ModalBody className={styles['deduplication-plugin-content']}>
-            {(window.dtable && window.dtable.permission == 'r') ?
+            {(window.dtable && window.dtable.permission === 'r') ?
               <p className="h-100 d-flex align-items-center justify-content-center text-red">{intl.get('This_plugin_is_not_available_now')}</p> : (
                 <div className={styles['deduplication-plugin-wrapper']}>
-                  <div className={styles['deduplication-plugin-show']} onClick={this.hideDetailDialog}>
+                  <div className={styles['deduplication-plugin-show']}>
                     <div className={styles['table-wrapper']}>
                       <TableView
-                        duplicationData={duplicationData}
-                        clickCallback={this.showDetailDialog}
-                        selectedItem={selectedItem}
+                        duplicationRows={duplicationRows}
+                        allDeDuplicationColumns={allDeDuplicationColumns}
                         configSettings={configSettings}
+                        collaborators={this.collaborators}
+                        dtable={this.dtable}
+                        onDeleteRow={this.onDeleteRow}
+                        onDeleteSelectedRows={this.deleteSelectedRows}
                       />
                     </div>
                   </div>
                   <Settings
                     configSettings={configSettings}
                     onSelectChange={this.onSelectChange}
-                    hideDetailDialog={this.hideDetailDialog}
                   />
-                  {isShowDetailDialog &&
-                    <DetailDuplicationDialog
-                      selectedItem={selectedItem}
-                      configSettings={configSettings}
-                      dtable={this.dtable}
-                      collaborators={this.collaborators}
-                      onRowDelete={this.onRowDelete}
-                      toggleRowSelected={this.toggleRowSelected}
-                      toggleAllSelected={this.toggleAllSelected}
-                      deleteSelected={this.deleteSelected}
-                    />
-                  }
                 </div>
               )}
           </ModalBody>

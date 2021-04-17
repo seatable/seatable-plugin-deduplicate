@@ -8,7 +8,7 @@ const propTypes = {
 };
 
 class Option extends Component {
-  
+
   onSelectOption = (value) => {
     this.props.onSelectOption(value);
   }

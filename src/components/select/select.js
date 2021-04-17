@@ -15,6 +15,7 @@ const propTypes = {
 };
 
 class Select extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -46,9 +47,9 @@ class Select extends Component {
   render() {
     let { className, value, options, placeholder } = this.props;
     return(
-      <div 
+      <div
         ref={(node) => this.selector = node}
-        className={classnames('dtable-select', 'custom-select', {'focus': this.state.isShowSelectOptions}, className)} 
+        className={classnames('dtable-select', 'custom-select', {'focus': this.state.isShowSelectOptions}, className)}
         onClick={this.onSelectToggle}>
         <div className="selected-option">
           {value.label ? (
@@ -59,7 +60,7 @@ class Select extends Component {
           {!this.props.isLocked && <i className="dtable-font dtable-icon-drop-down"></i>}
         </div>
         {this.state.isShowSelectOptions && (
-          <OptGroup 
+          <OptGroup
             options={options}
             onSelectOption={this.props.onSelectOption}
           />

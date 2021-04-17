@@ -6,7 +6,7 @@ import DeleteRowDropdownMenu from './delete-component';
 const propTypes = {
   rowName: PropTypes.string.isRequired,
   row: PropTypes.string.isRequired,
-  onRowDelete: PropTypes.func.isRequired,
+  onDeleteRow: PropTypes.func.isRequired,
   rowIdx: PropTypes.number.isRequired,
   values: PropTypes.array.isRequired,
   onRef: PropTypes.func.isRequired
@@ -40,7 +40,7 @@ class RecordItem extends PureComponent {
       <div className={styles['deduplication-record']} style={{'width': this.props.width}}>
         <div className="d-flex justify-content-between w-100">
           <div className={styles['deduplication-record-name']}>{this.props.rowName}</div>
-          <DeleteRowDropdownMenu row={this.props.row} onRowDelete={this.props.onRowDelete} />
+          <DeleteRowDropdownMenu row={this.props.row} onDeleteRow={this.props.onDeleteRow} />
         </div>
         <div className={styles['deduplication-record-value']} ref={this.recordValue} onScroll={this.handleHorizontalScroll}>{this.props.values}</div>
       </div>

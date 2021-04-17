@@ -1,21 +1,40 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
+import DetailDuplicationDialog from './detail-duplication-dialog';
+
 import styles from '../css/plugin-layout.module.css';
+import { Fragment } from 'react';
+
+const EMPTY_CELL_CONTENT = intl.get('Empty');
 
 class TableView extends React.Component {
-  
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      expandRowIndex: -1,
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    const prevDuplicationRows = prevProps.duplicationRows || [];
+    const currDuplicationRows = this.props.duplicationRows || [];
+    if (currDuplicationRows.length !== prevDuplicationRows.length) {
+      this.setState({expandRowIndex: -1});
+    }
+  }
+
   renderHeader = () => {
-    const { configSettings } = this.props;
-    if (!configSettings) return;
-    const columns = [configSettings[2].active, ...configSettings[3].active];
+    const { allDeDuplicationColumns } = this.props;
+    if (!allDeDuplicationColumns) return;
     return (
       <thead>
         <tr>
-          {
-            columns.map((column, index) => {
-              return  <th key={'head-' + index}>{column}</th>
-            })
-          }
+          {allDeDuplicationColumns.map((column) => {
+            const { key, name } = column;
+            return <th key={`head-${key}`}>{name}</th>;
+          })}
           <th>{intl.get('Count')}</th>
         </tr>
       </thead>
@@ -23,53 +42,94 @@ class TableView extends React.Component {
   }
 
   renderBody = () => {
-    let { duplicationData, selectedItem, configSettings } = this.props;
-    const keys = Object.keys(duplicationData);
-    if (!configSettings) return;
-    const columns = [configSettings[2].active, ...configSettings[3].active];
-
-    return keys.map((key, index) => { //eslint-disable-line
-      if (duplicationData[key].value > 1) {
-        const currentItem = Object.assign({key: key}, duplicationData[key]);
-        let content = key;
-        if (key === 'null' || key === 'undefined') {
-          content = intl.get('Empty');
-        }
-        return (
-          <tr key={'line-' + index}>
-            {
-              columns.map((column, index) => {
-                return <td key={'cell-' + index}>
-                  {content}
-                </td>
-              })
+    const { duplicationRows, allDeDuplicationColumns } = this.props;
+    return Array.isArray(duplicationRows) && duplicationRows.map((duplicationRow, rowIndex) => {
+      const { cells, count } = duplicationRow;
+      return (
+        <tr key={`line-${rowIndex}`}>
+          {allDeDuplicationColumns.map((column) => {
+            const { key } = column;
+            let cellValue = cells[key];
+            if ((cellValue === 'null' || cellValue === 'undefined') && cellValue !== 0) {
+              cellValue = EMPTY_CELL_CONTENT;
             }
-            <td onClick={(event) => this.props.clickCallback && this.props.clickCallback(event, currentItem)} className={styles['value-cell'] + " " + (currentItem.key === selectedItem.key ? styles['selected-cell'] : '')}><span>{currentItem.value}</span></td>
-          </tr>
-        )
-      }
+            return (
+              <td key={`cell-${key}`}>
+                {cellValue}
+              </td>
+            );
+          })}
+          <td
+            onClick={this.onExpandDuplicationRow.bind(this, rowIndex)}
+            className={styles['value-cell']}
+          >
+            <span>{count}</span>
+          </td>
+        </tr>
+      );
     });
   }
 
-  renderDedupication = () => {
-    return (
-      <table>
-        {this.renderHeader()}
-        <tbody>
-          {this.renderBody()}
-        </tbody>
-      </table>
-    )
+  onExpandDuplicationRow = (rowIndex) => {
+    this.setState({expandRowIndex: rowIndex});
+  }
+
+  getExpandRowItem = () => {
+    const { expandRowIndex } = this.state;
+    const duplicationRow = this.props.duplicationRows[expandRowIndex];
+    const { rows = [], count = 0 } = duplicationRow || {};
+    const rowsSelected = rows.map(item => false);
+    return {
+      rows,
+      rowsSelected,
+      value: count,
+      isAllSelected: false,
+    };
+  }
+
+  onHideExpandRow = () => {
+    this.setState({expandRowIndex: -1});
   }
 
   render() {
-    const { duplicationData } = this.props;
-    if (Object.keys(duplicationData).length === 0) {
+    const { expandRowIndex } = this.state;
+    const { duplicationRows, configSettings } = this.props;
+    if (!Array.isArray(duplicationRows) ||  duplicationRows.length === 0) {
       return <div className={styles['error-description']}>{intl.get('No_duplication')}</div>;
     } else {
-      return this.renderDedupication();
+      return (
+        <Fragment>
+          <table>
+            {this.renderHeader()}
+            <tbody>
+              {this.renderBody()}
+            </tbody>
+          </table>
+          {expandRowIndex > -1 && (
+            <DetailDuplicationDialog
+              selectedItem={this.getExpandRowItem()}
+              configSettings={configSettings}
+              collaborators={this.props.collaborators}
+              dtable={this.props.dtable}
+              onDeleteRow={this.props.onDeleteRow}
+              onDeleteSelectedRows={this.props.onDeleteSelectedRows}
+              onHideExpandRow={this.onHideExpandRow}
+            />
+          )}
+        </Fragment>
+      );
     }
   }
 }
+
+TableView.propTypes = {
+  duplicationRows: PropTypes.array,
+  allDeDuplicationColumns: PropTypes.array,
+  configSettings: PropTypes.array,
+  collaborators: PropTypes.array,
+  dtable: PropTypes.object,
+  onDeleteRow: PropTypes.func,
+  onDeleteSelectedRows: PropTypes.func,
+};
 
 export default TableView;
