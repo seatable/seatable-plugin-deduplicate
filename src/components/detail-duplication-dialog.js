@@ -20,7 +20,8 @@ class DetailDuplicationDialog extends React.Component {
     this.state = {
       isArrowShown: false,
       canScrollViaClick: false,
-      isCheckboxesShown: false
+      isCheckboxesShown: false,
+      selectedRows: [],
     };
     this.recordItems = [];
     this.scrollLeft = 0;
@@ -28,6 +29,13 @@ class DetailDuplicationDialog extends React.Component {
 
   componentDidMount() {
     this.checkArrows();
+    document.addEventListener('click', this.onHideExpandRow);
+  }
+
+  onHideExpandRow = (event) => {
+    if (this.detailDuplicationDialog && event && !this.detailDuplicationDialog.contains(event.target)) {
+      this.props.onHideExpandRow();
+    }
   }
 
   checkArrows = () => {
@@ -41,10 +49,7 @@ class DetailDuplicationDialog extends React.Component {
 
   componentWillUnmount() {
     this.recordItems = null;
-  }
-
-  onRowDelete = (rowId, index) => {
-    this.props.onRowDelete(rowId, index);
+    document.removeEventListener('keydown', this.onHideExpandRow);
   }
 
   handleVerticalScroll = (e) => {
@@ -61,18 +66,18 @@ class DetailDuplicationDialog extends React.Component {
     const minScrollLeft = 0, // minimum scrollLeft
       maxScrollLeft = scrollWidth - offsetWidth; // maximum scrollLeft
     let targetScrollLeft; // the scrollLeft to achieve
-    if (direction == 'left') {
+    if (direction === 'left') {
       // already at the leftmost
-      if (scrollLeft == 0) {
+      if (scrollLeft === 0) {
         return;
       }
       // scroll offset: less than or equal to `offsetWidth`
       targetScrollLeft = scrollLeft > offsetWidth ? scrollLeft - offsetWidth : minScrollLeft;
     }
 
-    if (direction == 'right') {
+    if (direction === 'right') {
       // already at the rightmost
-      if (scrollLeft + offsetWidth == scrollWidth) {
+      if (scrollLeft + offsetWidth === scrollWidth) {
         return;
       }
       targetScrollLeft = scrollLeft + offsetWidth;
@@ -96,11 +101,17 @@ class DetailDuplicationDialog extends React.Component {
   renderDetailData = () => {
     const { dtable, configSettings, selectedItem } = this.props;
     const { isArrowShown, isCheckboxesShown } = this.state;
+    const { rows } = selectedItem;
     const table = dtable.getTableByName(configSettings[0].active);
     return (
       <Fragment>
         <div className={`${styles['column-names-container']} position-relative`}>
-          {isArrowShown && <span className={`dtable-font dtable-icon-left position-absolute ${styles['scroll-arrow']} ${styles['scroll-left']} ${this.columnNameList.scrollLeft > 0 ? styles['scroll-arrow-active'] : ''}`} onClick={this.scrollViaClick.bind(this, 'left')}></span>}
+          {isArrowShown &&
+            <span
+              className={`dtable-font dtable-icon-left position-absolute ${styles['scroll-arrow']} ${styles['scroll-left']} ${this.columnNameList.scrollLeft > 0 ? styles['scroll-arrow-active'] : ''}`}
+              onClick={this.scrollViaClick.bind(this, 'left')}>
+            </span>
+          }
           <ol className={`${styles['column-name-list']} d-flex align-items-center m-0 p-0`}
             onScroll={this.handleHorizontalScroll}
             ref={ref => this.columnNameList = ref}
@@ -108,19 +119,23 @@ class DetailDuplicationDialog extends React.Component {
             {isCheckboxesShown &&
               <li className="mr-3">
                 <input type="checkbox"
-                  checked={selectedItem.isAllSelected}
-                  onChange={this.props.toggleAllSelected}
+                  checked={this.isAllRowsSelected()}
+                  onChange={this.toggleAllSelected}
                 />
               </li>
             }
             {table.columns.map((item, index) => {
               if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
-          !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
-                return <li key={`column-name-${index}`}
-                  className={`${styles['column-name']} text-truncate`}
-                  style={{'width': this.getCellRecordWidth(item)}}
-                  title={item.name}
-                >{item.name}</li>;
+                !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
+                return (
+                  <li key={`column-name-${index}`}
+                    className={`${styles['column-name']} text-truncate`}
+                    style={{'width': this.getCellRecordWidth(item)}}
+                    title={item.name}
+                  >
+                    {item.name}
+                  </li>
+                );
               }
               return null;
             })}
@@ -128,7 +143,7 @@ class DetailDuplicationDialog extends React.Component {
           {isArrowShown && <span className={`dtable-font dtable-icon-right position-absolute ${styles['scroll-arrow']} ${styles['scroll-right']} ${this.columnNameList.scrollLeft + this.columnNameList.offsetWidth < this.columnNameList.scrollWidth ? styles['scroll-arrow-active'] : ''}`} onClick={this.scrollViaClick.bind(this, 'right')}></span>}
         </div>
         <div className={`${styles['record-list']} flex-fill`} onScroll={this.handleVerticalScroll}>
-          {selectedItem.rows.length > 0 && selectedItem.rows.map((row, index) => {
+          {rows.length > 0 && rows.map((rowId, index) => {
             return (
               <div
                 className={`${styles['record-container']} d-flex align-items-center`}
@@ -136,16 +151,16 @@ class DetailDuplicationDialog extends React.Component {
               >
                 {isCheckboxesShown &&
                   <input type="checkbox" className="mr-2"
-                    checked={selectedItem.rowsSelected[index]}
-                    onChange={this.props.toggleRowSelected.bind(this, index)}
+                    checked={this.state.selectedRows.includes(rowId)}
+                    onChange={this.toggleRowSelected.bind(this, rowId)}
                   />
                 }
                 <RecordItem
                   width={isCheckboxesShown ? 'calc(100% - 21px)' : '100%'}
-                  rowName={this.getRowName(row, table, index)}
-                  row={row}
-                  onRowDelete={() => this.onRowDelete(row, index)}
-                  values={this.getRecord(row, table)}
+                  rowName={this.getRowName(rowId, table)}
+                  row={rowId}
+                  onDeleteRow={this.onDeleteRow.bind(this, rowId)}
+                  values={this.getRecord(rowId, table)}
                   onRef={this.onRef}
                   rowIdx={index}
                   scrollLeftAll={this.scrollLeftAll}
@@ -158,10 +173,51 @@ class DetailDuplicationDialog extends React.Component {
     );
   }
 
-  getRowName = (rowId, table, index) => {
+  isAllRowsSelected = () => {
+    const { selectedItem } = this.props;
+    const { selectedRows } = this.state;
+    return selectedItem.rows.every((rowId) => selectedRows.includes(rowId));
+  }
+
+  toggleRowSelected = (rowId) => {
+    const { selectedRows } = this.state;
+    const rowIndex = selectedRows.indexOf(rowId);
+    if (rowIndex > -1) {
+      selectedRows.splice(rowIndex, 1);
+    } else {
+      selectedRows.push(rowId);
+    }
+    this.setState({ selectedRows });
+  }
+
+  toggleAllSelected = () => {
+    const { selectedItem } = this.props;
+    const { selectedRows } = this.state;
+    let newSelectedRows = [];
+    if (selectedRows.length < selectedItem.rows.length) {
+      newSelectedRows = [...selectedItem.rows];
+    }
+    this.setState({ selectedRows: newSelectedRows });
+  }
+
+  onDeleteRow = (rowId) => {
+    const { selectedRows } = this.state;
+    const rowIndex = selectedRows.indexOf(rowId);
+    if (rowIndex > -1) {
+      selectedRows.splice(rowIndex, 1);
+      this.setState({ selectedRows });
+    }
+    this.props.onDeleteRow(rowId);
+  }
+
+  onDeleteSelectedRows = () => {
+    this.props.onDeleteSelectedRows(this.state.selectedRows);
+    this.setState({selectedRows: []});
+  }
+
+  getRowName = (rowId, table) => {
     const row = table['id_row_map'][rowId];
-    let rowName = row['0000'] || '';
-    return rowName;
+    return row['0000'] || '';
   }
 
   getRecord = (rowIdx, table) => {
@@ -170,23 +226,23 @@ class DetailDuplicationDialog extends React.Component {
     return this.getRowRecord(row, columns, UNSHOWN_COLUMN_KEY_LIST);
   }
 
-  getRowRecord = (row, columns, unshownColumnKeyList) => {
+  getRowRecord = (row, columns, unShownColumnKeyList) => {
     let displayRow = [];
     columns.forEach((column) => {
       displayRow.push(
-        this.getFormattedCell(column, row, unshownColumnKeyList)
+        this.getFormattedCell(column, row, unShownColumnKeyList)
       );
     });
     return displayRow;
   };
 
-  getFormattedCell = (column, row, unshownColumnKeyList) => {
-    let { key, type, data } = column;
-    let { _id: rowId } = row;
+  getFormattedCell = (column, row, unShownColumnKeyList) => {
+    const { key, type, data } = column;
+    const { _id: rowId } = row;
     let value = row[key];
     let displayValue;
     let isNonEmptyArray = Array.isArray(value) && value.length > 0;
-    if (!unshownColumnKeyList.includes(key) && !UNSHOWN_COLUMN_TYPE_LIST.includes(type)) {
+    if (!unShownColumnKeyList.includes(key) && !UNSHOWN_COLUMN_TYPE_LIST.includes(type)) {
       switch(type) {
         case 'text': {
           if (value && typeof value === 'string') {
@@ -309,7 +365,7 @@ class DetailDuplicationDialog extends React.Component {
       }
       return this.getCellRecord(displayValue, rowId, column);
     }
-  };
+  }
 
   getCellRecord = (displayValue, rowId, column) => {
     let { key } = column;
@@ -319,7 +375,7 @@ class DetailDuplicationDialog extends React.Component {
         {displayValue ? displayValue : <span className={styles['row-cell-value-empty']}></span>}
       </div>
     );
-  };
+  }
 
   getCellRecordWidth = (column) => {
     let { type, data } = column;
@@ -347,7 +403,7 @@ class DetailDuplicationDialog extends React.Component {
         return 100;
       }
     }
-  };
+  }
 
   handleHorizontalScroll = (e) => {
     let scrollLeft = e.target.scrollLeft;
@@ -367,28 +423,36 @@ class DetailDuplicationDialog extends React.Component {
   }
 
   toggleShowCheckboxes = () => {
-    this.props.toggleAllSelected(false);
     this.setState({
-      isCheckboxesShown: !this.state.isCheckboxesShown
+      isCheckboxesShown: !this.state.isCheckboxesShown,
+      selectedRows: [],
     }, this.checkArrows);
   }
 
   render() {
     const { selectedItem } = this.props;
-    const { isCheckboxesShown } = this.state;
+    const { isCheckboxesShown, selectedRows } = this.state;
     return (
-      <div className={`${styles['details-container']} d-flex flex-column`}>
+      <div className={`${styles['details-container']} d-flex flex-column`} ref={ref => this.detailDuplicationDialog = ref}>
         <div className={`${styles['records-amount']} d-flex justify-content-between align-items-center`}>
           <p className="m-0">{intl.get('amount_records', {amount: selectedItem.rows.length})}</p>
           <div>
-            {selectedItem.rowsSelected.some(item => item === true) && <Button
-              className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
-              onClick={this.props.deleteSelected}
-            >{intl.get('Delete')}</Button>}
-            {selectedItem.rows.length > 0 && <Button
-              className={`border-0 p-0 ml-2 text-primary ${styles['records-op-btn']}`}
-              onClick={this.toggleShowCheckboxes}
-            >{isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}</Button>}
+            {selectedRows.length > 0 &&
+              <Button
+                className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
+                onClick={this.onDeleteSelectedRows}
+              >
+                {intl.get('Delete')}
+              </Button>
+            }
+            {selectedItem.rows.length > 0 &&
+              <Button
+                className={`border-0 p-0 ml-2 text-primary ${styles['records-op-btn']}`}
+                onClick={this.toggleShowCheckboxes}
+              >
+                {isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}
+              </Button>
+            }
           </div>
         </div>
         <div

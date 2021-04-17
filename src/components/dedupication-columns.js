@@ -1,11 +1,10 @@
-import React from 'react'
+import React from 'react';
 import Select from './select';
 import styles from '../css/plugin-layout.module.css';
 
 class DeDuplicationColumns extends React.Component {
-  
+
   renderColumns() {
-    
     let { configSetting } = this.props;
     const settings = configSetting.settings;
 

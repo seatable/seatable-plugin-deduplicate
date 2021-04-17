@@ -17,4 +17,4 @@ const de = {
   This_plugin_is_not_available_now: 'This plugin is not available now as your permission is read-only.'
 };
 
-export default de; 
+export default de;
