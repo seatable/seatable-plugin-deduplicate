@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.com
+
+[seatable_plugins.deduplication]
+file_filter = public/locale/<lang>/deduplication.json
+source_file = public/locale/en/deduplication.json
+source_lang = en_US
+type = KEYVALUEJSON
