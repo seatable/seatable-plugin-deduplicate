@@ -15,6 +15,7 @@ const zh_CN = {
   "Select": "选择",
   "Cancel": "取消",
   "This_plugin_is_not_available_now": "您只有只读权限，该插件当前不可用。"
-};
+}
+;
 
 export default zh_CN;
