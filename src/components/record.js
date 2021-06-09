@@ -35,9 +35,17 @@ class RecordItem extends PureComponent {
     this.props.scrollLeftAll(this.scrollLeft);
   }
 
+  expandRecord = () => {
+    if (window.app.expandRow) {
+      const { table, dtable, row: rowID } = this.props;
+      const targetRow = dtable.getRowById(table, rowID)
+      window.app.expandRow(targetRow, table);
+    }
+  }
+
   render() {
     return (
-      <div className={styles['deduplication-record']} style={{'width': this.props.width}}>
+      <div className={styles['deduplication-record']} style={{'width': this.props.width}} onClick={this.expandRecord}>
         <div className="d-flex justify-content-between w-100">
           <div className={styles['deduplication-record-name']}>{this.props.rowName}</div>
           <DeleteRowDropdownMenu row={this.props.row} onDeleteRow={this.props.onDeleteRow} />
