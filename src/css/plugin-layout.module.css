@@ -222,6 +222,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-start;
+  cursor: pointer;
 }
 
 .deduplication-record-name {
