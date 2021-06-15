@@ -164,6 +164,8 @@ class DetailDuplicationDialog extends React.Component {
                   onRef={this.onRef}
                   rowIdx={index}
                   scrollLeftAll={this.scrollLeftAll}
+                  table={table}
+                  dtable={dtable}
                 />
               </div>
             );
