@@ -355,3 +355,21 @@
 .deduplication-columns-select {
   margin-bottom: 14px;
 }
+
+.delete-all-container {
+  text-align: center;
+  padding: 10px;
+  background: #eee;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.delete-all-container .delete-all-highlight-msg {
+  color: #ff8000;
+  margin-left: .5rem;
+}
+
+.delete-all-container .delete-all-highlight-msg:hover {
+  text-decoration: underline;
+}

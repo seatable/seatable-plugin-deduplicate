@@ -14,6 +14,7 @@ const en = {
   "amount_records": "{amount} records",
   "Select": "Select",
   "Cancel": "Cancel",
+  "Delete_all_duplicated_items": "<span class={class}>Delete all duplicated items</span>, keep only the first one.",
   "This_plugin_is_not_available_now": "This plugin is not available now as your permission is read-only."
 }
 ;

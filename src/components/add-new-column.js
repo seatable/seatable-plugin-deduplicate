@@ -20,7 +20,10 @@ class AddColumn extends React.Component {
   render() {
     return (
       <Fragment>
-        <div onClick={this.addColumn} className={styles['add-column'] + ' ' + (this.isActive() ? styles['active'] : '')}><span className={styles['column-item'] + ' dtable-font dtable-icon-add-table'}></span><span>{intl.get('Add_new_column')}</span></div>
+        <div onClick={this.addColumn} className={styles['add-column'] + ' ' + (this.isActive() ? styles['active'] : '')}>
+          <span className={styles['column-item'] + ' dtable-font dtable-icon-add-table'}></span>
+          <span>{intl.get('Add_new_column')}</span>
+        </div>
       </Fragment>
     );
   }

@@ -38,7 +38,7 @@ class RecordItem extends PureComponent {
   expandRecord = () => {
     if (window.app.expandRow) {
       const { table, dtable, row: rowID } = this.props;
-      const targetRow = dtable.getRowById(table, rowID)
+      const targetRow = dtable.getRowById(table, rowID);
       window.app.expandRow(targetRow, table);
     }
   }
