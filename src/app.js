@@ -347,7 +347,7 @@ class App extends React.Component {
     const tableName = configSettings[0].active;
     const currentTable = this.dtable.getTableByName(tableName);
     const interval = 100;
-    const row_len = 500;
+    const row_len = 1000;
     let deleteRows = () => {
       if (all_row_ids.length > 0) {
         setTimeout(() => {
