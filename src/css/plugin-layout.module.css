@@ -357,12 +357,17 @@
 }
 
 .delete-all-container {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+}
+
+.delete-all-container .delete-all-button {
   padding: 10px;
   background: #eee;
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
+  width: fit-content;
 }
 
 .delete-all-container .delete-all-highlight-msg {

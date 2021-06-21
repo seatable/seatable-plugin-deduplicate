@@ -382,8 +382,10 @@ class App extends React.Component {
                   <div className={styles['deduplication-plugin-show']}>
                     <div className={styles['table-wrapper']}>
                       {(Array.isArray(duplicationRows) && duplicationRows.length > 0) &&
-                        <div className={styles['delete-all-container']} onClick={this.deleteAllDuplicationRows}>
-                          {intl.getHTML('Delete_all_duplicated_items', { class: styles['delete-all-highlight-msg'] })}
+                        <div className={styles['delete-all-container']}>
+                          <div className={styles['delete-all-button']} onClick={this.deleteAllDuplicationRows}>
+                            {intl.getHTML('Delete_all_duplicated_items', { class: styles['delete-all-highlight-msg'] })}
+                          </div>
                         </div>
                       }
                       <TableView
