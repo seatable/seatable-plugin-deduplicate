@@ -5,7 +5,8 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import DTable from 'dtable-sdk';
 import Settings from './components/settings';
 import TableView from './components/table-view';
-import { compareString } from  './utils';
+import DeleteTip from './components/tips/delete-tip';
+import { compareString } from './utils';
 
 import './locale/index.js';
 
@@ -26,6 +27,7 @@ class App extends React.Component {
       showDialog: true,
       configSettings: null,
       isShowDetailDialog: false,
+      isDeleteTipShow: false,
       selectedItem: {},
       duplicationData: {}
     };
@@ -361,6 +363,7 @@ class App extends React.Component {
   };
 
   deleteAllDuplicationRows = () => {
+    this.setState({ isDeleteTipShow: false });
     const { duplicationRows } = this.state;
     let all_row_ids = [];
     duplicationRows.forEach(duplicationItem => {
@@ -369,8 +372,18 @@ class App extends React.Component {
     this.deleteRowsByIds(all_row_ids);
   }
 
+  openConfirm = () => {
+    this.setState({ isDeleteTipShow: true });
+  }
+
+  closeDeleteTip = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    this.setState({ isDeleteTipShow: false });
+  }
+
   render() {
-    let { showDialog, configSettings, duplicationRows, allDeDuplicationColumns } = this.state;
+    let { showDialog, configSettings, duplicationRows, allDeDuplicationColumns, isDeleteTipShow } = this.state;
     return (
       <Fragment>
         <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.onPluginToggle} className={styles['deduplication-plugin']} size="lg" zIndex="1048">
@@ -383,10 +396,16 @@ class App extends React.Component {
                     <div className={styles['table-wrapper']}>
                       {(Array.isArray(duplicationRows) && duplicationRows.length > 0) &&
                         <div className={styles['delete-all-container']}>
-                          <div className={styles['delete-all-button']} onClick={this.deleteAllDuplicationRows}>
-                            {intl.getHTML('Delete_all_duplicated_items', { class: styles['delete-all-highlight-msg'] })}
+                          <div className={styles['delete-all-button']}>
+                            <span className={styles['delete-all-highlight-msg']} onClick={this.openConfirm}>
+                              {intl.getHTML('Delete_all_duplicated_items')}
+                            </span>
+                            <span>{intl.getHTML('keep_only_the_first_one.')}</span>
                           </div>
                         </div>
+                      }
+                      {isDeleteTipShow &&
+                        <DeleteTip onDelect={this.deleteAllDuplicationRows} toggle={this.closeDeleteTip} />
                       }
                       <TableView
                         duplicationRows={duplicationRows}
