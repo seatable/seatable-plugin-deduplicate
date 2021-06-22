@@ -14,6 +14,7 @@ const zh_CN = {
   "amount_records": "{amount} 条记录",
   "Select": "选择",
   "Cancel": "取消",
+  "Delete_all_duplicated_items": "<span class={class}>删除所有重复项</span>，只保留第一个。",
   "This_plugin_is_not_available_now": "您只有只读权限，该插件当前不可用。"
 }
 ;

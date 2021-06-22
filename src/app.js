@@ -342,11 +342,31 @@ class App extends React.Component {
     this.dtable.deleteRowById(currentTable, rowId);
   }
 
-  deleteSelectedRows = (rowIds) => {
+  deleteRowsByIds = (all_row_ids) => {
     const { configSettings } = this.state;
     const tableName = configSettings[0].active;
     const currentTable = this.dtable.getTableByName(tableName);
-    this.dtable.deleteRowsByIds(currentTable, rowIds);
+    const interval = 100;
+    const row_len = 1000;
+    let deleteRows = () => {
+      if (all_row_ids.length > 0) {
+        setTimeout(() => {
+          const rowIds = all_row_ids.splice(0, row_len);
+          this.dtable.deleteRowsByIds(currentTable, rowIds);
+          deleteRows();
+        }, interval);
+      }
+    };
+    deleteRows();
+  };
+
+  deleteAllDuplicationRows = () => {
+    const { duplicationRows } = this.state;
+    let all_row_ids = [];
+    duplicationRows.forEach(duplicationItem => {
+      all_row_ids.push(...duplicationItem.rows.slice(1));
+    });
+    this.deleteRowsByIds(all_row_ids);
   }
 
   render() {
@@ -361,6 +381,13 @@ class App extends React.Component {
                 <div className={styles['deduplication-plugin-wrapper']}>
                   <div className={styles['deduplication-plugin-show']}>
                     <div className={styles['table-wrapper']}>
+                      {(Array.isArray(duplicationRows) && duplicationRows.length > 0) &&
+                        <div className={styles['delete-all-container']}>
+                          <div className={styles['delete-all-button']} onClick={this.deleteAllDuplicationRows}>
+                            {intl.getHTML('Delete_all_duplicated_items', { class: styles['delete-all-highlight-msg'] })}
+                          </div>
+                        </div>
+                      }
                       <TableView
                         duplicationRows={duplicationRows}
                         allDeDuplicationColumns={allDeDuplicationColumns}
@@ -368,7 +395,7 @@ class App extends React.Component {
                         collaborators={this.collaborators}
                         dtable={this.dtable}
                         onDeleteRow={this.onDeleteRow}
-                        onDeleteSelectedRows={this.deleteSelectedRows}
+                        onDeleteSelectedRows={this.deleteRowsByIds}
                       />
                     </div>
                   </div>
