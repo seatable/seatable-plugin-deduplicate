@@ -398,9 +398,9 @@ class App extends React.Component {
                         <div className={styles['delete-all-container']}>
                           <div className={styles['delete-all-button']}>
                             <span className={styles['delete-all-highlight-msg']} onClick={this.openDeleteTip}>
-                              {intl.getHTML('Delete_all_duplicated_items')}
+                              {intl.get('Delete_all_duplicated_items')}
                             </span>
-                            <span>{intl.getHTML('keep_only_the_first_one.')}</span>
+                            <span>{intl.get('keep_only_the_first_one.')}</span>
                           </div>
                         </div>
                       }
