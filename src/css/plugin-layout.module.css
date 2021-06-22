@@ -381,10 +381,8 @@
 }
 
 .delete-tip-container {
-  display: flex;
-  flex-direction: column;
   width: 300px;
-  padding: 10px;
+  padding: 15px;
   background: #fff;
   border-radius: 5px;
   border: 1px solid #ddd;
@@ -404,5 +402,4 @@
 .delete-tip-container .delete-tip-footer {
   display: flex;
   justify-content: flex-end;
-  margin: 5px 10px;
 }

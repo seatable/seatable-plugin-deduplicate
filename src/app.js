@@ -372,7 +372,7 @@ class App extends React.Component {
     this.deleteRowsByIds(all_row_ids);
   }
 
-  openConfirm = () => {
+  openDeleteTip = () => {
     this.setState({ isDeleteTipShow: true });
   }
 
@@ -397,7 +397,7 @@ class App extends React.Component {
                       {(Array.isArray(duplicationRows) && duplicationRows.length > 0) &&
                         <div className={styles['delete-all-container']}>
                           <div className={styles['delete-all-button']}>
-                            <span className={styles['delete-all-highlight-msg']} onClick={this.openConfirm}>
+                            <span className={styles['delete-all-highlight-msg']} onClick={this.openDeleteTip}>
                               {intl.getHTML('Delete_all_duplicated_items')}
                             </span>
                             <span>{intl.getHTML('keep_only_the_first_one.')}</span>
