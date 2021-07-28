@@ -403,3 +403,17 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.column-delete-icon {
+  background: transparent;
+  font-weight: 400;
+  font-size: 0.75rem;
+  opacity: 0.5;
+  cursor: pointer;
+}
+.column-delete-icon:hover {
+  opacity: 1;
+}
+.column-delete-icon:focus {
+  outline: none;
+}

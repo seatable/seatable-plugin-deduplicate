@@ -165,7 +165,12 @@ class App extends React.Component {
     if (type === 'multi_deduplication_column') {
       let { configSettings } = this.state;
       const multiDeduplicationColumns = configSettings[3].active;
-      multiDeduplicationColumns.splice(multiColumnIndex, 1, option.name);
+      if (!option) {
+        // delete the column
+        multiDeduplicationColumns.splice(multiColumnIndex, 1);
+      } else {
+        multiDeduplicationColumns.splice(multiColumnIndex, 1, option.name);
+      }
       configSettings[3].active = multiDeduplicationColumns;
       return configSettings;
     }
