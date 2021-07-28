@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SettingItem from './setting-item';
 import AddColumn from './add-new-column';
-import DeDuplicationColumns from './dedupication-columns';
+import DeDuplicationColumns from './deduplication-columns';
 import intl from 'react-intl-universal';
 import styles from '../css/plugin-layout.module.css';
 
