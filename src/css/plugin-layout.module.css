@@ -336,21 +336,28 @@
 }
 
 .add-column {
-  color: #bbb;
+  background: transparent;
+  color: #999999;
+  font-weight: 400;
   cursor: pointer;
-  display: flex;
-  align-items: center;
 } 
 
-.active:hover {
-  color: #191919;
+.add-column:hover {
+  color: #333333;
 }
 
-.add-column .column-item {
-  margin-right: 5px;
-  display: inline-block;
-  -webkit-transform: scale(.8);
-  transform: scale(.8);
+.add-column:focus {
+  outline: none;
+}
+
+.add-column:disabled,
+.add-column:disabled:hover {
+  color: #cfcfcf;
+  cursor: default;
+}
+
+.add-column .add-column-icon {
+  font-size: .8rem;
 }
 
 .deduplication-columns-select {
@@ -408,11 +415,11 @@
   background: transparent;
   font-weight: 400;
   font-size: 0.75rem;
-  opacity: 0.5;
+  color: #999999;
   cursor: pointer;
 }
 .column-delete-icon:hover {
-  opacity: 1;
+  color: #333333;
 }
 .column-delete-icon:focus {
   outline: none;
