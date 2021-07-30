@@ -90,7 +90,7 @@ class App extends React.Component {
 
     let activeColumn = this.dtable.getColumnByName(activeTable, columnName);
     let columnSettings = this.getColumnSettings(activeTable, activeView, activeColumn);
-    let multiColumnSettings = this.initMuiltiDeduplicationColumnSetting(activeTable, activeView, activeColumn);
+    let multiColumnSettings = this.initMultiDeduplicationColumnSetting(activeTable, activeView, activeColumn);
     let addColumnSetting = this.getAddColumnSetting();
     configSettings.push(columnSettings, multiColumnSettings, addColumnSetting);
     return configSettings;
@@ -104,7 +104,7 @@ class App extends React.Component {
       let tableSettings = this.getTableSettings(currentTable);
       let viewSettings = this.getViewSettings(currentTable);
       let columnSettings = this.getColumnSettings(currentTable, currentView);
-      let multiColumnSettings = this.initMuiltiDeduplicationColumnSetting(currentTable, currentView);
+      let multiColumnSettings = this.initMultiDeduplicationColumnSetting(currentTable, currentView);
       let addColumnSetting = this.getAddColumnSetting();
       let configSettings = [tableSettings, viewSettings, columnSettings, multiColumnSettings, addColumnSetting];
       return configSettings;
@@ -117,7 +117,7 @@ class App extends React.Component {
       let currentView = this.dtable.getViewByName(currentTable, option.name);
       let viewSettings = this.getViewSettings(currentTable, currentView);
       let columnSettings = this.getColumnSettings(currentTable, currentView);
-      let multiColumnSettings = this.initMuiltiDeduplicationColumnSetting(currentTable, currentView, );
+      let multiColumnSettings = this.initMultiDeduplicationColumnSetting(currentTable, currentView, );
       let addColumnSetting = this.getAddColumnSetting();
       configSettings.splice(1, 4, viewSettings, columnSettings, multiColumnSettings, addColumnSetting);
       return configSettings;
@@ -132,7 +132,7 @@ class App extends React.Component {
       let currentView = this.dtable.getViewByName(currentTable, viewName);
       let currentColumn = this.dtable.getColumnByName(currentTable, option.name);
       let columnSettings = this.getColumnSettings(currentTable, currentView, currentColumn);
-      const columnSelections = this.getMuiltiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
+      const columnSelections = this.getMultiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
       let activeColumns = selectedColumns.active;
       if (option.name === intl.get('Select_a_column')) {
         activeColumns = [];
@@ -157,7 +157,7 @@ class App extends React.Component {
       let currentColumn = this.dtable.getColumnByName(currentTable, columnName);
       const deduplicationColumnSetting = configSettings[3];
       const activeDeduplicationColumns = deduplicationColumnSetting.active;
-      const newDeduplicationColumnSetting = this.getMuiltiDeduplicationColumnSetting(currentTable, currentView, currentColumn, activeDeduplicationColumns);
+      const newDeduplicationColumnSetting = this.getMultiDeduplicationColumnSetting(currentTable, currentView, currentColumn, activeDeduplicationColumns);
       configSettings.splice(3, 1, newDeduplicationColumnSetting);
       return configSettings;
     }
@@ -165,7 +165,12 @@ class App extends React.Component {
     if (type === 'multi_deduplication_column') {
       let { configSettings } = this.state;
       const multiDeduplicationColumns = configSettings[3].active;
-      multiDeduplicationColumns.splice(multiColumnIndex, 1, option.name);
+      if (!option) {
+        // delete the column
+        multiDeduplicationColumns.splice(multiColumnIndex, 1);
+      } else {
+        multiDeduplicationColumns.splice(multiColumnIndex, 1, option.name);
+      }
       configSettings[3].active = multiDeduplicationColumns;
       return configSettings;
     }
@@ -216,8 +221,8 @@ class App extends React.Component {
     return { type: 'add_column' };
   }
 
-  getMuiltiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}, activeColumns = []) => {
-    let columnSettings = this.getMuiltiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
+  getMultiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}, activeColumns = []) => {
+    let columnSettings = this.getMultiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
 
     const currentActiveColumns = [...activeColumns];
 
@@ -229,7 +234,7 @@ class App extends React.Component {
     return {type: 'multi_deduplication_column', active: currentActiveColumns, settings: columnSettings};
   }
 
-  getMuiltiDeduplicationColumnSelections = (currentTable, currentView, currentColumn = {}) => {
+  getMultiDeduplicationColumnSelections = (currentTable, currentView, currentColumn = {}) => {
     let columns = this.dtable.getShownColumns(currentTable, currentView);
     // need options: checkout map column
     return columns.filter(column => { //eslint-disable-line
@@ -239,8 +244,8 @@ class App extends React.Component {
     });
   }
 
-  initMuiltiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}) => {
-    let columnSettings = this.getMuiltiDeduplicationColumnSelections(currentTable, currentView, currentColumn = {});
+  initMultiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}) => {
+    let columnSettings = this.getMultiDeduplicationColumnSelections(currentTable, currentView, currentColumn = {});
     return {type: 'multi_deduplication_column', active: [], settings: columnSettings};
   }
 

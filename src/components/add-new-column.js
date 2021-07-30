@@ -1,5 +1,4 @@
-
-import React, { Fragment } from 'react';
+import React from 'react';
 import intl from 'react-intl-universal';
 import styles from '../css/plugin-layout.module.css';
 
@@ -19,12 +18,10 @@ class AddColumn extends React.Component {
 
   render() {
     return (
-      <Fragment>
-        <div onClick={this.addColumn} className={styles['add-column'] + ' ' + (this.isActive() ? styles['active'] : '')}>
-          <span className={styles['column-item'] + ' dtable-font dtable-icon-add-table'}></span>
-          <span>{intl.get('Add_new_column')}</span>
-        </div>
-      </Fragment>
+      <button onClick={this.addColumn} disabled={!this.isActive()} className={`border-0 p-0 ${styles['add-column']}`}>
+        <span className={`dtable-font dtable-icon-add-table mr-1 ${styles['add-column-icon']}`}></span>
+        <span>{intl.get('Add_new_column')}</span>
+      </button>
     );
   }
 }
