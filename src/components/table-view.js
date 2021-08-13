@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
+import { SingleSelectFormatter } from 'dtable-ui-component';
 import DetailDuplicationDialog from './detail-duplication-dialog';
 
 import styles from '../css/plugin-layout.module.css';
-import { Fragment } from 'react';
 
 const EMPTY_CELL_CONTENT = intl.get('Empty');
 
@@ -48,11 +48,19 @@ class TableView extends React.Component {
       return (
         <tr key={`line-${rowIndex}`}>
           {allDeDuplicationColumns.map((column) => {
-            const { key } = column;
+            const { key, type, data } = column;
             let cellValue = cells[key];
             if ((cellValue === 'null' || cellValue === 'undefined') && cellValue !== 0) {
               cellValue = EMPTY_CELL_CONTENT;
             }
+
+            // for 'single-select'
+            if (type === 'single-select' && cellValue && typeof cellValue === 'string') {
+              let options = data && data.options ? data.options : [];
+              let option = options.find(option => option.id === cellValue);
+              cellValue = option ? <SingleSelectFormatter options={options} value={cellValue} /> : '';
+            }
+
             return (
               <td key={`cell-${key}`}>
                 {cellValue}
