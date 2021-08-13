@@ -12,7 +12,7 @@ import './locale/index.js';
 
 import styles from './css/plugin-layout.module.css';
 
-const DEDUPLICATION_LIST = ['text', 'date', 'number'];
+const DEDUPLICATION_LIST = ['text', 'date', 'number', 'single-select'];
 
 const propTypes = {
   showDialog: PropTypes.bool
