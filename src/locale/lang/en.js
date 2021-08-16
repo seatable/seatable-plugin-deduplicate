@@ -14,10 +14,11 @@ const en = {
   "amount_records": "{amount} records",
   "Select": "Select",
   "Cancel": "Cancel",
-  "Delete_all_duplicated_items": "Delete all duplicated items",
-  "keep_only_the_first_one.": ", keep only the first one.",
-  "Are_you_sure_you_want_to_delete_duplicated_records": "Are you sure you want to delete duplicated records?",
-  "This_plugin_is_not_available_now": "This plugin is not available now as your permission is read-only."
+  "This_plugin_is_not_available_now": "This plugin is not available now as your permission is read-only.",
+  "Delete_all_duplicated_items": "Delete all the duplicated records",
+  "keep_only_one": ", only keep the first one or the last one.",
+  "keep_first": "Keep the first one",
+  "keep_last": "Keep the last one"
 }
 ;
 

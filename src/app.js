@@ -367,13 +367,19 @@ class App extends React.Component {
     deleteRows();
   };
 
-  deleteAllDuplicationRows = () => {
+  deleteAllDuplicationRows = (kept) => {
     this.setState({ isDeleteTipShow: false });
     const { duplicationRows } = this.state;
     let all_row_ids = [];
-    duplicationRows.forEach(duplicationItem => {
-      all_row_ids.push(...duplicationItem.rows.slice(1));
-    });
+    if (kept == 'first') { // keep the first one
+      duplicationRows.forEach(duplicationItem => {
+        all_row_ids.push(...duplicationItem.rows.slice(1));
+      });
+    } else { // keep the last one
+      duplicationRows.forEach(duplicationItem => {
+        all_row_ids.push(...duplicationItem.rows.slice(0, -1));
+      });
+    }
     this.deleteRowsByIds(all_row_ids);
   }
 
@@ -405,12 +411,12 @@ class App extends React.Component {
                             <span className={styles['delete-all-highlight-msg']} onClick={this.openDeleteTip}>
                               {intl.get('Delete_all_duplicated_items')}
                             </span>
-                            <span>{intl.get('keep_only_the_first_one.')}</span>
+                            <span>{intl.get('keep_only_one')}</span>
                           </div>
                         </div>
                       }
                       {isDeleteTipShow &&
-                        <DeleteTip onDelect={this.deleteAllDuplicationRows} toggle={this.closeDeleteTip} />
+                        <DeleteTip onDelete={this.deleteAllDuplicationRows} toggle={this.closeDeleteTip} />
                       }
                       <TableView
                         duplicationRows={duplicationRows}
