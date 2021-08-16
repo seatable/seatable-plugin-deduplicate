@@ -17,8 +17,8 @@ const en = {
   "This_plugin_is_not_available_now": "This plugin is not available now as your permission is read-only.",
   "Delete_all_duplicated_items": "Delete all the duplicated records",
   "keep_only_one": ", only keep the first one or the last one.",
-  "keep_first": "keep the first one",
-  "keep_last": "keep the last one"
+  "keep_first": "Keep the first one",
+  "keep_last": "Keep the last one"
 }
 ;
 
