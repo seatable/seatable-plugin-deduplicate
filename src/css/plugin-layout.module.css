@@ -389,7 +389,7 @@
 
 .delete-tip-container {
   width: 300px;
-  padding: 15px;
+  padding: 16px;
   background: #fff;
   border-radius: 5px;
   border: 1px solid #ddd;
@@ -399,16 +399,10 @@
   z-index: 9999;
 }
 
-.delete-tip-container .delete-tip-header {
-  margin-left: 10px;
-  margin-bottom: 2rem;
-  font-size: 16px;
-  font-weight: bold;
-}
-
 .delete-tip-container .delete-tip-footer {
   display: flex;
   justify-content: flex-end;
+  margin-top: 35px;
 }
 
 .column-delete-icon {
