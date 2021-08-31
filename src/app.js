@@ -99,7 +99,7 @@ class App extends React.Component {
   updateSelectedSettings = (type, option, multiColumnIndex) => {
     if (type === 'table') {
       let currentTable = this.dtable.getTableByName(option.name);
-      let currentView = this.dtable.getViews(currentTable)[0];
+      let currentView = this.dtable.getNonArchiveViews(currentTable)[0];
 
       let tableSettings = this.getTableSettings(currentTable);
       let viewSettings = this.getViewSettings(currentTable);
@@ -186,7 +186,7 @@ class App extends React.Component {
   }
 
   getViewSettings = (currentTable, activeView = null) => {
-    let views = this.dtable.getViews(currentTable);
+    let views = this.dtable.getNonArchiveViews(currentTable);
     let viewSettings = views.map(view => {
       return {id: view._id, name: view.name};
     });
