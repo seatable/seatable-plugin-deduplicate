@@ -14,7 +14,11 @@ const zh_CN = {
   "amount_records": "{amount} 条记录",
   "Select": "选择",
   "Cancel": "取消",
-  "This_plugin_is_not_available_now": "您只有只读权限，该插件当前不可用。"
+  "This_plugin_is_not_available_now": "您只有只读权限，该插件当前不可用。",
+  "Delete_all_duplicated_items": "删除所有重复的记录",
+  "keep_only_one": "，只保留第一个或最后一个。",
+  "keep_first": "保留第一个",
+  "keep_last": "保留最后一个"
 }
 ;
 
