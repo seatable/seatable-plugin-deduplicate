@@ -22,7 +22,7 @@ class DeDuplicationColumns extends React.Component {
           <button type="button"
             aria-label={intl.get('Delete')}
             title={intl.get('Delete')}
-            onClick={index => this.deleteColumn(index)}
+            onClick={() => this.deleteColumn(index)}
             className={`border-0 p-0 ml-2 dtable-font dtable-icon-fork-number ${styles['column-delete-icon']}`}></button>
         </div>
       );
