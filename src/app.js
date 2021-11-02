@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
-import DTable from 'dtable-sdk';
+import DTable, { CELL_TYPE } from 'dtable-sdk';
 import Settings from './components/settings';
 import TableView from './components/table-view';
 import DeleteTip from './components/tips/delete-tip';
@@ -12,7 +12,7 @@ import './locale/index.js';
 
 import styles from './css/plugin-layout.module.css';
 
-const DEDUPLICATION_LIST = ['text', 'date', 'number', 'single-select'];
+const DEDUPLICATION_LIST = [CELL_TYPE.TEXT, CELL_TYPE.DATE, CELL_TYPE.NUMBER, CELL_TYPE.SINGLE_SELECT];
 
 const propTypes = {
   showDialog: PropTypes.bool
@@ -310,19 +310,54 @@ class App extends React.Component {
     });
   }
 
-  sortDuplicationRows = (duplicationRows, selectedColumn) => {
-    duplicationRows.sort((currRow, nextRow) => {
-      const currCellValue = currRow.cells[selectedColumn.key];
-      const nextCellValue = nextRow.cells[selectedColumn.key];
-      if (!currCellValue && currCellValue !== 0) {
-        return -1;
-      }
-      if (!nextCellValue && nextCellValue !== 0) {
-        return 1;
-      }
-      if (currCellValue === nextCellValue) return 0;
-      return compareString(currCellValue, nextCellValue);
-    });
+  sortDuplicationRows = (duplicationRows, column) => {
+    const { type, key } = column;
+    const optionsMap = {};
+    if (type === CELL_TYPE.SINGLE_SELECT) {
+      const { options } = column.data;
+      options.forEach(option => {
+        optionsMap[option.id] = option.name;
+      });
+    }
+    // DEDUPLICATION_LIST support four types: CELL_TYPE.TEXT, CELL_TYPE.DATE, CELL_TYPE.NUMBER, CELL_TYPE.SINGLE_SELECT
+    switch (type) {
+      case CELL_TYPE.NUMBER:
+        duplicationRows.sort((currRow, nextRow) => {
+          const currCellValue = currRow.cells[key];
+          const nextCellValue = nextRow.cells[key];
+          if (currCellValue === nextCellValue) return 0;
+          return currCellValue > nextCellValue ? 1 : -1;
+        });
+        break;
+      case CELL_TYPE.SINGLE_SELECT:
+        duplicationRows.sort((currRow, nextRow) => {
+          const currCellValue = currRow.cells[key];
+          const nextCellValue = nextRow.cells[key];
+          if (currCellValue === nextCellValue) return 0;
+          return compareString(optionsMap[currCellValue], optionsMap[nextCellValue]);
+        });
+        break;
+      // Text and date column values are all string
+      case CELL_TYPE.DATE:
+      case CELL_TYPE.TEXT:
+        duplicationRows.sort((currRow, nextRow) => {
+          const currCellValue = currRow.cells[key];
+          const nextCellValue = nextRow.cells[key];
+          if (currCellValue === nextCellValue) {
+            return 0;
+          }
+          if (!currCellValue && currCellValue !== 0) {
+            return -1;
+          }
+          if (!nextCellValue && nextCellValue !== 0) {
+            return 1;
+          }
+          return compareString(currCellValue, nextCellValue);
+        });
+        break;
+      default:
+        break;
+    }
   }
 
   onDTableChanged = () => {
