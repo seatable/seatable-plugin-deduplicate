@@ -1,8 +1,10 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
+import { CELL_TYPE } from 'dtable-sdk';
 import { SingleSelectFormatter } from 'dtable-ui-component';
 import DetailDuplicationDialog from './detail-duplication-dialog';
+import { getSelectColumnOptionMap } from '../utils';
 
 import styles from '../css/plugin-layout.module.css';
 
@@ -17,12 +19,24 @@ class TableView extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.setTableHeight();
+  }
+
   componentDidUpdate(prevProps) {
     const prevDuplicationRows = prevProps.duplicationRows || [];
     const currDuplicationRows = this.props.duplicationRows || [];
     if (currDuplicationRows.length !== prevDuplicationRows.length) {
       this.setState({expandRowIndex: -1});
     }
+    this.setTableHeight();
+  }
+
+  setTableHeight = () => {
+    if (!this.tableContainer) return;
+    setTimeout(() => {
+      this.props.setTableHeight(this.tableContainer.offsetHeight);
+    }, 0);
   }
 
   renderHeader = () => {
@@ -43,21 +57,33 @@ class TableView extends React.Component {
 
   renderBody = () => {
     const { duplicationRows, allDeDuplicationColumns } = this.props;
-    return Array.isArray(duplicationRows) && duplicationRows.map((duplicationRow, rowIndex) => {
-      const { cells, count } = duplicationRow;
+    if (!Array.isArray(duplicationRows)) {
+      return null;
+    }
+
+    let singleSelectsOptionsMap = {};
+    allDeDuplicationColumns.forEach(column => {
+      const { type } = column;
+      if (type === CELL_TYPE.SINGLE_SELECT) {
+        singleSelectsOptionsMap[column.key] = getSelectColumnOptionMap(column);
+      }
+    });
+
+    return duplicationRows.map((duplicationRow, rowIndex) => {
+      const { item, rows } = duplicationRow;
       return (
         <tr key={`line-${rowIndex}`}>
           {allDeDuplicationColumns.map((column) => {
             const { key, type, data } = column;
-            let cellValue = cells[key];
+            let cellValue = item[key];
             if ((cellValue === 'null' || cellValue === 'undefined') && cellValue !== 0) {
               cellValue = EMPTY_CELL_CONTENT;
             }
 
             // for 'single-select'
-            if (type === 'single-select' && cellValue && typeof cellValue === 'string') {
+            if (type === CELL_TYPE.SINGLE_SELECT && cellValue && typeof cellValue === 'string') {
               let options = data && data.options ? data.options : [];
-              let option = options.find(option => option.id === cellValue);
+              let option = (singleSelectsOptionsMap[key] || {})[cellValue];
               cellValue = option ? <SingleSelectFormatter options={options} value={cellValue} /> : '';
             }
 
@@ -71,7 +97,7 @@ class TableView extends React.Component {
             onClick={this.onExpandDuplicationRow.bind(this, rowIndex)}
             className={styles['value-cell']}
           >
-            <span>{count}</span>
+            <span>{rows.length}</span>
           </td>
         </tr>
       );
@@ -85,12 +111,12 @@ class TableView extends React.Component {
   getExpandRowItem = () => {
     const { expandRowIndex } = this.state;
     const duplicationRow = this.props.duplicationRows[expandRowIndex];
-    const { rows = [], count = 0 } = duplicationRow || {};
+    const { rows = [] } = duplicationRow || {};
     const rowsSelected = rows.map(item => false);
     return {
       rows,
       rowsSelected,
-      value: count,
+      value: rows.length,
       isAllSelected: false,
     };
   }
@@ -107,7 +133,7 @@ class TableView extends React.Component {
     } else {
       return (
         <Fragment>
-          <table>
+          <table ref={(ref) => this.tableContainer = ref}>
             {this.renderHeader()}
             <tbody>
               {this.renderBody()}
@@ -138,6 +164,7 @@ TableView.propTypes = {
   dtable: PropTypes.object,
   onDeleteRow: PropTypes.func,
   onDeleteSelectedRows: PropTypes.func,
+  setTableHeight: PropTypes.func,
 };
 
 export default TableView;

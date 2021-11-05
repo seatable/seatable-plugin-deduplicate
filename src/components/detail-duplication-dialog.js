@@ -22,6 +22,7 @@ class DetailDuplicationDialog extends React.Component {
       canScrollViaClick: false,
       isCheckboxesShown: false,
       selectedRows: [],
+      pageSize: 1,
     };
     this.recordItems = [];
     this.scrollLeft = 0;
@@ -55,6 +56,11 @@ class DetailDuplicationDialog extends React.Component {
   handleVerticalScroll = (e) => {
     // to keep the value of `this.scrollLeft`
     e.stopPropagation(); // important!
+    const { offsetHeight, scrollTop } = this.scrollContainer;
+    const recordHeight = 98;
+    if ((offsetHeight + scrollTop) >= (this.state.pageSize * 20 * recordHeight - recordHeight)) {
+      this.setState({ pageSize: this.state.pageSize + 1 });
+    }
   }
 
   onRef = (ref, rowIdx) => {
@@ -100,8 +106,8 @@ class DetailDuplicationDialog extends React.Component {
 
   renderDetailData = () => {
     const { dtable, configSettings, selectedItem } = this.props;
-    const { isArrowShown, isCheckboxesShown } = this.state;
-    const { rows } = selectedItem;
+    const { isArrowShown, isCheckboxesShown, pageSize } = this.state;
+    let rows = (selectedItem.rows || []).slice(0, pageSize * 20);
     const table = dtable.getTableByName(configSettings[0].active);
     return (
       <Fragment>
@@ -142,7 +148,11 @@ class DetailDuplicationDialog extends React.Component {
           </ol>
           {isArrowShown && <span className={`dtable-font dtable-icon-right position-absolute ${styles['scroll-arrow']} ${styles['scroll-right']} ${this.columnNameList.scrollLeft + this.columnNameList.offsetWidth < this.columnNameList.scrollWidth ? styles['scroll-arrow-active'] : ''}`} onClick={this.scrollViaClick.bind(this, 'right')}></span>}
         </div>
-        <div className={`${styles['record-list']} flex-fill`} onScroll={this.handleVerticalScroll}>
+        <div
+          className={`${styles['record-list']} flex-fill`}
+          onScroll={this.handleVerticalScroll}
+          ref={(ref) => this.scrollContainer = ref}
+        >
           {rows.length > 0 && rows.map((rowId, index) => {
             return (
               <div

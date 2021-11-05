@@ -6,7 +6,7 @@ import DTable, { CELL_TYPE } from 'dtable-sdk';
 import Settings from './components/settings';
 import TableView from './components/table-view';
 import DeleteTip from './components/tips/delete-tip';
-import { compareString } from './utils';
+import { compareString, throttle, getSelectColumnOptionMap } from './utils';
 
 import './locale/index.js';
 
@@ -28,6 +28,9 @@ class App extends React.Component {
       configSettings: null,
       isShowDetailDialog: false,
       isDeleteTipShow: false,
+      duplicationRows: [],
+      allDeDuplicationColumns: [],
+      pageSize: 1,
       selectedItem: {},
       duplicationData: {}
     };
@@ -272,6 +275,7 @@ class App extends React.Component {
       this.setState({
         duplicationRows: [],
         allDeDuplicationColumns: [],
+        pageSize: 1,
       });
       return;
     }
@@ -280,33 +284,47 @@ class App extends React.Component {
     const deDuplicationColumnNames = [...configSettings[3].active];
     const deDuplicationColumns = this.getColumnsByName(table, deDuplicationColumnNames);
     const allDeDuplicationColumns = [selectedColumn, ...deDuplicationColumns];
+    const allColumnKeys = allDeDuplicationColumns.map(column => column.key);
     let duplicationRows = [];
-    rows.forEach((item) => {
-      const statRowIndex = this.findExistStatRowIndex(item, duplicationRows, allDeDuplicationColumns);
-      if (statRowIndex > -1) {
-        duplicationRows[statRowIndex].count = duplicationRows[statRowIndex].count + 1;
-        duplicationRows[statRowIndex].rows.push(item._id);
-      } else {
-        const cells = {};
-        allDeDuplicationColumns.forEach((column) => cells[column.key] = item[column.key]);
-        duplicationRows.push({
-          count: 1,
-          rows: [item._id],
-          cells
-        });
+    let rowValueMap = {};
+    let selectColumnKey2OptionMap = {};
+    allDeDuplicationColumns.forEach(column => {
+      if (column.type === CELL_TYPE.SINGLE_SELECT) {
+        selectColumnKey2OptionMap[column.key] = getSelectColumnOptionMap(column);
       }
     });
-    duplicationRows = duplicationRows.filter((statRow) => statRow.count > 1);
+
+    rows.forEach((item) => {
+      let rowValueKey = '';
+      allColumnKeys.forEach(key => {
+        let cellValue = item[key];
+        if (cellValue === null || typeof cellValue === 'undefined') {
+          cellValue = '';
+        }
+        // If single select column, check value ID is valid
+        if (cellValue && selectColumnKey2OptionMap[key]) {
+          if (selectColumnKey2OptionMap[key][cellValue]) {
+            rowValueKey += String(cellValue);
+          }
+        } else {
+          rowValueKey += String(cellValue);
+        }
+        rowValueKey += key;
+      });
+      let statRowIndex = rowValueMap[rowValueKey];
+      if (statRowIndex > -1) {
+        duplicationRows[statRowIndex].rows.push(item._id);
+      } else {
+        rowValueMap[rowValueKey] = duplicationRows.length;
+        duplicationRows.push({ rows: [item._id], item });
+      }
+    });
+    duplicationRows = duplicationRows.filter((statRow) => statRow.rows.length > 1);
     this.sortDuplicationRows(duplicationRows, selectedColumn);
     this.setState({
       duplicationRows,
       allDeDuplicationColumns,
-    });
-  }
-
-  findExistStatRowIndex(rawRow, duplicationRows, columns) {
-    return duplicationRows.findIndex((statRow) => {
-      return columns.every((column) => statRow.cells[column.key] === rawRow[column.key]);
+      pageSize: 1,
     });
   }
 
@@ -323,16 +341,16 @@ class App extends React.Component {
     switch (type) {
       case CELL_TYPE.NUMBER:
         duplicationRows.sort((currRow, nextRow) => {
-          const currCellValue = currRow.cells[key];
-          const nextCellValue = nextRow.cells[key];
+          const currCellValue = currRow.item[key];
+          const nextCellValue = nextRow.item[key];
           if (currCellValue === nextCellValue) return 0;
           return currCellValue > nextCellValue ? 1 : -1;
         });
         break;
       case CELL_TYPE.SINGLE_SELECT:
         duplicationRows.sort((currRow, nextRow) => {
-          const currCellValue = currRow.cells[key];
-          const nextCellValue = nextRow.cells[key];
+          const currCellValue = currRow.item[key];
+          const nextCellValue = nextRow.item[key];
           if (currCellValue === nextCellValue) return 0;
           return compareString(optionsMap[currCellValue], optionsMap[nextCellValue]);
         });
@@ -341,8 +359,8 @@ class App extends React.Component {
       case CELL_TYPE.DATE:
       case CELL_TYPE.TEXT:
         duplicationRows.sort((currRow, nextRow) => {
-          const currCellValue = currRow.cells[key];
-          const nextCellValue = nextRow.cells[key];
+          const currCellValue = currRow.item[key];
+          const nextCellValue = nextRow.item[key];
           if (currCellValue === nextCellValue) {
             return 0;
           }
@@ -428,8 +446,21 @@ class App extends React.Component {
     this.setState({ isDeleteTipShow: false });
   }
 
+  onScroll = () => {
+    const deleteContainerHeight = 41;
+    const marginTop = 20;
+    const { offsetHeight, scrollTop } = this.scrollContainer;
+    if ((offsetHeight + scrollTop) >= (this.innerTableHeight + deleteContainerHeight + marginTop)) {
+      this.setState({ pageSize: this.state.pageSize + 1 });
+    }
+  }
+
+  setTableHeight = (height) => {
+    this.innerTableHeight = height;
+  }
+
   render() {
-    let { showDialog, configSettings, duplicationRows, allDeDuplicationColumns, isDeleteTipShow } = this.state;
+    let { showDialog, configSettings, duplicationRows, allDeDuplicationColumns, isDeleteTipShow, pageSize } = this.state;
     return (
       <Fragment>
         <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.onPluginToggle} className={styles['deduplication-plugin']} size="lg" zIndex="1048">
@@ -438,7 +469,10 @@ class App extends React.Component {
             {(window.dtable && window.dtable.permission === 'r') ?
               <p className="h-100 d-flex align-items-center justify-content-center text-red">{intl.get('This_plugin_is_not_available_now')}</p> : (
                 <div className={styles['deduplication-plugin-wrapper']}>
-                  <div className={styles['deduplication-plugin-show']}>
+                  <div className={styles['deduplication-plugin-show']}
+                    onScroll={throttle(this.onScroll, 100)}
+                    ref={(ref) => this.scrollContainer = ref}
+                  >
                     <div className={styles['table-wrapper']}>
                       {(Array.isArray(duplicationRows) && duplicationRows.length > 0) &&
                         <div className={styles['delete-all-container']}>
@@ -454,13 +488,14 @@ class App extends React.Component {
                         <DeleteTip onDelete={this.deleteAllDuplicationRows} toggle={this.closeDeleteTip} />
                       }
                       <TableView
-                        duplicationRows={duplicationRows}
+                        duplicationRows={duplicationRows.slice(0, pageSize * 50)}
                         allDeDuplicationColumns={allDeDuplicationColumns}
                         configSettings={configSettings}
                         collaborators={this.collaborators}
                         dtable={this.dtable}
                         onDeleteRow={this.onDeleteRow}
                         onDeleteSelectedRows={this.deleteRowsByIds}
+                        setTableHeight={this.setTableHeight}
                       />
                     </div>
                   </div>
