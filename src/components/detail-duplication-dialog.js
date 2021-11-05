@@ -3,7 +3,7 @@ import { Button } from 'reactstrap';
 import intl from 'react-intl-universal';
 import moment from 'moment';
 import { SingleSelectFormatter } from 'dtable-ui-component';
-import { getImageThumbnailUrl, throttle } from '../utils';
+import { getImageThumbnailUrl } from '../utils';
 import CollaboratorFormatter from '../components/formatter/collaborator-formatter';
 import RecordItem from './record';
 
@@ -56,10 +56,6 @@ class DetailDuplicationDialog extends React.Component {
   handleVerticalScroll = (e) => {
     // to keep the value of `this.scrollLeft`
     e.stopPropagation(); // important!
-    throttle(this.setPageSize, 100)();
-  }
-
-  setPageSize = () => {
     const { offsetHeight, scrollTop } = this.scrollContainer;
     const recordHeight = 98;
     if ((offsetHeight + scrollTop) >= (this.state.pageSize * 20 * recordHeight - recordHeight)) {
