@@ -4,6 +4,7 @@ import intl from 'react-intl-universal';
 import { CELL_TYPE } from 'dtable-sdk';
 import { SingleSelectFormatter } from 'dtable-ui-component';
 import DetailDuplicationDialog from './detail-duplication-dialog';
+import { getSelectColumnOptionMap } from '../utils';
 
 import styles from '../css/plugin-layout.module.css';
 
@@ -62,22 +63,19 @@ class TableView extends React.Component {
 
     let singleSelectsOptionsMap = {};
     allDeDuplicationColumns.forEach(column => {
-      const { type, data } = column;
+      const { type } = column;
       if (type === CELL_TYPE.SINGLE_SELECT) {
-        let options = data && data.options ? data.options : [];
-        let optionIdMap = {};
-        options.forEach(option => optionIdMap[option.id] = true);
-        singleSelectsOptionsMap[column.key] = optionIdMap;
+        singleSelectsOptionsMap[column.key] = getSelectColumnOptionMap(column);
       }
     });
 
     return duplicationRows.map((duplicationRow, rowIndex) => {
-      const { cells, count } = duplicationRow;
+      const { item, rows } = duplicationRow;
       return (
         <tr key={`line-${rowIndex}`}>
           {allDeDuplicationColumns.map((column) => {
             const { key, type, data } = column;
-            let cellValue = cells[key];
+            let cellValue = item[key];
             if ((cellValue === 'null' || cellValue === 'undefined') && cellValue !== 0) {
               cellValue = EMPTY_CELL_CONTENT;
             }
@@ -99,7 +97,7 @@ class TableView extends React.Component {
             onClick={this.onExpandDuplicationRow.bind(this, rowIndex)}
             className={styles['value-cell']}
           >
-            <span>{count}</span>
+            <span>{rows.length}</span>
           </td>
         </tr>
       );
@@ -113,12 +111,12 @@ class TableView extends React.Component {
   getExpandRowItem = () => {
     const { expandRowIndex } = this.state;
     const duplicationRow = this.props.duplicationRows[expandRowIndex];
-    const { rows = [], count = 0 } = duplicationRow || {};
+    const { rows = [] } = duplicationRow || {};
     const rowsSelected = rows.map(item => false);
     return {
       rows,
       rowsSelected,
-      value: count,
+      value: rows.length,
       isAllSelected: false,
     };
   }

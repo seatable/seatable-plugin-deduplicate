@@ -59,3 +59,12 @@ export const throttle = (func, delay) => {
     }
   };
 };
+
+export function getSelectColumnOptionMap(column) {
+  if (!column || !column.data || !Array.isArray(column.data.options)) {
+    return {};
+  }
+  let optionMap = {};
+  column.data.options.forEach(option => optionMap[option.id] = true);
+  return optionMap;
+}

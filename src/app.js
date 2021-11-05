@@ -6,7 +6,7 @@ import DTable, { CELL_TYPE } from 'dtable-sdk';
 import Settings from './components/settings';
 import TableView from './components/table-view';
 import DeleteTip from './components/tips/delete-tip';
-import { compareString, throttle } from './utils';
+import { compareString, throttle, getSelectColumnOptionMap } from './utils';
 
 import './locale/index.js';
 
@@ -287,39 +287,35 @@ class App extends React.Component {
     const allColumnKeys = allDeDuplicationColumns.map(column => column.key);
     let duplicationRows = [];
     let rowValueMap = {};
-
-    rows.forEach((item) => {
-      let statRowIndex;
-      let rowValueKey = '';
-      allColumnKeys.forEach(key => {
-        rowValueKey += String(item[key]);
-      });
-      if (!rowValueMap[rowValueKey] && rowValueMap[rowValueKey] !== 0) {
-        statRowIndex = -1;
-      } else {
-        statRowIndex = rowValueMap[rowValueKey];
-      }
-
-      if (statRowIndex > -1) {
-        duplicationRows[statRowIndex].count = duplicationRows[statRowIndex].count + 1;
-        duplicationRows[statRowIndex].rows.push(item._id);
-      } else {
-        const cells = {};
-        let whilekey = '';
-        allColumnKeys.forEach((columnKey) => {
-          const value = item[columnKey];
-          cells[columnKey] = value;
-          whilekey += String(value);
-        });
-        rowValueMap[whilekey] = duplicationRows.length;
-        duplicationRows.push({
-          count: 1,
-          rows: [item._id],
-          cells
-        });
+    let selectColumnKey2OptionMap = {};
+    allDeDuplicationColumns.forEach(column => {
+      if (column.type === CELL_TYPE.SINGLE_SELECT) {
+        selectColumnKey2OptionMap[column.key] = getSelectColumnOptionMap(column);
       }
     });
-    duplicationRows = duplicationRows.filter((statRow) => statRow.count > 1);
+
+    rows.forEach((item) => {
+      let rowValueKey = '';
+      allColumnKeys.forEach(key => {
+        const cellValue = item[key];
+        // If single select column, check value ID is valid
+        if (cellValue && selectColumnKey2OptionMap[key]) {
+          if (selectColumnKey2OptionMap[key][cellValue]) {
+            rowValueKey += String(cellValue);
+          }
+        } else {
+          rowValueKey += String(cellValue);
+        }
+      });
+      let statRowIndex = rowValueMap[rowValueKey];
+      if (statRowIndex > -1) {
+        duplicationRows[statRowIndex].rows.push(item._id);
+      } else {
+        rowValueMap[rowValueKey] = duplicationRows.length;
+        duplicationRows.push({ rows: [item._id], item });
+      }
+    });
+    duplicationRows = duplicationRows.filter((statRow) => statRow.rows.length > 1);
     this.sortDuplicationRows(duplicationRows, selectedColumn);
     this.setState({
       duplicationRows,
@@ -341,16 +337,16 @@ class App extends React.Component {
     switch (type) {
       case CELL_TYPE.NUMBER:
         duplicationRows.sort((currRow, nextRow) => {
-          const currCellValue = currRow.cells[key];
-          const nextCellValue = nextRow.cells[key];
+          const currCellValue = currRow.item[key];
+          const nextCellValue = nextRow.item[key];
           if (currCellValue === nextCellValue) return 0;
           return currCellValue > nextCellValue ? 1 : -1;
         });
         break;
       case CELL_TYPE.SINGLE_SELECT:
         duplicationRows.sort((currRow, nextRow) => {
-          const currCellValue = currRow.cells[key];
-          const nextCellValue = nextRow.cells[key];
+          const currCellValue = currRow.item[key];
+          const nextCellValue = nextRow.item[key];
           if (currCellValue === nextCellValue) return 0;
           return compareString(optionsMap[currCellValue], optionsMap[nextCellValue]);
         });
@@ -359,8 +355,8 @@ class App extends React.Component {
       case CELL_TYPE.DATE:
       case CELL_TYPE.TEXT:
         duplicationRows.sort((currRow, nextRow) => {
-          const currCellValue = currRow.cells[key];
-          const nextCellValue = nextRow.cells[key];
+          const currCellValue = currRow.item[key];
+          const nextCellValue = nextRow.item[key];
           if (currCellValue === nextCellValue) {
             return 0;
           }
