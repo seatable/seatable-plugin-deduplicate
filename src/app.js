@@ -309,7 +309,7 @@ class App extends React.Component {
         } else {
           rowValueKey += String(cellValue);
         }
-        rowValueKey += '-';
+        rowValueKey += key;
       });
       let statRowIndex = rowValueMap[rowValueKey];
       if (statRowIndex > -1) {
