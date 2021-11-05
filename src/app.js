@@ -304,11 +304,12 @@ class App extends React.Component {
         // If single select column, check value ID is valid
         if (cellValue && selectColumnKey2OptionMap[key]) {
           if (selectColumnKey2OptionMap[key][cellValue]) {
-            rowValueKey += (String(cellValue) + '-');
+            rowValueKey += String(cellValue);
           }
         } else {
-          rowValueKey += (String(cellValue) + '-');
+          rowValueKey += String(cellValue);
         }
+        rowValueKey += '-';
       });
       let statRowIndex = rowValueMap[rowValueKey];
       if (statRowIndex > -1) {
