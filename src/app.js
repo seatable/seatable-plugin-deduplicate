@@ -297,14 +297,17 @@ class App extends React.Component {
     rows.forEach((item) => {
       let rowValueKey = '';
       allColumnKeys.forEach(key => {
-        const cellValue = item[key];
+        let cellValue = item[key];
+        if (cellValue === null || typeof cellValue === 'undefined') {
+          cellValue = '';
+        }
         // If single select column, check value ID is valid
         if (cellValue && selectColumnKey2OptionMap[key]) {
           if (selectColumnKey2OptionMap[key][cellValue]) {
-            rowValueKey += String(cellValue);
+            rowValueKey += (String(cellValue) + '-');
           }
         } else {
-          rowValueKey += String(cellValue);
+          rowValueKey += (String(cellValue) + '-');
         }
       });
       let statRowIndex = rowValueMap[rowValueKey];
