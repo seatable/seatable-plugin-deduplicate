@@ -1,6 +1,6 @@
 import { getImageThumbnailUrl, compareString, throttle, getSelectColumnOptionMap } from '../src/utils';
 
-test('test compareString function', () => {
+test('test getImageThumbnailUrl function', () => {
   window.dtable = {};
   window.dtable.server = 'https://dev.seatable.cn';
   const url1 = 'https://dev.seatable.cn/workspace/3/asset/80ef2a56-690b-474b-8b00-a9535f90857a/images/2021-07/test.png';
@@ -22,7 +22,7 @@ test('test compareString function', () => {
   expect(compareString('test', 'test')).toBe(0);
 });
 
-test('test compareString function', () => {
+test('test throttle function', () => {
   const fn = () => {};
   const result = throttle(fn, 100);
   expect(typeof result).toBe('function');
