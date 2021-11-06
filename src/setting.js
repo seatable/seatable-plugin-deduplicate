@@ -8,4 +8,5 @@ const config = {
 };
 
 const dtablePluginConfig = Object.assign({}, config, {server: config.server.replace(/\/+$/, '')});
+
 window.dtablePluginConfig = dtablePluginConfig;
