@@ -3,8 +3,8 @@
   "version": "0.0.30",
   "private": true,
   "dependencies": {
-    "dtable-sdk": "0.0.115",
-    "dtable-ui-component": "0.1.60",
+    "dtable-sdk": "0.0.124",
+    "dtable-ui-component": "0.1.70",
     "moment": "^2.27.0",
     "prop-types": "^15.7.2",
     "react": "16.14.0",
