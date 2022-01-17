@@ -1,6 +1,6 @@
 
 const config = {
-  APIToken: 'dcda36fd98160d78d88095dd6493525d1fa62d6f',
+  APIToken: 'ce6fae609c5e39c6d4cf8d11369a4e7f85ecef9b',
   server: 'https://dev.seafile.com/dtable-web',
   workspaceID: '6',
   dtableName: '插件测试',
