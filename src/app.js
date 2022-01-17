@@ -406,18 +406,7 @@ class App extends React.Component {
     const { configSettings } = this.state;
     const tableName = configSettings[0].active;
     const currentTable = this.dtable.getTableByName(tableName);
-    const interval = 100;
-    const row_len = 1000;
-    let deleteRows = () => {
-      if (all_row_ids.length > 0) {
-        setTimeout(() => {
-          const rowIds = all_row_ids.splice(0, row_len);
-          this.dtable.deleteRowsByIds(currentTable, rowIds);
-          deleteRows();
-        }, interval);
-      }
-    };
-    deleteRows();
+    this.dtable.deleteRowsByIds(currentTable, all_row_ids);
   };
 
   deleteAllDuplicationRows = (kept) => {
