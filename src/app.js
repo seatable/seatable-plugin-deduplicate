@@ -358,7 +358,7 @@ class App extends React.Component {
       // Text and date column values are all string
       case CELL_TYPE.DATE:
       case CELL_TYPE.TEXT:
-        case CELL_TYPE.EMAIL:
+      case CELL_TYPE.EMAIL:
         duplicationRows.sort((currRow, nextRow) => {
           const currCellValue = currRow.item[key];
           const nextCellValue = nextRow.item[key];
