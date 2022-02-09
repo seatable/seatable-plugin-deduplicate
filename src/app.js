@@ -12,7 +12,7 @@ import './locale/index.js';
 
 import styles from './css/plugin-layout.module.css';
 
-const DEDUPLICATION_LIST = [CELL_TYPE.TEXT, CELL_TYPE.DATE, CELL_TYPE.NUMBER, CELL_TYPE.SINGLE_SELECT];
+const DEDUPLICATION_LIST = [CELL_TYPE.TEXT, CELL_TYPE.DATE, CELL_TYPE.NUMBER, CELL_TYPE.SINGLE_SELECT, CELL_TYPE.EMAIL];
 
 const propTypes = {
   showDialog: PropTypes.bool
@@ -337,7 +337,7 @@ class App extends React.Component {
         optionsMap[option.id] = option.name;
       });
     }
-    // DEDUPLICATION_LIST support four types: CELL_TYPE.TEXT, CELL_TYPE.DATE, CELL_TYPE.NUMBER, CELL_TYPE.SINGLE_SELECT
+    // DEDUPLICATION_LIST support five types: CELL_TYPE.TEXT, CELL_TYPE.DATE, CELL_TYPE.NUMBER, CELL_TYPE.SINGLE_SELECT, CELL_TYPE.EMAIL
     switch (type) {
       case CELL_TYPE.NUMBER:
         duplicationRows.sort((currRow, nextRow) => {
@@ -358,6 +358,7 @@ class App extends React.Component {
       // Text and date column values are all string
       case CELL_TYPE.DATE:
       case CELL_TYPE.TEXT:
+        case CELL_TYPE.EMAIL:
         duplicationRows.sort((currRow, nextRow) => {
           const currCellValue = currRow.item[key];
           const nextCellValue = nextRow.item[key];
