@@ -1,6 +1,6 @@
 {
   "name": "seatable-plugin-template",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "private": true,
   "dependencies": {
     "babel-plugin-on-demand-loading": "^0.0.9",
