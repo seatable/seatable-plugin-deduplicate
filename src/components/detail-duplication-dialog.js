@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Button } from 'reactstrap';
 import intl from 'react-intl-universal';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { SingleSelectFormatter } from 'dtable-ui-component';
 import { getImageThumbnailUrl } from '../utils';
 import CollaboratorFormatter from '../components/formatter/collaborator-formatter';
@@ -265,14 +265,14 @@ class DetailDuplicationDialog extends React.Component {
         case 'date': {
           if (value && typeof value === 'string') {
             let format = 'YYYY-MM-DD';
-            displayValue = moment(value).format(format);
+            displayValue = dayjs(value).format(format);
           }
           break;
         }
         case 'ctime':
         case 'mtime': {
           if (value && typeof value === 'string') {
-            displayValue = moment(value).format('YYYY-MM-DD HH:mm:ss');
+            displayValue = dayjs(value).format('YYYY-MM-DD HH:mm:ss');
           }
           break;
         }

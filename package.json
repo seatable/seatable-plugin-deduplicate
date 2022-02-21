@@ -1,12 +1,12 @@
 {
   "name": "seatable-plugin-template",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "private": true,
   "dependencies": {
     "babel-plugin-on-demand-loading": "^0.0.9",
-    "dtable-sdk": "0.0.131",
-    "dtable-ui-component": "0.1.82",
-    "moment": "^2.27.0",
+    "dayjs": "1.10.7",
+    "dtable-sdk": "0.0.134",
+    "dtable-ui-component": "0.1.82beta",
     "prop-types": "^15.7.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
