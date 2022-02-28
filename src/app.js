@@ -238,7 +238,7 @@ class App extends React.Component {
   }
 
   getMultiDeduplicationColumnSelections = (currentTable, currentView, currentColumn = {}) => {
-    let columns = this.dtable.getShownColumns(currentTable, currentView);
+    let columns = this.dtable.getViewShownColumns(currentView, currentTable);
     // need options: checkout map column
     return columns.filter(column => { //eslint-disable-line
       if (DEDUPLICATION_LIST.includes(column.type) && currentColumn.key !== column.key) {
