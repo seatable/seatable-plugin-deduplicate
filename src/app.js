@@ -199,7 +199,7 @@ class App extends React.Component {
   }
 
   getColumnSettings = (currentTable, currentView, activeColumn = null) => {
-    let columns = this.dtable.getShownColumns(currentTable, currentView);
+    let columns = this.dtable.getViewShownColumns(currentView, currentTable);
     // need options: checkout map column
     columns = columns.filter(column => {
       return DEDUPLICATION_LIST.includes(column.type);
