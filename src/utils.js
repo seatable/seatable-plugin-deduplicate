@@ -68,3 +68,9 @@ export function getSelectColumnOptionMap(column) {
   column.data.options.forEach(option => optionMap[option.id] = true);
   return optionMap;
 }
+
+export const isValidEmail = (email) => {
+  const reg = /^[A-Za-zd]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,6}$/;
+
+  return reg.test(email);
+};

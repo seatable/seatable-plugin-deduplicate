@@ -27,3 +27,6 @@ yarn-error.log*
 
 # /src/setting.js
 /src/setting.js
+
+# local development settings
+/src/setting.local.js
