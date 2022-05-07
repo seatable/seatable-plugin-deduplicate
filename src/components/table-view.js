@@ -8,8 +8,6 @@ import Formatter from './formatter';
 
 import styles from '../css/plugin-layout.module.css';
 
-const EMPTY_CELL_CONTENT = intl.get('Empty');
-
 class TableView extends React.Component {
 
   constructor(props) {

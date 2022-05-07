@@ -13,10 +13,10 @@ import './locale/index.js';
 import styles from './css/plugin-layout.module.css';
 
 const DEDUPLICATION_LIST = [
-  CELL_TYPE.TEXT, 
-  CELL_TYPE.DATE, 
-  CELL_TYPE.NUMBER, 
-  CELL_TYPE.SINGLE_SELECT, 
+  CELL_TYPE.TEXT,
+  CELL_TYPE.DATE,
+  CELL_TYPE.NUMBER,
+  CELL_TYPE.SINGLE_SELECT,
   CELL_TYPE.EMAIL,
   CELL_TYPE.FORMULA,
   CELL_TYPE.LINK_FORMULA,
@@ -341,7 +341,7 @@ class App extends React.Component {
         let cellValue = item[key];
         if (SPECIAL_DEDUPLICATION_COLUMN_TYPE.includes(type)) {
           cellValue = formulaRows[item._id][key];
-         
+
           rowValueKey += String(cellValue);
         } else {
           if (cellValue === null || typeof cellValue === 'undefined') {
@@ -404,13 +404,13 @@ class App extends React.Component {
         });
         break;
       // Text and date column values are all string
-      case CELL_TYPE.LINK_FORMULA: 
+      case CELL_TYPE.LINK_FORMULA:
       case CELL_TYPE.FORMULA: {
         duplicationRows.sort((currRow, nextRow) => {
           const currCellValue = formulaRows[currRow.item._id][key];
           const nextCellValue = formulaRows[nextRow.item._id][key];
           return this.dtable.sortFormula(currCellValue, nextCellValue, 'up', {columnData: data, value: {}});
-        })
+        });
         break;
       }
       case CELL_TYPE.DATE:

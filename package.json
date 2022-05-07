@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "dayjs": "1.10.7",
-    "dtable-sdk": "0.0.141beta",
+    "dtable-sdk": "0.0.142",
     "dtable-ui-component": "0.1.83",
     "prop-types": "^15.7.2",
     "react": "16.14.0",

@@ -207,7 +207,7 @@ class Formatter extends React.Component {
         if (!row._creator || !collaborator) return this.renderEmptyFormatter();
         if (isDataLoaded) {
           let creatorFormatter = <CreatorFormatter collaborators={[collaborator]} value={row._creator} />;
-          
+
           return creatorFormatter;
         }
         return null;
@@ -216,7 +216,7 @@ class Formatter extends React.Component {
         if (!row._last_modifier || !collaborator) return this.renderEmptyFormatter();
         if (isDataLoaded) {
           let lastModifierFormatter = <LastModifierFormatter collaborators={[collaborator]} value={row._last_modifier} />;
-          
+
           return lastModifierFormatter;
         }
         return null;
