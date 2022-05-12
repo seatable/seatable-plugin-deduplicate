@@ -25,7 +25,7 @@ import {
   ButtonFormatter
 } from 'dtable-ui-component';
 import LinkFormatter from './link-formatter';
-import { isValidEmail } from '../../utils';
+import { isValidEmail } from '../../utils/common-utils';
 
 import styles from '../../css/plugin-layout.module.css';
 
