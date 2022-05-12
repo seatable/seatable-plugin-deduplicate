@@ -142,6 +142,9 @@ class TableView extends React.Component {
               onDeleteRow={this.props.onDeleteRow}
               onDeleteSelectedRows={this.props.onDeleteSelectedRows}
               onHideExpandRow={this.onHideExpandRow}
+              formulaRows={this.props.formulaRows}
+              getOptionColors={this.props.getOptionColors}
+              getCellValueDisplayString={this.props.getCellValueDisplayString}
             />
           )}
         </Fragment>

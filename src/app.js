@@ -7,6 +7,7 @@ import Settings from './components/settings';
 import TableView from './components/table-view';
 import DeleteTip from './components/tips/delete-tip';
 import { compareString, throttle, getSelectColumnOptionMap } from './utils';
+import CellValueUtils from './utils/cell-value-utils';
 
 import './locale/index.js';
 
@@ -14,19 +15,19 @@ import styles from './css/plugin-layout.module.css';
 
 const DEDUPLICATION_LIST = [
   CELL_TYPE.TEXT,
+  CELL_TYPE.STRING,
   CELL_TYPE.DATE,
   CELL_TYPE.NUMBER,
   CELL_TYPE.SINGLE_SELECT,
   CELL_TYPE.EMAIL,
   CELL_TYPE.FORMULA,
   CELL_TYPE.LINK_FORMULA,
-  CELL_TYPE.LINK
+  CELL_TYPE.LINK,
 ];
 
-const SPECIAL_DEDUPLICATION_COLUMN_TYPE = [
+const FORMULA_COLUMN_TYPES = [
   CELL_TYPE.FORMULA,
-  CELL_TYPE.LINK_FORMULA,
-  CELL_TYPE.LINK
+  CELL_TYPE.LINK_FORMULA
 ];
 
 const propTypes = {
@@ -50,6 +51,7 @@ class App extends React.Component {
       duplicationData: {}
     };
     this.dtable = new DTable();
+    this.cellValueUtils = new CellValueUtils({ dtable: this.dtable });
   }
 
   componentDidMount() {
@@ -218,27 +220,13 @@ class App extends React.Component {
     // need options: checkout map column
     columns = columns.filter(column => {
       const { type } = column;
-      if (SPECIAL_DEDUPLICATION_COLUMN_TYPE.includes(type)) {
+      if (FORMULA_COLUMN_TYPES.includes(type)) {
         const { data } = column;
         const { array_type, result_type } = data;
-        switch (result_type) {
-          case FORMULA_RESULT_TYPE.STRING: {
-            return column;
-          }
-          case FORMULA_RESULT_TYPE.NUMBER: {
-            return column;
-          }
-          case FORMULA_RESULT_TYPE.DATE: {
-            return column;
-          }
-          case FORMULA_RESULT_TYPE.ARRAY: {
-            return DEDUPLICATION_LIST.includes(array_type);
-          }
-          default: {
-            return false;
-          }
-        }
+        return DEDUPLICATION_LIST.includes(result_type) ||
+        (result_type === FORMULA_RESULT_TYPE.ARRAY && DEDUPLICATION_LIST.includes(array_type));
       }
+
       return DEDUPLICATION_LIST.includes(type);
     });
 
@@ -298,6 +286,14 @@ class App extends React.Component {
     });
   }
 
+  getOptionColors = () => {
+    return this.dtable.getOptionColors();
+  }
+
+  getCellValueDisplayString = (cellValue, column, {tables = [], collaborators = []} = {}) => {
+    return this.cellValueUtils.getCellValueDisplayString(cellValue, column, { tables, collaborators });
+  }
+
   getUserCommonInfo = (email, avatar_size) => {
     const dtableWebAPI = window.dtableWebAPI || this.dtable.dtableWebAPI;
     return dtableWebAPI.getUserCommonInfo(email, avatar_size);
@@ -339,9 +335,12 @@ class App extends React.Component {
       allDeDuplicationColumns.forEach(column => {
         const { key, type } = column;
         let cellValue = item[key];
-        if (SPECIAL_DEDUPLICATION_COLUMN_TYPE.includes(type)) {
+        if (FORMULA_COLUMN_TYPES.includes(type)) {
           cellValue = formulaRows[item._id][key];
-
+          rowValueKey += String(cellValue);
+        } else if (CELL_TYPE.LINK === type) {
+          const linkCellItem = formulaRows[item._id][key];
+          cellValue = Array.isArray(linkCellItem) ? linkCellItem.map(link => link.display_value) : null;
           rowValueKey += String(cellValue);
         } else {
           if (cellValue === null || typeof cellValue === 'undefined') {
@@ -403,16 +402,26 @@ class App extends React.Component {
           return compareString(optionsMap[currCellValue], optionsMap[nextCellValue]);
         });
         break;
-      // Text and date column values are all string
       case CELL_TYPE.LINK_FORMULA:
       case CELL_TYPE.FORMULA: {
         duplicationRows.sort((currRow, nextRow) => {
-          const currCellValue = formulaRows[currRow.item._id][key];
-          const nextCellValue = formulaRows[nextRow.item._id][key];
+          const currCellValue = formulaRows[currRow.item._id][key] || null;
+          const nextCellValue = formulaRows[nextRow.item._id][key] || null;
           return this.dtable.sortFormula(currCellValue, nextCellValue, 'up', {columnData: data, value: {}});
         });
         break;
       }
+      case CELL_TYPE.LINK: {
+        duplicationRows.sort((currRow, nextRow) => {
+          const currCellVal = formulaRows[currRow.item._id][key];
+          const nextCellVal = formulaRows[nextRow.item._id][key];
+          let currDisplayValues = Array.isArray(currCellVal) ? currCellVal.map(link => link.display_value) : null;
+          let nextDisplayValues = Array.isArray(nextCellVal) ? nextCellVal.map(link => link.display_value) : null;
+          return this.dtable.sortFormula(currDisplayValues, nextDisplayValues, 'up', {columnData: data, value: {}});
+        });
+        break;
+      }
+      // Text and date column values are all string
       case CELL_TYPE.DATE:
       case CELL_TYPE.TEXT:
       case CELL_TYPE.EMAIL:
@@ -543,8 +552,10 @@ class App extends React.Component {
                         onDeleteRow={this.onDeleteRow}
                         onDeleteSelectedRows={this.deleteRowsByIds}
                         setTableHeight={this.setTableHeight}
-                        getUserCommonInfo={this.getUserCommonInfo}
                         formulaRows={this.state.formulaRows}
+                        getUserCommonInfo={this.getUserCommonInfo}
+                        getOptionColors={this.getOptionColors}
+                        getCellValueDisplayString={this.getCellValueDisplayString}
                       />
                     </div>
                   </div>

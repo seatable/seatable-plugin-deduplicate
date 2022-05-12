@@ -27,6 +27,8 @@ import {
 import LinkFormatter from './link-formatter';
 import { isValidEmail } from '../../utils';
 
+import styles from '../../css/plugin-layout.module.css';
+
 const propTypes = {
   type: PropTypes.string,
   column: PropTypes.object.isRequired,
@@ -39,6 +41,7 @@ const propTypes = {
   getUserCommonInfo: PropTypes.func,
   getMediaUrl: PropTypes.func,
   getOptionColors: PropTypes.func,
+  getCellValueDisplayString: PropTypes.func,
 };
 
 class Formatter extends React.Component {
@@ -106,7 +109,7 @@ class Formatter extends React.Component {
   }
 
   renderEmptyFormatter = () => {
-    return <span className="row-cell-empty d-inline-block"></span>;
+    return <span className={styles['row-cell-value-empty']}></span>;
   }
 
   renderFormatter = () => {
@@ -242,7 +245,6 @@ class Formatter extends React.Component {
             collaborators={collaborators}
             renderEmptyFormatter={this.renderEmptyFormatter}
             getOptionColors={this.props.getOptionColors}
-            getUserCommonInfo={this.props.getUserCommonInfo}
             getCellValueDisplayString={this.props.getCellValueDisplayString}
           />
         );

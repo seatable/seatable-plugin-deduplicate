@@ -11,6 +11,7 @@ import {
   LongTextFormatter,
 } from 'dtable-ui-component';
 import CollaboratorItemFormatter from './collaborator-formatter';
+import { getFormulaArrayValue, isArrayFormalColumn } from '../../utils/common-utils';
 
 function LinkFormatter(props) {
   const { column, value, containerClassName, collaborators, tables } = props;
@@ -25,9 +26,8 @@ function LinkFormatter(props) {
     data: array_data || null
   };
   const { type: displayColumnType , data: displayColumnData } = displayColumn;
-  const cellValue = value;
+  const cellValue = getFormulaArrayValue(value, !isArrayFormalColumn(displayColumnType));
   if (!Array.isArray(cellValue) || cellValue.length === 0) return props.renderEmptyFormatter();
-
   switch(displayColumnType) {
     case CELL_TYPE.TEXT:
     case CELL_TYPE.AUTO_NUMBER:
@@ -273,7 +273,6 @@ LinkFormatter.propTypes = {
   containerClassName: PropTypes.string,
   renderEmptyFormatter: PropTypes.func,
   getOptionColors: PropTypes.func,
-  getUserCommonInfo: PropTypes.func,
   getCellValueDisplayString: PropTypes.func,
 };
 
