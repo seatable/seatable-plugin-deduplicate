@@ -1,5 +1,5 @@
 import { CELL_TYPE, FORMULA_RESULT_TYPE } from 'dtable-sdk';
-import { getFormulaArrayValue, convertValueToDtableLongTextValue, isArrayFormalColumn } from './common-utils';
+import { convertValueToDtableLongTextValue, isArrayFormalColumn } from './common-utils';
 
 class CellValueUtils {
 
@@ -203,79 +203,6 @@ class CellValueUtils {
         return Array.isArray(cellValue) ? cellValue.map(item => item + '').filter(item => item).join(', ') : cellValue + '';
       }
     }
-  }
-
-  getExportRows = (columns, rows, { tables = [], collaborators = [] } = {}) => {
-    let columnsKeyNameMap = {};
-    Array.isArray(columns) && columns.forEach(column => {
-      const { key, name } = column;
-      if (key && name) {
-        columnsKeyNameMap[key] = column;
-      }
-    });
-    return Array.isArray(rows) ? rows.map(row => {
-      let newRow = {};
-      Object.keys(columnsKeyNameMap).forEach(key => {
-        const column = columnsKeyNameMap[key];
-        const { name, type } = column;
-        const cellValue = row[key];
-        if (type === CELL_TYPE.LONG_TEXT) {
-          newRow[name] = convertValueToDtableLongTextValue(cellValue);
-        } else if (type === CELL_TYPE.LINK) {
-          const validCellValue = getFormulaArrayValue(cellValue);
-          newRow[name] = this.getCellValueDisplayString(validCellValue, column, { tables, collaborators });
-        } else if (type === CELL_TYPE.FORMULA || type === CELL_TYPE.LINK_FORMULA) {
-          const validCellValue = Array.isArray(cellValue) ? getFormulaArrayValue(cellValue) : cellValue;
-          const { data } = column;
-          const { result_type } = data || {};
-          if (Array.isArray(validCellValue)) {
-            newRow[name] = this.getCellValueDisplayString(validCellValue, column, { tables, collaborators });
-          } else {
-            if (result_type === FORMULA_RESULT_TYPE.NUMBER) {
-              newRow[name] = validCellValue;
-            } else if (result_type === FORMULA_RESULT_TYPE.DATE) {
-              let format = 'YYYY-MM-DD';
-              if (data && data.format ) {
-                format = data.format ;
-              }
-              format = format.indexOf('HH:mm') > -1 ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD';
-              newRow[name] = cellValue && typeof cellValue === 'string' ? this.dtable.getDateDisplayString(cellValue.replace('T', ' ').replace('Z', ''), { format }) : '';
-            } else {
-              newRow[name] = this.getCellValueDisplayString(validCellValue, column, { tables, collaborators });
-            }
-          }
-        } else if (type === CELL_TYPE.BUTTON) {
-          //
-        } else {
-          newRow[name] = row[key];
-        }
-      });
-      return newRow;
-    }) : [];
-  }
-
-  getExportColumns = (columns) => {
-    if (!Array.isArray(columns)) return [];
-    return columns.map(column => {
-      const { type } = column;
-      if (type === CELL_TYPE.LINK) return { ...column, data: null, type: CELL_TYPE.TEXT };
-      if (column.type === CELL_TYPE.LINK_FORMULA || column.type === CELL_TYPE.FORMULA) {
-        const { data } = column;
-        const { result_type } = data || {};
-        if (result_type === FORMULA_RESULT_TYPE.NUMBER) {
-          return { ...column, data: { format: data.format, decimal: data.decimal, thousands: data.thousands, precision: data.precision, enable_precision: data.enable_precision } , type: CELL_TYPE.NUMBER };
-        }
-        if (result_type === FORMULA_RESULT_TYPE.DATE) {
-          let format = 'YYYY-MM-DD';
-          if (data && data.format ) {
-            format = data.format ;
-          }
-          return { ...column, data: { format }, type: CELL_TYPE.DATE };
-        }
-        return { ...column, data: null, type: CELL_TYPE.TEXT };
-      }
-      return column;
-    });
   }
 
 }

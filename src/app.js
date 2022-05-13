@@ -220,7 +220,7 @@ class App extends React.Component {
     // need options: checkout map column
     columns = columns.filter(column => {
       const { type } = column;
-      if (FORMULA_COLUMN_TYPES.includes(type)) {
+      if (FORMULA_COLUMN_TYPES.includes(type) || type === CELL_TYPE.LINK) {
         const { data } = column;
         const { array_type, result_type } = data;
         return DEDUPLICATION_LIST.includes(result_type) ||
@@ -336,11 +336,18 @@ class App extends React.Component {
         const { key, type } = column;
         let cellValue = item[key];
         if (FORMULA_COLUMN_TYPES.includes(type)) {
-          cellValue = formulaRows[item._id][key];
+          cellValue = formulaRows[item._id] ? formulaRows[item._id][key] : null;
+          if (cellValue === null || typeof cellValue === 'undefined') {
+            cellValue = '';
+          }
           rowValueKey += String(cellValue);
-        } else if (CELL_TYPE.LINK === type) {
-          const linkCellItem = formulaRows[item._id][key];
+        } else if (type === CELL_TYPE.LINK) {
+          const linkCellItem = formulaRows[item._id] ? formulaRows[item._id][key] : null;
+
           cellValue = Array.isArray(linkCellItem) ? linkCellItem.map(link => link.display_value) : null;
+          if (cellValue === null || typeof cellValue === 'undefined') {
+            cellValue = '';
+          }
           rowValueKey += String(cellValue);
         } else {
           if (cellValue === null || typeof cellValue === 'undefined') {
@@ -405,16 +412,16 @@ class App extends React.Component {
       case CELL_TYPE.LINK_FORMULA:
       case CELL_TYPE.FORMULA: {
         duplicationRows.sort((currRow, nextRow) => {
-          const currCellValue = formulaRows[currRow.item._id][key] || null;
-          const nextCellValue = formulaRows[nextRow.item._id][key] || null;
+          const currCellValue = formulaRows[currRow.item._id] ? formulaRows[currRow.item._id][key] : null;
+          const nextCellValue = formulaRows[nextRow.item._id] ? formulaRows[nextRow.item._id][key] : null;
           return this.dtable.sortFormula(currCellValue, nextCellValue, 'up', {columnData: data, value: {}});
         });
         break;
       }
       case CELL_TYPE.LINK: {
         duplicationRows.sort((currRow, nextRow) => {
-          const currCellVal = formulaRows[currRow.item._id][key];
-          const nextCellVal = formulaRows[nextRow.item._id][key];
+          const currCellVal = formulaRows[currRow.item._id] ? formulaRows[currRow.item._id][key] : null;
+          const nextCellVal = formulaRows[nextRow.item._id] ? formulaRows[nextRow.item._id][key] : null;
           let currDisplayValues = Array.isArray(currCellVal) ? currCellVal.map(link => link.display_value) : null;
           let nextDisplayValues = Array.isArray(nextCellVal) ? nextCellVal.map(link => link.display_value) : null;
           return this.dtable.sortFormula(currDisplayValues, nextDisplayValues, 'up', {columnData: data, value: {}});
