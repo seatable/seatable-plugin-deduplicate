@@ -244,7 +244,7 @@ class DetailDuplicationDialog extends React.Component {
   };
 
   getFormattedCell = (column, row, unShownColumnKeyList) => {
-    const { key, type } = column;
+    const { key } = column;
     const { _id: rowId } = row;
     let displayValue;
     if (!unShownColumnKeyList.includes(key)) {

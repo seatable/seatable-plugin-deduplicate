@@ -526,12 +526,12 @@ class App extends React.Component {
     let { showDialog, configSettings, duplicationRows, allDeDuplicationColumns, isDeleteTipShow, pageSize } = this.state;
     return (
       <Fragment>
-        <Modal 
-          contentClassName={styles['modal-content']} 
-          isOpen={showDialog} 
-          toggle={this.onPluginToggle} 
-          className={`${styles['deduplication-plugin']} deduplicate-plugin`} 
-          size="lg" 
+        <Modal
+          contentClassName={styles['modal-content']}
+          isOpen={showDialog}
+          toggle={this.onPluginToggle}
+          className={`${styles['deduplication-plugin']} deduplicate-plugin`}
+          size="lg"
           zIndex="1048"
         >
           <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>{intl.get('Deduplication')}</ModalHeader>

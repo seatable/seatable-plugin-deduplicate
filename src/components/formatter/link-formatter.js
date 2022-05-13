@@ -38,7 +38,7 @@ function LinkFormatter(props) {
           {cellValue.map((value, index) => {
             if (!value) return null;
             return (
-              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
+              <div key={`link-${displayColumnType}-${index}`} className="deduplicate-link-item">
                 {value}
               </div>
             );
@@ -53,7 +53,7 @@ function LinkFormatter(props) {
             if (!value && value !== 0) return null;
             return <NumberFormatter
               key={`link-${displayColumnType}-${index}`}
-              containerClassName={"deduplicate-link-item"}
+              containerClassName="deduplicate-link-item"
               data={displayColumnData || {}}
               value={value}
             />;
@@ -71,7 +71,7 @@ function LinkFormatter(props) {
               key={`link-${displayColumnType}-${index}`}
               value={value.replace('T', ' ').replace('Z', '')}
               format={format}
-              containerClassName={"deduplicate-link-item"}
+              containerClassName="deduplicate-link-item"
             />;
           })}
         </div>
@@ -85,7 +85,7 @@ function LinkFormatter(props) {
             return <CTimeFormatter
               key={`link-${displayColumnType}-${index}`}
               value={value}
-              containerClassName={"deduplicate-link-item"}
+              containerClassName="deduplicate-link-item"
             />;
           })}
         </div>
@@ -99,7 +99,7 @@ function LinkFormatter(props) {
             return <MTimeFormatter
               key={`link-${displayColumnType}-${index}`}
               value={value}
-              containerClassName={"deduplicate-link-item"}
+              containerClassName="deduplicate-link-item"
             />;
           })}
         </div>
@@ -110,7 +110,7 @@ function LinkFormatter(props) {
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
             if (!value) return null;
-            return <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
+            return <div key={`link-${displayColumnType}-${index}`} className="deduplicate-link-item">
               {props.getCellValueDisplayString(value, displayColumn)}
             </div>;
           })}
@@ -148,7 +148,7 @@ function LinkFormatter(props) {
               :
               props.getCellValueDisplayString([value], displayColumn);
             return (
-              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
+              <div key={`link-${displayColumnType}-${index}`} className="deduplicate-link-item">
                 {valueDisplayString}
               </div>
             );
@@ -167,7 +167,7 @@ function LinkFormatter(props) {
               :
               props.getCellValueDisplayString([value], displayColumn, { collaborators });
             return (
-              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
+              <div key={`link-${displayColumnType}-${index}`} className="deduplicate-link-item">
                 {valueDisplayString}
               </div>
             );
@@ -194,7 +194,7 @@ function LinkFormatter(props) {
           {cellValue.map((value, index) => {
             if (!value) return null;
             return (
-              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
+              <div key={`link-${displayColumnType}-${index}`} className="deduplicate-link-item">
                 {props.getCellValueDisplayString(value, displayColumn)}
               </div>
             );
@@ -225,7 +225,7 @@ function LinkFormatter(props) {
           {cellValue.map((value, index) => {
             if (!value) return null;
             return (
-              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
+              <div key={`link-${displayColumnType}-${index}`} className="deduplicate-link-item">
                 {props.getCellValueDisplayString(value, displayColumn, { collaborators, tables })}
               </div>
             );
@@ -238,7 +238,7 @@ function LinkFormatter(props) {
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
             return (
-              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
+              <div key={`link-${displayColumnType}-${index}`} className="deduplicate-link-item">
                 {value + ''}
               </div>
             );
@@ -252,7 +252,7 @@ function LinkFormatter(props) {
           {cellValue.map((value, index) => {
             if (!value) return null;
             return (
-              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
+              <div key={`link-${displayColumnType}-${index}`} className="deduplicate-link-item">
                 {value}
               </div>
             );
