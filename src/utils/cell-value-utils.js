@@ -49,13 +49,6 @@ class CellValueUtils {
     return this.dtable.getDateDisplayString(cellValue.replace('T', ' ').replace('Z', ''), columnData);
   }
 
-  getMultipleOptionName = (options, cellVal) => {
-    if (!cellVal || !options || !Array.isArray(options)) return null;
-    let selectedOptions = options.filter((option) => cellVal.includes(option.id));
-    if (selectedOptions.length === 0) return null;
-    return selectedOptions.map((option) => option.name).join(', ');
-  }
-
   getFormulaDisplayString = (cellValue, column, { tables = [], collaborators = [] } = {}) => {
     if (!column) return '';
     const { data: columnData } = column;
