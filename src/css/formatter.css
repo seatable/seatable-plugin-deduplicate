@@ -1,0 +1,172 @@
+/* cell formatter */
+.deduplicate-plugin .dtable-ui.cell-formatter-container {
+  height: 100%;
+  width: 100%;
+  line-height: 32px;
+}
+
+.deduplicate-plugin .deduplicate-file-formatter {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.deduplicate-plugin .deduplicate-button-formatter.cell-formatter-container {
+  margin: 3px auto;
+  text-align: center;
+  height: 26px;
+  line-height: 14px;
+  min-width: 80px;
+  max-width: 100%;
+  width: fit-content;
+}
+
+.deduplicate-plugin .deduplicate-date-formatter,
+.deduplicate-plugin .deduplicate-number-formatter,
+.deduplicate-plugin .deduplicate-duration-formatter {
+  text-align: right;
+}
+
+.deduplicate-plugin .deduplicate-text-formatter,
+.deduplicate-plugin .deduplicate-url-formatter,
+.deduplicate-plugin .deduplicate-email-formatter,
+.deduplicate-plugin .deduplicate-long-text-formatter .long-text-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.deduplicate-plugin .dtable-ui.long-text-formatter {
+  height: 100%;
+}
+
+.deduplicate-plugin .deduplicate-checkbox-formatter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.deduplicate-plugin .deduplicate-collaborator-formatter,
+.deduplicate-plugin .deduplicate-creator-formatter,
+.deduplicate-plugin .deduplicate-last-modifier-formatter {
+  display: flex;
+  align-items: center;
+}
+
+.deduplicate-plugin .collaborator-avatar {
+  height: 16px;
+  width: 16px;
+}
+
+/* link */
+.deduplicate-plugin .deduplicate-table-container .deduplicate-link-formatter {
+  justify-content: center;
+}
+
+.deduplicate-plugin .deduplicate-link-formatter {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  flex-wrap: nowrap;
+  width: 100%;
+  height: 100%;
+}
+
+.deduplicate-plugin .deduplicate-link-formatter .deduplicate-link-item {
+  flex-shrink: 0;
+  height: 20px;
+  margin-right: 4px;
+  padding: 0 6px;
+  font-size: 13px;
+  max-width: 100%;
+  background: #eceff4;
+  border-radius: 3px;
+  align-items: center;
+  vertical-align: middle;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 20px;
+  width: fit-content;
+}
+
+.deduplicate-plugin .deduplicate-link-formatter .deduplicate-checkbox-item {
+  width: fit-content;
+  margin-right: 10px;
+  line-height: 36px;
+}
+
+.deduplicate-plugin .deduplicate-link-formatter .deduplicate-long-text-item {
+  display: inline-flex;
+  margin-right: 10px;
+  font-size: 13px;
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.deduplicate-plugin .dtable-ui.cell-formatter-container.collaborator-formatter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.deduplicate-plugin .formula-formatter.multiple {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item {
+  display: inline-flex;
+  margin-right: 10px;
+  font-size: 13px;
+  max-width: 100%;
+}
+
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .text-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .number-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .date-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .url-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .email-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .duration-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .geolocation-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .ctime-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .mtime-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .auto-number-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .rate-formatter {
+  line-height: 20px;
+}
+
+.deduplicate-plugin .formula-formatter.multiple .single-select-formatter .dtable-ui.select-item,
+.deduplicate-plugin .formula-formatter.multiple .creator-formatter .collaborator-item,
+.deduplicate-plugin .formula-formatter.multiple .last-modified-formatter .collaborator-item {
+  margin-right: 0 !important;
+}
+
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .checkbox-formatter {
+  line-height: 24px;
+}
+
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .creator-formatter,
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .last-modified-formatter {
+  line-height: 1;
+}
+
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .checkbox {
+  transform: unset;
+}
+
+.deduplicate-plugin .formula-formatter.multiple .formula-formatter-content-item .collaborator {
+  margin-right: 0;
+}
+
+.deduplicate-plugin .deduplicate-file-formatter .file-item-icon {
+  margin-right: 4px;
+}
+
+.deduplicate-plugin .deduplicate-file-formatter .file-item-icon:last-child {
+  margin-right: 0;
+}
+

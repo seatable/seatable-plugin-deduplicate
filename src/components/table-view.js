@@ -2,13 +2,11 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
 import { CELL_TYPE } from 'dtable-sdk';
-import { SingleSelectFormatter } from 'dtable-ui-component';
 import DetailDuplicationDialog from './detail-duplication-dialog';
 import { getSelectColumnOptionMap } from '../utils';
+import Formatter from './formatter';
 
 import styles from '../css/plugin-layout.module.css';
-
-const EMPTY_CELL_CONTENT = intl.get('Empty');
 
 class TableView extends React.Component {
 
@@ -74,22 +72,18 @@ class TableView extends React.Component {
       return (
         <tr key={`line-${rowIndex}`}>
           {allDeDuplicationColumns.map((column) => {
-            const { key, type, data } = column;
-            let cellValue = item[key];
-            if ((cellValue === 'null' || cellValue === 'undefined') && cellValue !== 0) {
-              cellValue = EMPTY_CELL_CONTENT;
-            }
-
-            // for 'single-select'
-            if (type === CELL_TYPE.SINGLE_SELECT && cellValue && typeof cellValue === 'string') {
-              let options = data && data.options ? data.options : [];
-              let option = (singleSelectsOptionsMap[key] || {})[cellValue];
-              cellValue = option ? <SingleSelectFormatter options={options} value={cellValue} /> : '';
-            }
+            const { key } = column;
 
             return (
               <td key={`cell-${key}`}>
-                {cellValue}
+                <Formatter
+                  column={column}
+                  row={item}
+                  CellType={CELL_TYPE}
+                  collaborators={this.props.collaborators}
+                  formulaRows={this.props.formulaRows}
+                  getUserCommonInfo={this.props.getUserCommonInfo}
+                />
               </td>
             );
           })}
@@ -133,7 +127,7 @@ class TableView extends React.Component {
     } else {
       return (
         <Fragment>
-          <table ref={(ref) => this.tableContainer = ref}>
+          <table ref={(ref) => this.tableContainer = ref} className="deduplicate-table-container">
             {this.renderHeader()}
             <tbody>
               {this.renderBody()}
@@ -148,6 +142,9 @@ class TableView extends React.Component {
               onDeleteRow={this.props.onDeleteRow}
               onDeleteSelectedRows={this.props.onDeleteSelectedRows}
               onHideExpandRow={this.onHideExpandRow}
+              formulaRows={this.props.formulaRows}
+              getOptionColors={this.props.getOptionColors}
+              getCellValueDisplayString={this.props.getCellValueDisplayString}
             />
           )}
         </Fragment>
@@ -157,6 +154,7 @@ class TableView extends React.Component {
 }
 
 TableView.propTypes = {
+  formulaRows: PropTypes.object,
   duplicationRows: PropTypes.array,
   allDeDuplicationColumns: PropTypes.array,
   configSettings: PropTypes.array,
@@ -165,6 +163,7 @@ TableView.propTypes = {
   onDeleteRow: PropTypes.func,
   onDeleteSelectedRows: PropTypes.func,
   setTableHeight: PropTypes.func,
+  getUserCommonInfo: PropTypes.func,
 };
 
 export default TableView;

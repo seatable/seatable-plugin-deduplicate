@@ -2,17 +2,33 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
-import DTable, { CELL_TYPE } from 'dtable-sdk';
+import DTable, { CELL_TYPE, FORMULA_RESULT_TYPE } from 'dtable-sdk';
 import Settings from './components/settings';
 import TableView from './components/table-view';
 import DeleteTip from './components/tips/delete-tip';
 import { compareString, throttle, getSelectColumnOptionMap } from './utils';
+import CellValueUtils from './utils/cell-value-utils';
 
 import './locale/index.js';
 
 import styles from './css/plugin-layout.module.css';
 
-const DEDUPLICATION_LIST = [CELL_TYPE.TEXT, CELL_TYPE.DATE, CELL_TYPE.NUMBER, CELL_TYPE.SINGLE_SELECT, CELL_TYPE.EMAIL];
+const DEDUPLICATION_LIST = [
+  CELL_TYPE.TEXT,
+  CELL_TYPE.STRING,
+  CELL_TYPE.DATE,
+  CELL_TYPE.NUMBER,
+  CELL_TYPE.SINGLE_SELECT,
+  CELL_TYPE.EMAIL,
+  CELL_TYPE.FORMULA,
+  CELL_TYPE.LINK_FORMULA,
+  CELL_TYPE.LINK,
+];
+
+const FORMULA_COLUMN_TYPES = [
+  CELL_TYPE.FORMULA,
+  CELL_TYPE.LINK_FORMULA
+];
 
 const propTypes = {
   showDialog: PropTypes.bool
@@ -35,6 +51,7 @@ class App extends React.Component {
       duplicationData: {}
     };
     this.dtable = new DTable();
+    this.cellValueUtils = new CellValueUtils({ dtable: this.dtable });
   }
 
   componentDidMount() {
@@ -202,7 +219,15 @@ class App extends React.Component {
     let columns = this.dtable.getViewShownColumns(currentView, currentTable);
     // need options: checkout map column
     columns = columns.filter(column => {
-      return DEDUPLICATION_LIST.includes(column.type);
+      const { type } = column;
+      if (FORMULA_COLUMN_TYPES.includes(type) || type === CELL_TYPE.LINK) {
+        const { data } = column;
+        const { array_type, result_type } = data;
+        return DEDUPLICATION_LIST.includes(result_type) ||
+        (result_type === FORMULA_RESULT_TYPE.ARRAY && DEDUPLICATION_LIST.includes(array_type));
+      }
+
+      return DEDUPLICATION_LIST.includes(type);
     });
 
     let columnSettings = columns.map(column => {
@@ -261,6 +286,19 @@ class App extends React.Component {
     });
   }
 
+  getOptionColors = () => {
+    return this.dtable.getOptionColors();
+  }
+
+  getCellValueDisplayString = (cellValue, column, {tables = [], collaborators = []} = {}) => {
+    return this.cellValueUtils.getCellValueDisplayString(cellValue, column, { tables, collaborators });
+  }
+
+  getUserCommonInfo = (email, avatar_size) => {
+    const dtableWebAPI = window.dtableWebAPI || this.dtable.dtableWebAPI;
+    return dtableWebAPI.getUserCommonInfo(email, avatar_size);
+  }
+
   getColumnsByName = (table, columns) => {
     return columns.map((column) => {
       return this.dtable.getColumnByName(table, column);
@@ -279,12 +317,11 @@ class App extends React.Component {
       });
       return;
     }
-
     const rows = this.dtable.getViewRows(view, table);
+    const formulaRows = this.dtable.getTableFormulaResults(table, rows);
     const deDuplicationColumnNames = [...configSettings[3].active];
     const deDuplicationColumns = this.getColumnsByName(table, deDuplicationColumnNames);
     const allDeDuplicationColumns = [selectedColumn, ...deDuplicationColumns];
-    const allColumnKeys = allDeDuplicationColumns.map(column => column.key);
     let duplicationRows = [];
     let rowValueMap = {};
     let selectColumnKey2OptionMap = {};
@@ -293,21 +330,37 @@ class App extends React.Component {
         selectColumnKey2OptionMap[column.key] = getSelectColumnOptionMap(column);
       }
     });
-
     rows.forEach((item) => {
       let rowValueKey = '';
-      allColumnKeys.forEach(key => {
+      allDeDuplicationColumns.forEach(column => {
+        const { key, type } = column;
         let cellValue = item[key];
-        if (cellValue === null || typeof cellValue === 'undefined') {
-          cellValue = '';
-        }
-        // If single select column, check value ID is valid
-        if (cellValue && selectColumnKey2OptionMap[key]) {
-          if (selectColumnKey2OptionMap[key][cellValue]) {
+        if (FORMULA_COLUMN_TYPES.includes(type)) {
+          cellValue = formulaRows[item._id] ? formulaRows[item._id][key] : null;
+          if (cellValue === null || typeof cellValue === 'undefined') {
+            cellValue = '';
+          }
+          rowValueKey += String(cellValue);
+        } else if (type === CELL_TYPE.LINK) {
+          const linkCellItem = formulaRows[item._id] ? formulaRows[item._id][key] : null;
+
+          cellValue = Array.isArray(linkCellItem) ? linkCellItem.map(link => link.display_value) : null;
+          if (cellValue === null || typeof cellValue === 'undefined') {
+            cellValue = '';
+          }
+          rowValueKey += String(cellValue);
+        } else {
+          if (cellValue === null || typeof cellValue === 'undefined') {
+            cellValue = '';
+          }
+          // If single select column, check value ID is valid
+          if (cellValue && selectColumnKey2OptionMap[key]) {
+            if (selectColumnKey2OptionMap[key][cellValue]) {
+              rowValueKey += String(cellValue);
+            }
+          } else {
             rowValueKey += String(cellValue);
           }
-        } else {
-          rowValueKey += String(cellValue);
         }
         rowValueKey += key;
       });
@@ -320,16 +373,17 @@ class App extends React.Component {
       }
     });
     duplicationRows = duplicationRows.filter((statRow) => statRow.rows.length > 1);
-    this.sortDuplicationRows(duplicationRows, selectedColumn);
+    this.sortDuplicationRows(duplicationRows, selectedColumn, formulaRows);
     this.setState({
       duplicationRows,
       allDeDuplicationColumns,
       pageSize: 1,
+      formulaRows
     });
   }
 
-  sortDuplicationRows = (duplicationRows, column) => {
-    const { type, key } = column;
+  sortDuplicationRows = (duplicationRows, column, formulaRows) => {
+    const { type, key, data = {} } = column;
     const optionsMap = {};
     if (type === CELL_TYPE.SINGLE_SELECT) {
       const { options } = column.data;
@@ -355,6 +409,25 @@ class App extends React.Component {
           return compareString(optionsMap[currCellValue], optionsMap[nextCellValue]);
         });
         break;
+      case CELL_TYPE.LINK_FORMULA:
+      case CELL_TYPE.FORMULA: {
+        duplicationRows.sort((currRow, nextRow) => {
+          const currCellValue = formulaRows[currRow.item._id] ? formulaRows[currRow.item._id][key] : null;
+          const nextCellValue = formulaRows[nextRow.item._id] ? formulaRows[nextRow.item._id][key] : null;
+          return this.dtable.sortFormula(currCellValue, nextCellValue, 'up', {columnData: data, value: {}});
+        });
+        break;
+      }
+      case CELL_TYPE.LINK: {
+        duplicationRows.sort((currRow, nextRow) => {
+          const currCellVal = formulaRows[currRow.item._id] ? formulaRows[currRow.item._id][key] : null;
+          const nextCellVal = formulaRows[nextRow.item._id] ? formulaRows[nextRow.item._id][key] : null;
+          let currDisplayValues = Array.isArray(currCellVal) ? currCellVal.map(link => link.display_value) : null;
+          let nextDisplayValues = Array.isArray(nextCellVal) ? nextCellVal.map(link => link.display_value) : null;
+          return this.dtable.sortFormula(currDisplayValues, nextDisplayValues, 'up', {columnData: data, value: {}});
+        });
+        break;
+      }
       // Text and date column values are all string
       case CELL_TYPE.DATE:
       case CELL_TYPE.TEXT:
@@ -453,7 +526,14 @@ class App extends React.Component {
     let { showDialog, configSettings, duplicationRows, allDeDuplicationColumns, isDeleteTipShow, pageSize } = this.state;
     return (
       <Fragment>
-        <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.onPluginToggle} className={styles['deduplication-plugin']} size="lg" zIndex="1048">
+        <Modal
+          contentClassName={styles['modal-content']}
+          isOpen={showDialog}
+          toggle={this.onPluginToggle}
+          className={`${styles['deduplication-plugin']} deduplicate-plugin`}
+          size="lg"
+          zIndex="1048"
+        >
           <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>{intl.get('Deduplication')}</ModalHeader>
           <ModalBody className={styles['deduplication-plugin-content']}>
             {(window.dtable && window.dtable.permission === 'r') ?
@@ -486,6 +566,10 @@ class App extends React.Component {
                         onDeleteRow={this.onDeleteRow}
                         onDeleteSelectedRows={this.deleteRowsByIds}
                         setTableHeight={this.setTableHeight}
+                        formulaRows={this.state.formulaRows}
+                        getUserCommonInfo={this.getUserCommonInfo}
+                        getOptionColors={this.getOptionColors}
+                        getCellValueDisplayString={this.getCellValueDisplayString}
                       />
                     </div>
                   </div>

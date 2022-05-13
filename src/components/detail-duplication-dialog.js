@@ -1,17 +1,13 @@
 import React, { Fragment } from 'react';
 import { Button } from 'reactstrap';
 import intl from 'react-intl-universal';
-import dayjs from 'dayjs';
-import { SingleSelectFormatter } from 'dtable-ui-component';
-import { getImageThumbnailUrl } from '../utils';
-import CollaboratorFormatter from '../components/formatter/collaborator-formatter';
+import { CELL_TYPE } from 'dtable-sdk';
 import RecordItem from './record';
 
 import styles from '../css/plugin-layout.module.css';
-import fileIcon from '../image/file.png';
+import Formatter from './formatter';
 
 const UNSHOWN_COLUMN_KEY_LIST = ['0000'];
-const UNSHOWN_COLUMN_TYPE_LIST = ['long-text', 'geolocation', 'link'];
 
 class DetailDuplicationDialog extends React.Component {
 
@@ -131,8 +127,7 @@ class DetailDuplicationDialog extends React.Component {
               </li>
             }
             {table.columns.map((item, index) => {
-              if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
-                !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
+              if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key)) {
                 return (
                   <li key={`column-name-${index}`}
                     className={`${styles['column-name']} text-truncate`}
@@ -249,132 +244,21 @@ class DetailDuplicationDialog extends React.Component {
   };
 
   getFormattedCell = (column, row, unShownColumnKeyList) => {
-    const { key, type, data } = column;
+    const { key } = column;
     const { _id: rowId } = row;
-    let value = row[key];
     let displayValue;
-    let isNonEmptyArray = Array.isArray(value) && value.length > 0;
-    if (!unShownColumnKeyList.includes(key) && !UNSHOWN_COLUMN_TYPE_LIST.includes(type)) {
-      switch(type) {
-        case 'text': {
-          if (value && typeof value === 'string') {
-            displayValue = <span className={styles['cell-value-ellipsis']}>{value}</span>;
-          }
-          break;
-        }
-        case 'date': {
-          if (value && typeof value === 'string') {
-            let format = 'YYYY-MM-DD';
-            displayValue = dayjs(value).format(format);
-          }
-          break;
-        }
-        case 'ctime':
-        case 'mtime': {
-          if (value && typeof value === 'string') {
-            displayValue = dayjs(value).format('YYYY-MM-DD HH:mm:ss');
-          }
-          break;
-        }
-        case 'number': {
-          if (Object.prototype.toString.call(value) === '[object Number]') {
-            displayValue = <div className={styles['number-formatter']}>
-              {value}
-            </div>;
-          }
-          break;
-        }
-
-        case 'collaborator': {
-          if (value && isNonEmptyArray) {
-            let { collaborators } = this.props;
-            let validValue = value.filter(item => {
-              return collaborators.find(collaborator => collaborator.email === item);
-            });
-            displayValue = validValue.length > 0 ? <CollaboratorFormatter collaborators={collaborators} value={validValue} /> : '';
-          }
-          break;
-        }
-        case 'single-select': {
-          if (value && typeof value === 'string') {
-            let options = data && data.options ? data.options : [];
-            let option = options.find(option => option.id === value);
-            displayValue = option ? <SingleSelectFormatter options={options} value={value} /> : '';
-          }
-          break;
-        }
-
-        case 'multiple-select': {
-          if (value && isNonEmptyArray) {
-            let options = data && data.options ? data.options : [];
-            let validValue = value.filter((item) => {
-              return options.find(option => option.id === item);
-            });
-            displayValue = validValue.length > 0 ?
-              <div className="multiple-select-formatter d-flex">
-                {validValue.map((item, index) => {
-                  return <SingleSelectFormatter options={options} value={item} key={`row-operation-multiple-select-${index}`} />;
-                })}
-              </div>
-              : '';
-          }
-          break;
-        }
-
-        case 'file': {
-          if (value && isNonEmptyArray) {
-            let amount = value.length;
-            displayValue = <div className="image-cell-value">
-              <img alt='' src={fileIcon} width="24" />
-              {amount > 1 && <span className="cell-value-size">{`+${amount - 1}`}</span>}
-            </div>;
-          }
-          break;
-        }
-
-        case 'image': {
-          if (value && isNonEmptyArray) {
-            let imgSrc = getImageThumbnailUrl(value[0]);
-            let amount = value.length;
-            displayValue = <div className="image-cell-value h-100">
-              <img alt='' src={imgSrc} className="mh-100" />
-              {amount > 1 && <span className="cell-value-size">{`+${amount - 1}`}</span>}
-            </div>;
-          }
-          break;
-        }
-
-        case 'checkbox': {
-          displayValue = <input className={styles['"checkbox"']} type='checkbox' readOnly checked={value ? true : false}/>;
-          break;
-        }
-
-        case 'creator':
-        case 'modifier': {
-          if (value) {
-            const { collaborators } = this.props;
-            const collaborator = collaborators.find((item) => {
-              return item.email === value;
-            });
-            displayValue = <div className={styles['collaborators-formatter']}>
-              <div className={styles['formatter-show']}>
-                <div className={styles['collaborator']}>
-                  <span className={styles['collaborator-avatar-container']}>
-                    <img className={styles['collaborator-avatar']} alt={collaborator.name} src={collaborator.avatar_url} />
-                  </span>
-                  <span className={styles['collaborator-name']}>{collaborator.name}</span>
-                </div>
-              </div>
-            </div>;
-          }
-          break;
-        }
-        default:
-          if (value && typeof value === 'string') {
-            displayValue = <span className={styles['cell-value-ellipsis']}>{value}</span>;
-          }
-          break;
-      }
+    if (!unShownColumnKeyList.includes(key)) {
+      displayValue =
+      <Formatter
+        column={column}
+        row={row}
+        CellType={CELL_TYPE}
+        collaborators={this.props.collaborators}
+        formulaRows={this.props.formulaRows}
+        getUserCommonInfo={this.props.getUserCommonInfo}
+        getOptionColors={this.props.getOptionColors}
+        getCellValueDisplayString={this.props.getCellValueDisplayString}
+      />;
       return this.getCellRecord(displayValue, rowId, column);
     }
   }
