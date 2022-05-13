@@ -8,7 +8,7 @@ import {
   CTimeFormatter,
   MTimeFormatter,
   CheckboxFormatter,
-  LongTextFormatter,
+  SimpleLongTextFormatter,
   CollaboratorFormatter
 } from 'dtable-ui-component';
 import { getFormulaArrayValue, isArrayFormalColumn } from '../../utils/common-utils';
@@ -208,7 +208,7 @@ function LinkFormatter(props) {
           {cellValue.map((value, index) => {
             if (!value) return null;
             return (
-              <LongTextFormatter
+              <SimpleLongTextFormatter
                 key={`link-${displayColumnType}-${index}`}
                 value={value}
                 containerClassName={`deduplicate-${displayColumnType}-item`}
