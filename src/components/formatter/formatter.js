@@ -28,6 +28,7 @@ import LinkFormatter from './link-formatter';
 import { isValidEmail } from '../../utils/common-utils';
 
 import styles from '../../css/plugin-layout.module.css';
+import '../../css/formatter.css';
 
 const propTypes = {
   type: PropTypes.string,
@@ -116,77 +117,47 @@ class Formatter extends React.Component {
     const { column, row, collaborators, CellType } = this.props;
     const { type: columnType, key: columnKey } = column;
     const { isDataLoaded, collaborator } = this.state;
-
+    const containerClassName = `deduplicate-${columnType}-formatter`;
     switch(columnType) {
       case CellType.TEXT: {
-        let textFormatter = <TextFormatter value={row[columnKey]} containerClassName="deduplicate-text-editor" />;
-        if (!row[columnKey]) {
-          textFormatter = this.renderEmptyFormatter();
-        }
-        return textFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <TextFormatter value={row[columnKey]} containerClassName={containerClassName} />;
       }
       case CellType.COLLABORATOR: {
-        let collaboratorFormatter = <CollaboratorFormatter value={row[columnKey]} collaborators={collaborators}  containerClassName="deduplicate-text-editor"  />;
-        if (!row[columnKey] || row[columnKey].length === 0) {
-          collaboratorFormatter = this.renderEmptyFormatter();
-        }
-        return collaboratorFormatter;
+        if (!row[columnKey] || row[columnKey].length === 0) return this.renderEmptyFormatter();
+        return <CollaboratorFormatter value={row[columnKey]} collaborators={collaborators} containerClassName={containerClassName} />;
       }
       case CellType.LONG_TEXT: {
-        let longTextFormatter = <SimpleLongTextFormatter value={row[columnKey]} />;
-        if (!row[columnKey]) {
-          longTextFormatter =  this.renderEmptyFormatter();
-        }
-        return longTextFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <SimpleLongTextFormatter value={row[columnKey]} />;
       }
       case CellType.IMAGE: {
-        let imageFormatter = <ImageFormatter value={row[columnKey]} isSample />;
-        if (!row[columnKey] || row[columnKey].length === 0){
-          imageFormatter = this.renderEmptyFormatter();
-        }
-        return imageFormatter;
+        if (!row[columnKey] || row[columnKey].length === 0) return this.renderEmptyFormatter();
+        return <ImageFormatter value={row[columnKey]} isSample />;
       }
       case CellType.GEOLOCATION : {
-        let geolocationFormatter = <GeolocationFormatter value={row[columnKey]} containerClassName="deduplicate-text-editor" />;
-        if (!row[columnKey]) {
-          geolocationFormatter = this.renderEmptyFormatter();
-        }
-        return geolocationFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <GeolocationFormatter value={row[columnKey]} containerClassName={containerClassName} />;
       }
       case CellType.NUMBER: {
-        let numberFormatter = <NumberFormatter value={row[columnKey]} data={column.data} />;
-        if (!row[columnKey]) {
-          numberFormatter = this.renderEmptyFormatter();
-        }
-        return numberFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <NumberFormatter value={row[columnKey]} data={column.data} />;
       }
       case CellType.DATE: {
-        let dateFormatter = <DateFormatter value={row[columnKey]} format={column.data.format} />;
-        if (!row[columnKey]) {
-          dateFormatter =  this.renderEmptyFormatter();
-        }
-        return dateFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <DateFormatter value={row[columnKey]} format={column.data.format} />;
       }
       case CellType.MULTIPLE_SELECT: {
-        let multipleSelectFormatter = <MultipleSelectFormatter value={row[columnKey]} options={column.data.options} />;
-        if (!row[columnKey] || row[columnKey].length === 0) {
-          multipleSelectFormatter = this.renderEmptyFormatter();
-        }
-        return multipleSelectFormatter;
+        if (!row[columnKey] || row[columnKey].length === 0) return this.renderEmptyFormatter();
+        return <MultipleSelectFormatter value={row[columnKey]} options={column.data.options} />;
       }
       case CellType.SINGLE_SELECT: {
-        let singleSelectFormatter = <SingleSelectFormatter value={row[columnKey]} options={column.data.options} />;
-        if (!row[columnKey]) {
-          singleSelectFormatter = this.renderEmptyFormatter();
-        }
-        return singleSelectFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <SingleSelectFormatter value={row[columnKey]} options={column.data.options} />;
       }
       case CellType.FILE: {
-        let fileFormatter = <FileFormatter value={row[columnKey]} isSample />;
-        if (!row[columnKey] || row[columnKey].length === 0) {
-          fileFormatter = this.renderEmptyFormatter();
-        }
-        return fileFormatter;
+        if (!row[columnKey] || row[columnKey].length === 0) return this.renderEmptyFormatter();
+        return <FileFormatter value={row[columnKey]} isSample />;
       }
       case CellType.CHECKBOX: {
         let checkboxFormatter = <CheckboxFormatter value={row[columnKey]} />;
@@ -228,11 +199,8 @@ class Formatter extends React.Component {
       case CellType.LINK_FORMULA: {
         let formulaRows = this.props.formulaRows ? {...this.props.formulaRows} : {};
         let formulaValue = formulaRows[row._id] ? formulaRows[row._id][columnKey] : '';
-        let formulaFormatter = <FormulaFormatter value={formulaValue} column={column} collaborators={collaborators} containerClassName="text-center" />;
-        if (!formulaValue) {
-          formulaFormatter = this.renderEmptyFormatter();
-        }
-        return formulaFormatter;
+        if (!formulaValue) return this.renderEmptyFormatter();
+        return <FormulaFormatter value={formulaValue} column={column} collaborators={collaborators} containerClassName={containerClassName} />;
       }
       case CellType.LINK: {
         let formulaRows = this.props.formulaRows ? {...this.props.formulaRows} : {};
@@ -246,52 +214,35 @@ class Formatter extends React.Component {
             renderEmptyFormatter={this.renderEmptyFormatter}
             getOptionColors={this.props.getOptionColors}
             getCellValueDisplayString={this.props.getCellValueDisplayString}
+            containerClassName={containerClassName}
           />
         );
       }
       case CellType.AUTO_NUMBER: {
-        let autoNumberFormatter = <AutoNumberFormatter value={row[columnKey]} containerClassName="deduplicate-text-editor" />;
-        if (!row[columnKey]) {
-          autoNumberFormatter = this.renderEmptyFormatter();
-        }
-        return autoNumberFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <AutoNumberFormatter value={row[columnKey]} containerClassName={containerClassName} />;
       }
       case CellType.URL: {
-        let urlFormatter = <UrlFormatter value={row[columnKey]} containerClassName="deduplicate-text-editor" />;
-        if (!row[columnKey]) {
-          urlFormatter = this.renderEmptyFormatter();
-        }
-        return urlFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <UrlFormatter value={row[columnKey]} containerClassName={containerClassName} />;
       }
       case CellType.EMAIL: {
-        let emailFormatter = <EmailFormatter value={row[columnKey]} containerClassName="deduplicate-text-editor" />;
-        if (!row[columnKey]) {
-          emailFormatter = this.renderEmptyFormatter();
-        }
-        return emailFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <EmailFormatter value={row[columnKey]} containerClassName={containerClassName} />;
       }
       case CellType.DURATION: {
-        let durationFormatter = <DurationFormatter value={row[columnKey]} format={column.data.duration_format} containerClassName="deduplicate-text-editor" />;
-        if (!row[columnKey]) {
-          durationFormatter = this.renderEmptyFormatter();
-        }
-        return durationFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <DurationFormatter value={row[columnKey]} format={column.data.duration_format} containerClassName={containerClassName} />;
       }
       case CellType.RATE: {
-        let rateFormatter = <RateFormatter value={row[columnKey]} data={column.data} containerClassName="deduplicate-text-editor" />;
-        if (!row[columnKey]) {
-          rateFormatter = this.renderEmptyFormatter();
-        }
-        return rateFormatter;
+        if (!row[columnKey]) return this.renderEmptyFormatter();
+        return <RateFormatter value={row[columnKey]} data={column.data} containerClassName={containerClassName} />;
       }
       case CellType.BUTTON: {
         const { data = {} } = column;
         const optionColors = this.props.getOptionColors();
-        let buttonFormatter = <ButtonFormatter data={data} optionColors={optionColors} containerClassName="text-center" />;
-        if (!data.button_name) {
-          buttonFormatter = this.renderEmptyFormatter();
-        }
-        return buttonFormatter;
+        if (!data.button_name) return this.renderEmptyFormatter();
+        return <ButtonFormatter data={data} optionColors={optionColors} containerClassName={containerClassName} />;
       }
       default:
         return null;

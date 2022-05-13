@@ -127,7 +127,7 @@ class TableView extends React.Component {
     } else {
       return (
         <Fragment>
-          <table ref={(ref) => this.tableContainer = ref}>
+          <table ref={(ref) => this.tableContainer = ref} className="deduplicate-table-container">
             {this.renderHeader()}
             <tbody>
               {this.renderBody()}

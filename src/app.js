@@ -318,7 +318,7 @@ class App extends React.Component {
       return;
     }
     const rows = this.dtable.getViewRows(view, table);
-    const formulaRows = this.dtable.getTableFormulaResultsContainerLinks(table, rows);
+    const formulaRows = this.dtable.getTableFormulaResults(table, rows);
     const deDuplicationColumnNames = [...configSettings[3].active];
     const deDuplicationColumns = this.getColumnsByName(table, deDuplicationColumnNames);
     const allDeDuplicationColumns = [selectedColumn, ...deDuplicationColumns];
@@ -526,7 +526,14 @@ class App extends React.Component {
     let { showDialog, configSettings, duplicationRows, allDeDuplicationColumns, isDeleteTipShow, pageSize } = this.state;
     return (
       <Fragment>
-        <Modal contentClassName={styles['modal-content']} isOpen={showDialog} toggle={this.onPluginToggle} className={styles['deduplication-plugin']} size="lg" zIndex="1048">
+        <Modal 
+          contentClassName={styles['modal-content']} 
+          isOpen={showDialog} 
+          toggle={this.onPluginToggle} 
+          className={`${styles['deduplication-plugin']} deduplicate-plugin`} 
+          size="lg" 
+          zIndex="1048"
+        >
           <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>{intl.get('Deduplication')}</ModalHeader>
           <ModalBody className={styles['deduplication-plugin-content']}>
             {(window.dtable && window.dtable.permission === 'r') ?

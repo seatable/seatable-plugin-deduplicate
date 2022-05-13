@@ -8,7 +8,6 @@ import styles from '../css/plugin-layout.module.css';
 import Formatter from './formatter';
 
 const UNSHOWN_COLUMN_KEY_LIST = ['0000'];
-const UNSHOWN_COLUMN_TYPE_LIST = ['long-text', 'geolocation', 'link'];
 
 class DetailDuplicationDialog extends React.Component {
 
@@ -128,8 +127,7 @@ class DetailDuplicationDialog extends React.Component {
               </li>
             }
             {table.columns.map((item, index) => {
-              if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key) &&
-                !UNSHOWN_COLUMN_TYPE_LIST.includes(item.type)) {
+              if (!UNSHOWN_COLUMN_KEY_LIST.includes(item.key)) {
                 return (
                   <li key={`column-name-${index}`}
                     className={`${styles['column-name']} text-truncate`}
@@ -249,7 +247,7 @@ class DetailDuplicationDialog extends React.Component {
     const { key, type } = column;
     const { _id: rowId } = row;
     let displayValue;
-    if (!unShownColumnKeyList.includes(key) && !UNSHOWN_COLUMN_TYPE_LIST.includes(type)) {
+    if (!unShownColumnKeyList.includes(key)) {
       displayValue =
       <Formatter
         column={column}

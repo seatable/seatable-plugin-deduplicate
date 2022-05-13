@@ -9,8 +9,8 @@ import {
   MTimeFormatter,
   CheckboxFormatter,
   LongTextFormatter,
+  CollaboratorFormatter
 } from 'dtable-ui-component';
-import CollaboratorItemFormatter from './collaborator-formatter';
 import { getFormulaArrayValue, isArrayFormalColumn } from '../../utils/common-utils';
 
 function LinkFormatter(props) {
@@ -38,7 +38,7 @@ function LinkFormatter(props) {
           {cellValue.map((value, index) => {
             if (!value) return null;
             return (
-              <div key={`link-${displayColumnType}-${index}`} className="sql-query-link-item">
+              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
                 {value}
               </div>
             );
@@ -53,7 +53,7 @@ function LinkFormatter(props) {
             if (!value && value !== 0) return null;
             return <NumberFormatter
               key={`link-${displayColumnType}-${index}`}
-              containerClassName="sql-query-link-item"
+              containerClassName={"deduplicate-link-item"}
               data={displayColumnData || {}}
               value={value}
             />;
@@ -71,7 +71,7 @@ function LinkFormatter(props) {
               key={`link-${displayColumnType}-${index}`}
               value={value.replace('T', ' ').replace('Z', '')}
               format={format}
-              containerClassName="sql-query-link-item"
+              containerClassName={"deduplicate-link-item"}
             />;
           })}
         </div>
@@ -85,7 +85,7 @@ function LinkFormatter(props) {
             return <CTimeFormatter
               key={`link-${displayColumnType}-${index}`}
               value={value}
-              containerClassName="sql-query-link-item"
+              containerClassName={"deduplicate-link-item"}
             />;
           })}
         </div>
@@ -99,7 +99,7 @@ function LinkFormatter(props) {
             return <MTimeFormatter
               key={`link-${displayColumnType}-${index}`}
               value={value}
-              containerClassName="sql-query-link-item"
+              containerClassName={"deduplicate-link-item"}
             />;
           })}
         </div>
@@ -110,7 +110,7 @@ function LinkFormatter(props) {
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
             if (!value) return null;
-            return <div key={`link-${displayColumnType}-${index}`} className="sql-query-link-item">
+            return <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
               {props.getCellValueDisplayString(value, displayColumn)}
             </div>;
           })}
@@ -120,10 +120,10 @@ function LinkFormatter(props) {
     case CELL_TYPE.CREATOR:
     case CELL_TYPE.LAST_MODIFIER: {
       return (
-        <div className="dtable-ui cell-formatter-container collaborator-formatter sql-query-collaborator-formatter">
+        <div className="dtable-ui cell-formatter-container collaborator-formatter deduplicate-collaborator-formatter">
           {cellValue.map((value, index) => {
             if (!value) return null;
-            return <CollaboratorItemFormatter
+            return <CollaboratorFormatter
               key={`link-${displayColumnType}-${index}`}
               value={value}
               collaborators={collaborators}
@@ -135,7 +135,7 @@ function LinkFormatter(props) {
     case CELL_TYPE.SINGLE_SELECT: {
       if (!cellValue || cellValue.length === 0) return props.renderEmptyFormatter();
       const options = displayColumnData && Array.isArray(displayColumnData.options) ? displayColumnData.options : [];
-      return <MultipleSelectFormatter value={cellValue} options={options || []} containerClassName={`sql-query-${displayColumnType}-formatter`} />;
+      return <MultipleSelectFormatter value={cellValue} options={options || []} containerClassName={`deduplicate-${displayColumnType}-formatter`} />;
     }
     case CELL_TYPE.MULTIPLE_SELECT: {
       if (!cellValue || cellValue.length === 0) return props.renderEmptyFormatter();
@@ -148,7 +148,7 @@ function LinkFormatter(props) {
               :
               props.getCellValueDisplayString([value], displayColumn);
             return (
-              <div key={`link-${displayColumnType}-${index}`} className="sql-query-link-item">
+              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
                 {valueDisplayString}
               </div>
             );
@@ -167,7 +167,7 @@ function LinkFormatter(props) {
               :
               props.getCellValueDisplayString([value], displayColumn, { collaborators });
             return (
-              <div key={`link-${displayColumnType}-${index}`} className="sql-query-link-item">
+              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
                 {valueDisplayString}
               </div>
             );
@@ -182,7 +182,7 @@ function LinkFormatter(props) {
             return <CheckboxFormatter
               key={`link-${displayColumnType}-${index}`}
               value={Boolean(value)}
-              containerClassName={`sql-query-${displayColumnType}-item`}
+              containerClassName={`deduplicate-${displayColumnType}-item`}
             />;
           })}
         </div>
@@ -194,7 +194,7 @@ function LinkFormatter(props) {
           {cellValue.map((value, index) => {
             if (!value) return null;
             return (
-              <div key={`link-${displayColumnType}-${index}`} className="sql-query-link-item">
+              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
                 {props.getCellValueDisplayString(value, displayColumn)}
               </div>
             );
@@ -211,7 +211,7 @@ function LinkFormatter(props) {
               <LongTextFormatter
                 key={`link-${displayColumnType}-${index}`}
                 value={value}
-                containerClassName={`sql-query-${displayColumnType}-item`}
+                containerClassName={`deduplicate-${displayColumnType}-item`}
               />
             );
           })}
@@ -225,7 +225,7 @@ function LinkFormatter(props) {
           {cellValue.map((value, index) => {
             if (!value) return null;
             return (
-              <div key={`link-${displayColumnType}-${index}`} className="sql-query-link-item">
+              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
                 {props.getCellValueDisplayString(value, displayColumn, { collaborators, tables })}
               </div>
             );
@@ -238,7 +238,7 @@ function LinkFormatter(props) {
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
             return (
-              <div key={`link-${displayColumnType}-${index}`} className="sql-query-link-item">
+              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
                 {value + ''}
               </div>
             );
@@ -252,7 +252,7 @@ function LinkFormatter(props) {
           {cellValue.map((value, index) => {
             if (!value) return null;
             return (
-              <div key={`link-${displayColumnType}-${index}`} className="sql-query-link-item">
+              <div key={`link-${displayColumnType}-${index}`} className={"deduplicate-link-item"}>
                 {value}
               </div>
             );
