@@ -149,11 +149,13 @@ class Formatter extends React.Component {
       }
       case CellType.MULTIPLE_SELECT: {
         if (!row[columnKey] || row[columnKey].length === 0) return this.renderEmptyFormatter();
-        return <MultipleSelectFormatter value={row[columnKey]} options={column.data.options} />;
+        const options = (column.data && column.data.options) || [];
+        return <MultipleSelectFormatter value={row[columnKey]} options={options} />;
       }
       case CellType.SINGLE_SELECT: {
         if (!row[columnKey]) return this.renderEmptyFormatter();
-        return <SingleSelectFormatter value={row[columnKey]} options={column.data.options} />;
+        const options = (column.data && column.data.options) || [];
+        return <SingleSelectFormatter value={row[columnKey]} options={options} />;
       }
       case CellType.FILE: {
         if (!row[columnKey] || row[columnKey].length === 0) return this.renderEmptyFormatter();
