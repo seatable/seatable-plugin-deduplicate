@@ -258,6 +258,7 @@ class DetailDuplicationDialog extends React.Component {
         getUserCommonInfo={this.props.getUserCommonInfo}
         getOptionColors={this.props.getOptionColors}
         getCellValueDisplayString={this.props.getCellValueDisplayString}
+        getMediaUrl={this.props.getMediaUrl}
       />;
       return this.getCellRecord(displayValue, rowId, column);
     }

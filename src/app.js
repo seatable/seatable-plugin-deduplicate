@@ -305,6 +305,10 @@ class App extends React.Component {
     });
   }
 
+  getMediaUrl = () => {
+    return window.dtable ? window.dtable.mediaUrl : window.dtablePluginConfig.mediaUrl;
+  }
+
   getDeduplicationData = (configSettings) => {
     const table = this.dtable.getTableByName(configSettings[0].active);
     const view = this.dtable.getViewByName(table, configSettings[1].active);
@@ -570,6 +574,7 @@ class App extends React.Component {
                         getUserCommonInfo={this.getUserCommonInfo}
                         getOptionColors={this.getOptionColors}
                         getCellValueDisplayString={this.getCellValueDisplayString}
+                        getMediaUrl={this.getMediaUrl}
                       />
                     </div>
                   </div>
