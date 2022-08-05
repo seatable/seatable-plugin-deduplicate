@@ -83,6 +83,7 @@ class TableView extends React.Component {
                   collaborators={this.props.collaborators}
                   formulaRows={this.props.formulaRows}
                   getUserCommonInfo={this.props.getUserCommonInfo}
+                  getMediaUrl={this.props.getMediaUrl}
                 />
               </td>
             );
@@ -145,6 +146,7 @@ class TableView extends React.Component {
               formulaRows={this.props.formulaRows}
               getOptionColors={this.props.getOptionColors}
               getCellValueDisplayString={this.props.getCellValueDisplayString}
+              getMediaUrl={this.props.getMediaUrl}
             />
           )}
         </Fragment>
@@ -164,6 +166,7 @@ TableView.propTypes = {
   onDeleteSelectedRows: PropTypes.func,
   setTableHeight: PropTypes.func,
   getUserCommonInfo: PropTypes.func,
+  getMediaUrl: PropTypes.func
 };
 
 export default TableView;
