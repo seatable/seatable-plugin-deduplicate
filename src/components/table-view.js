@@ -1,21 +1,13 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
 import { CELL_TYPE } from 'dtable-sdk';
-import DetailDuplicationDialog from './detail-duplication-dialog';
 import { getSelectColumnOptionMap } from '../utils';
 import Formatter from './formatter';
 
 import styles from '../css/plugin-layout.module.css';
 
 class TableView extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      expandRowIndex: -1,
-    };
-  }
 
   componentDidMount() {
     this.setTableHeight();
@@ -25,7 +17,7 @@ class TableView extends React.Component {
     const prevDuplicationRows = prevProps.duplicationRows || [];
     const currDuplicationRows = this.props.duplicationRows || [];
     if (currDuplicationRows.length !== prevDuplicationRows.length) {
-      this.setState({expandRowIndex: -1});
+      this.props.setExpandedRowIndex(-1);
     }
     this.setTableHeight();
   }
@@ -100,56 +92,21 @@ class TableView extends React.Component {
   }
 
   onExpandDuplicationRow = (rowIndex) => {
-    this.setState({expandRowIndex: rowIndex});
-  }
-
-  getExpandRowItem = () => {
-    const { expandRowIndex } = this.state;
-    const duplicationRow = this.props.duplicationRows[expandRowIndex];
-    const { rows = [] } = duplicationRow || {};
-    const rowsSelected = rows.map(item => false);
-    return {
-      rows,
-      rowsSelected,
-      value: rows.length,
-      isAllSelected: false,
-    };
-  }
-
-  onHideExpandRow = () => {
-    this.setState({expandRowIndex: -1});
+    this.props.setExpandedRowIndex(rowIndex);
   }
 
   render() {
-    const { expandRowIndex } = this.state;
-    const { duplicationRows, configSettings } = this.props;
+    const { duplicationRows } = this.props;
     if (!Array.isArray(duplicationRows) ||  duplicationRows.length === 0) {
       return <div className={styles['error-description']}>{intl.get('No_duplication')}</div>;
     } else {
       return (
-        <Fragment>
-          <table ref={(ref) => this.tableContainer = ref} className="deduplicate-table-container">
-            {this.renderHeader()}
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
-          {expandRowIndex > -1 && (
-            <DetailDuplicationDialog
-              selectedItem={this.getExpandRowItem()}
-              configSettings={configSettings}
-              collaborators={this.props.collaborators}
-              dtable={this.props.dtable}
-              onDeleteRow={this.props.onDeleteRow}
-              onDeleteSelectedRows={this.props.onDeleteSelectedRows}
-              onHideExpandRow={this.onHideExpandRow}
-              formulaRows={this.props.formulaRows}
-              getOptionColors={this.props.getOptionColors}
-              getCellValueDisplayString={this.props.getCellValueDisplayString}
-              getMediaUrl={this.props.getMediaUrl}
-            />
-          )}
-        </Fragment>
+        <table ref={(ref) => this.tableContainer = ref} className="deduplicate-table-container">
+          {this.renderHeader()}
+          <tbody>
+            {this.renderBody()}
+          </tbody>
+        </table>
       );
     }
   }
@@ -159,11 +116,7 @@ TableView.propTypes = {
   formulaRows: PropTypes.object,
   duplicationRows: PropTypes.array,
   allDeDuplicationColumns: PropTypes.array,
-  configSettings: PropTypes.array,
   collaborators: PropTypes.array,
-  dtable: PropTypes.object,
-  onDeleteRow: PropTypes.func,
-  onDeleteSelectedRows: PropTypes.func,
   setTableHeight: PropTypes.func,
   getUserCommonInfo: PropTypes.func,
   getMediaUrl: PropTypes.func

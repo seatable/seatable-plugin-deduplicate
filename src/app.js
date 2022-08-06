@@ -5,6 +5,7 @@ import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import DTable, { CELL_TYPE, FORMULA_RESULT_TYPE } from 'dtable-sdk';
 import Settings from './components/settings';
 import TableView from './components/table-view';
+import DetailDuplicationDialog from './components/detail-duplication-dialog';
 import DeleteTip from './components/tips/delete-tip';
 import { compareString, throttle, getSelectColumnOptionMap } from './utils';
 import CellValueUtils from './utils/cell-value-utils';
@@ -48,7 +49,8 @@ class App extends React.Component {
       allDeDuplicationColumns: [],
       pageSize: 1,
       selectedItem: {},
-      duplicationData: {}
+      duplicationData: {},
+      expandedRowIndex: -1
     };
     this.dtable = new DTable();
     this.cellValueUtils = new CellValueUtils({ dtable: this.dtable });
@@ -526,8 +528,29 @@ class App extends React.Component {
     this.innerTableHeight = height;
   }
 
+  getExpandRowItem = () => {
+    const { expandedRowIndex, duplicationRows } = this.state;
+    const duplicationRow = duplicationRows[expandedRowIndex];
+    const { rows = [] } = duplicationRow || {};
+    const rowsSelected = rows.map(item => false);
+    return {
+      rows,
+      rowsSelected,
+      value: rows.length,
+      isAllSelected: false,
+    };
+  }
+
+  onHideExpandRow = () => {
+    this.setState({expandedRowIndex: -1});
+  }
+
+  setExpandedRowIndex = (index) => {
+    this.setState({expandedRowIndex: index});
+  }
+
   render() {
-    let { showDialog, configSettings, duplicationRows, allDeDuplicationColumns, isDeleteTipShow, pageSize } = this.state;
+    let { expandedRowIndex, showDialog, configSettings, duplicationRows, allDeDuplicationColumns, isDeleteTipShow, pageSize } = this.state;
     return (
       <Fragment>
         <Modal
@@ -564,16 +587,11 @@ class App extends React.Component {
                       <TableView
                         duplicationRows={duplicationRows.slice(0, pageSize * 50)}
                         allDeDuplicationColumns={allDeDuplicationColumns}
-                        configSettings={configSettings}
+                        setExpandedRowIndex={this.setExpandedRowIndex}
                         collaborators={this.collaborators}
-                        dtable={this.dtable}
-                        onDeleteRow={this.onDeleteRow}
-                        onDeleteSelectedRows={this.deleteRowsByIds}
                         setTableHeight={this.setTableHeight}
                         formulaRows={this.state.formulaRows}
                         getUserCommonInfo={this.getUserCommonInfo}
-                        getOptionColors={this.getOptionColors}
-                        getCellValueDisplayString={this.getCellValueDisplayString}
                         getMediaUrl={this.getMediaUrl}
                       />
                     </div>
@@ -584,6 +602,23 @@ class App extends React.Component {
                   />
                 </div>
               )}
+            {expandedRowIndex > -1 && (
+              <DetailDuplicationDialog
+                selectedItem={this.getExpandRowItem()}
+                onHideExpandRow={this.onHideExpandRow}
+                configSettings={configSettings}
+                collaborators={this.collaborators}
+                dtable={this.dtable}
+                onDeleteRow={this.onDeleteRow}
+                onDeleteSelectedRows={this.deleteRowsByIds}
+                setTableHeight={this.setTableHeight}
+                formulaRows={this.state.formulaRows}
+                getUserCommonInfo={this.getUserCommonInfo}
+                getOptionColors={this.getOptionColors}
+                getCellValueDisplayString={this.getCellValueDisplayString}
+                getMediaUrl={this.getMediaUrl}
+              />
+            )}
           </ModalBody>
         </Modal>
       </Fragment>
