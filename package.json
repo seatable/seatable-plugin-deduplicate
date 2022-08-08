@@ -1,6 +1,6 @@
 {
   "name": "seatable-plugin-template",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "private": true,
   "dependencies": {
     "dayjs": "1.10.7",
