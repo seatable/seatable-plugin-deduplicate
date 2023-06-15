@@ -15,10 +15,10 @@ const de = {
   "Select": "Auswählen",
   "Cancel": "Abbrechen",
   "This_plugin_is_not_available_now": "Das Plugin steht Ihnen nicht zur Verfügung, da Sie nur Lesezugriff haben.",
-  "Delete_all_duplicated_items": "Delete all the duplicated records",
-  "keep_only_one": ", only keep the first one or the last one.",
-  "keep_first": "Keep the first one",
-  "keep_last": "Keep the last one"
+  "Delete_all_duplicated_items": "Alle Duplikate löschen",
+  "keep_only_one": ", nur das erste oder letzte Duplikat erhalten.",
+  "keep_first": "Das erste behalten",
+  "keep_last": "Das letzte behalten"
 }
 ;
 
