@@ -573,7 +573,7 @@ class App extends React.Component {
                   >
                     <div className={styles['table-wrapper']}>
                       {(Array.isArray(duplicationRows) && duplicationRows.length > 0) &&
-                        <div className={styles['delete-all-container']}>
+                        <div className={styles['delete-all-containers']}>
                           <div className={styles['delete-all-button']}>
                             <span className={styles['delete-all-highlight-msg']} onClick={this.openDeleteTip}>
                               {intl.get('Delete_all_duplicated_items')}

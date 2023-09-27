@@ -364,12 +364,12 @@
   margin-bottom: 14px;
 }
 
-.delete-all-container {
+.delete-all-containers {
   display: flex;
   justify-content: center;
 }
 
-.delete-all-container .delete-all-button {
+.delete-all-containers .delete-all-button {
   padding: 10px;
   background: #eee;
   border-radius: 4px;
@@ -377,13 +377,13 @@
   width: fit-content;
 }
 
-.delete-all-container .delete-all-highlight-msg {
+.delete-all-containers .delete-all-highlight-msg {
   color: #ff8000;
   margin-left: .5rem;
   cursor: pointer;
 }
 
-.delete-all-container .delete-all-highlight-msg:hover {
+.delete-all-containers .delete-all-highlight-msg:hover {
   text-decoration: underline;
 }
 

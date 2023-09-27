@@ -10,7 +10,8 @@ const pluginName = files[0];
 
 const generatorLanguage = (lang, content) => {
   return (
-`const ${lang} = ${content};
+`/* eslint-disable */
+const ${lang} = ${content};
 
 export default ${lang};`
   );

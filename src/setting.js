@@ -14,17 +14,20 @@ let config = {
 try {
   config.local = require('./setting.local.js').default || {};
   config = {...config, ...{loadVerbose: true}, ...config.local};
+  // eslint-disable-next-line
   config.loadVerbose && console.log('[SeaTable Plugin Development] Configuration merged with "./src/setting.local.js" (this message can be disabled by adding `loadVerbose: false` to the local development settings)');
   delete config.local;
   delete config.loadVerbose;
 } catch (error) {
   // fall-through by intention
+  // eslint-disable-next-line
   console.error('[SeaTable Plugin Development] Please create "./src/setting.local.js" (from `setting.local.dist.js`)');
   throw error;
 }
 
 /** (3/5) remove server trailing slash(es) (if any, common configuration error)*/
 if (config.server !== config.server.replace(/\/+$/, '')) {
+  // eslint-disable-next-line
   console.log(`[SeaTable Plugin Development] Server "${config.server}" trailing slash(es) removed (this message will go away by correcting the \`server: ...\` entry in the local development settings)`);
   config.server = config.server.replace(/\/+$/, '');
 }
@@ -33,8 +36,11 @@ if (config.server !== config.server.replace(/\/+$/, '')) {
 if (intl.options && intl.options.locales && intl.options.locales[config.lang]) {
   intl.options.currentLocale = config.lang;
 } else {
+  // eslint-disable-next-line
   console.warn(`[SeaTable Plugin Development] Locale "${config.lang}" not available`);
+  // eslint-disable-next-line
   console.info(`[SeaTable Plugin Development] Available locales are: "${Object.keys((intl && intl.options && intl.options.locales) || {'ReactIntlUniversal Loading Error': 1}).join('", "')}"`);
+  // eslint-disable-next-line
   console.info('[SeaTable Plugin Development] Suggestions: verify "./src/setting.local.js" and/or the locales in "./src/locale"');
 }
 

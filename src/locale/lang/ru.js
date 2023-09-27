@@ -1,3 +1,4 @@
+/* eslint-disable */
 const ru = {
   "Deduplication": "Дедупликация",
   "Table": "Таблица",

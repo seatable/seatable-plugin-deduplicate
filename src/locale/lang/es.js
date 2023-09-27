@@ -1,3 +1,4 @@
+/* eslint-disable */
 const es = {
   "Deduplication": "Deduplication",
   "Table": "Table",

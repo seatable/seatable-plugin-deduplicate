@@ -1,3 +1,4 @@
+/* eslint-disable */
 const zh_CN = {
   "Deduplication": "数据去重",
   "Table": "子表",
