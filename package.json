@@ -1,10 +1,10 @@
 {
   "name": "seatable-plugin-template",
-  "version": "0.0.44",
+  "version": "0.0.45",
   "private": true,
   "dependencies": {
     "dtable-sdk": "0.2.3",
-    "dtable-ui-component": "0.3.18",
+    "dtable-ui-component": "0.3.20",
     "prop-types": "^15.7.2",
     "react": "16.14.0",
     "react-dom": "16.14.0",
