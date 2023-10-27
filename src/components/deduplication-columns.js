@@ -1,6 +1,6 @@
 import React from 'react';
 import intl from 'react-intl-universal';
-import Select from './select';
+import DtableSelect from 'dtable-ui-component/lib/DTableSelect';
 import styles from '../css/plugin-layout.module.css';
 
 class DeDuplicationColumns extends React.Component {
@@ -12,13 +12,15 @@ class DeDuplicationColumns extends React.Component {
     return configSetting.active.map((columnName, index) => {
       let activeOption = settings.find(setting => setting.name === columnName);
       return (
-        <div key={'deduplication-' + index} className={`${styles['deduplication-columns-select']} d-flex`}>
-          <Select
-            className="dtable-plugin-select"
-            value={this.createOption(activeOption)}
-            options={this.createOptions()}
-            onSelectOption={(option) => this.onSelectChange(option, index)}
-          />
+        <div key={'deduplication-' + index} className={`${styles['deduplication-columns-select-item']} d-flex`}>
+          <div className='w-100'>
+            <DtableSelect
+              classNamePrefix="deduplicate-column"
+              value={this.createOption(activeOption)}
+              options={this.createOptions()}
+              onChange={(option) => this.onSelectChange(option, index)}
+            />
+          </div>
           <button type="button"
             aria-label={intl.get('Delete')}
             title={intl.get('Delete')}
@@ -39,13 +41,14 @@ class DeDuplicationColumns extends React.Component {
   createOption = (option) => {
     return ({
       label: (<span className='select-option-name'>{option.name}</span>),
-      value: { name: option.name },
+      value: option.name,
     });
   }
 
   onSelectChange = (option, index) => {
     let { configSetting } = this.props;
-    this.props.onSelectChange(configSetting.type, option, index);
+    const selectedOption = { name: option.value };
+    this.props.onSelectChange(configSetting.type, selectedOption, index);
   }
 
   deleteColumn = (index) => {

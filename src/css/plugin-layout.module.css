@@ -91,8 +91,13 @@
   margin-bottom: 10px;
 }
 
-.dtable-plugin-settings-item {
+.dtable-plugin-settings-option {
   padding-bottom: 14px;
+}
+
+.split-line {
+  margin-bottom: 14px;
+  border-bottom: 1px solid #ddd;
 }
 
 .dtable-plugin-settings-parameter {
@@ -360,8 +365,9 @@
   font-size: .8rem;
 }
 
-.deduplication-columns-select {
+.deduplication-columns-select-item {
   margin-bottom: 14px;
+  margin-top: 14px;
 }
 
 .delete-all-containers {
