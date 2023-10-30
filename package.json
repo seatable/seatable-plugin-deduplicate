@@ -1,6 +1,6 @@
 {
   "name": "seatable-plugin-template",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "private": true,
   "dependencies": {
     "dtable-sdk": "0.2.3",
