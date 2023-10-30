@@ -12,13 +12,8 @@ const propTypes = {
 };
 
 class Settings extends Component {
-
-  onSelectChange = (option, type, index) => {
-    this.props.onSelectChange(option, type, index);
-  }
-
   render() {
-    const { configSettings, } = this.props;
+    const { configSettings, onSelectChange } = this.props;
     return (
       <div className={styles['dtable-plugin-settings']} onClick={this.props.hideDetailDialog}>
         <div className={styles['dtable-plugin-settings-header']}>
@@ -29,7 +24,7 @@ class Settings extends Component {
             if (configSetting.type === 'add_column') {
               return (
                 <AddColumn
-                  onSelectChange={this.onSelectChange}
+                  onSelectChange={onSelectChange}
                   key={configSetting.type}
                   configSettings={configSettings}
                   configSetting={configSetting}
@@ -40,7 +35,7 @@ class Settings extends Component {
               return (
                 <DeDuplicationColumns
                   key={configSetting.type}
-                  onSelectChange={this.onSelectChange}
+                  onSelectChange={onSelectChange}
                   configSetting={configSetting}
                 />
               );
@@ -49,7 +44,7 @@ class Settings extends Component {
               <SettingItem
                 key={configSetting.type}
                 configSetting={configSetting}
-                onSelectChange={this.onSelectChange}
+                onSelectChange={onSelectChange}
               />
             );
           })}
