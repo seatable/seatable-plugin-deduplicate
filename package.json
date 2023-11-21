@@ -4,10 +4,10 @@
   "private": true,
   "dependencies": {
     "dtable-sdk": "0.2.3",
-    "dtable-ui-component": "0.3.20",
+    "dtable-ui-component": "0.3.26",
     "prop-types": "^15.7.2",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "react-intl-universal": "^2.2.2",
     "reactstrap": "8.9.0"
   },
@@ -33,56 +33,6 @@
       "last 1 safari version"
     ]
   },
-  "jest": {
-    "roots": [
-      "<rootDir>/src"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}",
-      "!src/**/*.d.ts"
-    ],
-    "setupFiles": [
-      "react-app-polyfill/jsdom"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/setupTests.js"
-    ],
-    "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
-      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
-    ],
-    "testEnvironment": "jest-environment-jsdom-fourteen",
-    "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
-      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
-    },
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
-      "^.+\\.module\\.(css|sass|scss)$"
-    ],
-    "modulePaths": [],
-    "moduleNameMapper": {
-      "^react-native$": "react-native-web",
-      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
-    },
-    "moduleFileExtensions": [
-      "web.js",
-      "js",
-      "web.ts",
-      "ts",
-      "web.tsx",
-      "tsx",
-      "json",
-      "web.jsx",
-      "jsx",
-      "node"
-    ],
-    "watchPlugins": [
-      "jest-watch-typeahead/filename",
-      "jest-watch-typeahead/testname"
-    ]
-  },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",
     "@testing-library/jest-dom": "^4.2.4",
@@ -90,6 +40,7 @@
     "@testing-library/user-event": "^7.2.1",
     "@typescript-eslint/eslint-plugin": "^2.10.0",
     "@typescript-eslint/parser": "^2.10.0",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.8.0",
     "babel-eslint": "10.0.3",
     "babel-jest": "29.5.0",
     "babel-loader": "8.0.6",
@@ -143,6 +94,10 @@
     "webpack": "4.41.5",
     "webpack-dev-server": "^4.6.0",
     "webpack-manifest-plugin": "2.2.0",
-    "workbox-webpack-plugin": "4.3.1"
+    "workbox-webpack-plugin": "4.3.1",
+    "i18next": "^17.0.13",
+    "i18next-browser-languagedetector": "^3.0.3",
+    "i18next-xhr-backend": "^3.1.2",
+    "react-i18next": "^10.12.2"
   }
 }
