@@ -1,6 +1,6 @@
 {
   "name": "seatable-plugin-duplicate",
-  "version": "0.0.46",
+  "version": "0.0.47",
   "private": true,
   "dependencies": {
     "dtable-sdk": "0.2.3",
