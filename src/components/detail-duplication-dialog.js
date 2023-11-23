@@ -26,7 +26,7 @@ class DetailDuplicationDialog extends React.Component {
 
   componentDidMount() {
     this.checkArrows();
-    document.addEventListener('click', this.onHideExpandRow);
+    document.addEventListener('mousedown', this.onHideExpandRow);
   }
 
   onHideExpandRow = (event) => {
@@ -46,7 +46,7 @@ class DetailDuplicationDialog extends React.Component {
 
   componentWillUnmount() {
     this.recordItems = null;
-    document.removeEventListener('keydown', this.onHideExpandRow);
+    document.removeEventListener('mousedown', this.onHideExpandRow);
   }
 
   handleVerticalScroll = (e) => {
