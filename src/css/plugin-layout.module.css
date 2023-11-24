@@ -12,6 +12,12 @@
   font-size: 24px;
 }
 
+.deduplication-plugin-title {
+  margin-left: .5rem;
+  font-size: .875rem;
+  font-weight: 400;
+}
+
 .deduplication-plugin-content {
   padding: 0;
   height: calc(100% - 56px);
@@ -342,13 +348,13 @@
 
 .add-column {
   background: transparent;
-  color: #999999;
+  color: #666;
   font-weight: 400;
   cursor: pointer;
 } 
 
 .add-column:hover {
-  color: #333333;
+  color: #212529;
 }
 
 .add-column:focus {

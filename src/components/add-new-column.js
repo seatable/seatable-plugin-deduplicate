@@ -6,21 +6,14 @@ class AddColumn extends React.Component {
 
   addColumn = () => {
     let { configSetting } = this.props;
-    if (this.isActive()) {
-      this.props.onSelectChange(configSetting.type);
-    }
-  }
-
-  isActive = () => {
-    const activeColumn = this.props.configSettings[2].active;
-    return activeColumn !== intl.get('Select_a_column');
+    this.props.onSelectChange(configSetting.type);
   }
 
   render() {
     return (
-      <button onClick={this.addColumn} disabled={!this.isActive()} className={`border-0 p-0 ${styles['add-column']}`}>
+      <button onClick={this.addColumn} className={`border-0 p-0 ${styles['add-column']}`}>
         <span className={`dtable-font dtable-icon-add-table mr-1 ${styles['add-column-icon']}`}></span>
-        <span>{intl.get('Add_new_column')}</span>
+        <span>{intl.get('Add_column')}</span>
       </button>
     );
   }
