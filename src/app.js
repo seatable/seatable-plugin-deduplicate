@@ -12,6 +12,7 @@ import CellValueUtils from './utils/cell-value-utils';
 
 import './locale/index.js';
 
+import logo from './image/logo.png';
 import styles from './css/plugin-layout.module.css';
 
 const DEDUPLICATION_LIST = [
@@ -156,14 +157,9 @@ class App extends React.Component {
       let currentColumn = this.dtable.getColumnByName(currentTable, option.name);
       let columnSettings = this.getColumnSettings(currentTable, currentView, currentColumn);
       const columnSelections = this.getMultiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
-      let activeColumns = selectedColumns.active;
-      if (option.name === intl.get('Select_a_column')) {
-        activeColumns = [];
-      } else {
-        activeColumns = activeColumns.filter((column) => {
-          return column !== option.name;
-        });
-      }
+      const activeColumns = selectedColumns.active.filter((column) => {
+        return column !== option.name;
+      });
       selectedColumns.active = activeColumns;
       selectedColumns.settings = columnSelections;
       configSettings.splice(2, 2, columnSettings, selectedColumns);
@@ -235,12 +231,6 @@ class App extends React.Component {
 
     let columnSettings = columns.map(column => {
       return {id: column.key, name: column.name};
-    });
-
-    columnSettings.unshift({
-      id: '',
-      name: intl.get('Select_a_column'),
-      style: { color: 'rgba(0, 0, 0, .25)'}
     });
     // need options: checkout map column
     let active = activeColumn ? activeColumn.name : columnSettings[0].name;
@@ -562,7 +552,12 @@ class App extends React.Component {
           size="lg"
           zIndex="1048"
         >
-          <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>{intl.get('Deduplication')}</ModalHeader>
+          <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>
+            <div className="d-flex align-items-center">
+              <img src={logo} width="24" alt="logo"/>
+              <span className={styles['deduplication-plugin-title']}>{intl.get('Deduplication')}</span>
+            </div>
+          </ModalHeader>
           <ModalBody className={styles['deduplication-plugin-content']}>
             {(window.dtable && window.dtable.permission === 'r') ?
               <p className="h-100 d-flex align-items-center justify-content-center text-red">{intl.get('This_plugin_is_not_available_now')}</p> : (
