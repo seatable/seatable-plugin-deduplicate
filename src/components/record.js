@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { getRowById } from 'dtable-utils';
 import styles from '../css/plugin-layout.module.css';
 import DeleteRowDropdownMenu from './delete-component';
 
@@ -37,8 +38,8 @@ class RecordItem extends PureComponent {
 
   expandRecord = () => {
     if (window.app.expandRow) {
-      const { table, dtable, row: rowID } = this.props;
-      const targetRow = dtable.getRowById(table, rowID);
+      const { table, row: rowID } = this.props;
+      const targetRow = getRowById(table, rowID);
       window.app.expandRow(targetRow, table);
     }
   }

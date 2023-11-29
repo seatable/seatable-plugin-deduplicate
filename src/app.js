@@ -2,39 +2,45 @@ import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
-import DTable, { CELL_TYPE, FORMULA_RESULT_TYPE } from 'dtable-sdk';
+import {
+  CellType, FORMULA_RESULT_TYPE, SORT_TYPE, getTableByName, getViewByName,
+  getTableColumnByName, getNonArchiveViews, getViewShownColumns, sortFormula,
+  compareString,
+} from 'dtable-utils';
 import Settings from './components/settings';
 import TableView from './components/table-view';
 import DetailDuplicationDialog from './components/detail-duplication-dialog';
 import DeleteTip from './components/tips/delete-tip';
-import { compareString, throttle, getSelectColumnOptionMap } from './utils';
+import { throttle, getSelectColumnOptionMap } from './utils';
 import CellValueUtils from './utils/cell-value-utils';
 
 import './locale/index.js';
 
 import logo from './image/logo.png';
+import './css/app.css';
 import styles from './css/plugin-layout.module.css';
 
 const DEDUPLICATION_LIST = [
-  CELL_TYPE.TEXT,
-  CELL_TYPE.STRING,
-  CELL_TYPE.DATE,
-  CELL_TYPE.NUMBER,
-  CELL_TYPE.SINGLE_SELECT,
-  CELL_TYPE.EMAIL,
-  CELL_TYPE.FORMULA,
-  CELL_TYPE.LINK_FORMULA,
-  CELL_TYPE.LINK,
-  CELL_TYPE.CREATOR
+  CellType.TEXT,
+  CellType.STRING,
+  CellType.DATE,
+  CellType.NUMBER,
+  CellType.SINGLE_SELECT,
+  CellType.EMAIL,
+  CellType.FORMULA,
+  CellType.LINK_FORMULA,
+  CellType.LINK,
+  CellType.CREATOR
 ];
 
 const FORMULA_COLUMN_TYPES = [
-  CELL_TYPE.FORMULA,
-  CELL_TYPE.LINK_FORMULA
+  CellType.FORMULA,
+  CellType.LINK_FORMULA
 ];
 
 const propTypes = {
-  showDialog: PropTypes.bool
+  isDevelopment: PropTypes.bool,
+  showDialog: PropTypes.bool,
 };
 
 class App extends React.Component {
@@ -54,8 +60,7 @@ class App extends React.Component {
       duplicationData: {},
       expandedRowIndex: -1
     };
-    this.dtable = new DTable();
-    this.cellValueUtils = new CellValueUtils({ dtable: this.dtable });
+    this.cellValueUtils = new CellValueUtils();
   }
 
   componentDidMount() {
@@ -72,48 +77,55 @@ class App extends React.Component {
   }
 
   async initPluginDTableData() {
-    if (window.app === undefined) {
+    if (this.props.isDevelopment) {
       // local develop
-      window.app = {};
-      await this.dtable.init(window.dtablePluginConfig);
-      await this.dtable.syncWithServer();
-      this.dtable.subscribe('dtable-connect', () => { this.onDTableConnect(); });
+      window.dtableSDK.subscribe('dtable-connect', this.onDTableConnect);
     } else {
-      this.dtable.initInBrowser(window.app.dtableStore);
       this.onDTableConnect();
     }
-    this.collaborators = this.dtable.getRelatedUsers();
-    this.unsubscribeLocalDtableChanged = this.dtable.subscribe('local-dtable-changed', () => { this.onDTableChanged(); });
-    this.unsubscribeRemoteDtableChanged = this.dtable.subscribe('remote-dtable-changed', () => { this.onDTableChanged(); });
+    this.collaborators = window.app.state.collaborators;
+    this.unsubscribeLocalDtableChanged = window.dtableSDK.subscribe('local-dtable-changed', () => { this.onDTableChanged(); });
+    this.unsubscribeRemoteDtableChanged = window.dtableSDK.subscribe('remote-dtable-changed', () => { this.onDTableChanged(); });
     this.resetData();
   }
 
   onDTableConnect = () => {
     const { tableName, viewName, columnName } = this.initPluginSettings();
     const configSettings = this.initSelectedSettings(tableName, viewName, columnName);
-    this.setState({
-      configSettings: configSettings,
-    });
+    this.setState({ configSettings });
   }
 
   initPluginSettings = () => {
-    let activeTable = this.dtable.getActiveTable();
-    let activeView = this.dtable.getActiveView();
-    return  {tableName: activeTable.name, viewName: activeView.name, columnName: null};
+    const activeTable = window.dtableSDK.getActiveTable();
+    const activeView = window.dtableSDK.getActiveView();
+    return {
+      tableName: activeTable.name,
+      viewName: activeView.name,
+      columnName: null,
+    };
+  }
+
+  getCurrentTable = () => {
+    const { configSettings } = this.state;
+    const tables = window.dtableSDK.getTables();
+    const tableName = configSettings[0].active;
+    return getTableByName(tables, tableName);
   }
 
   initSelectedSettings = (tableName, viewName, columnName) => {
+    const tables = window.dtableSDK.getTables();
+    const activeTable = getTableByName(tables, tableName) || tables[0];
+    const tableSettings = this.getTableSettings(activeTable);
     let configSettings = [];
-    let activeTable = this.dtable.getTableByName(tableName);
-    let tableSettings = this.getTableSettings(activeTable);
     configSettings.push(tableSettings);
 
-    let activeView = this.dtable.getViewByName(activeTable, viewName);
-    let viewSettings = this.getViewSettings(activeTable, activeView);
+
+    const activeView = getViewByName(activeTable.views, viewName);
+    const viewSettings = this.getViewSettings(activeTable, activeView);
     configSettings.push(viewSettings);
 
-    let activeColumn = this.dtable.getColumnByName(activeTable, columnName);
-    let columnSettings = this.getColumnSettings(activeTable, activeView, activeColumn);
+    const activeColumn = getTableColumnByName(activeTable, columnName);
+    const columnSettings = this.getColumnSettings(activeTable, activeView, activeColumn);
     let multiColumnSettings = this.initMultiDeduplicationColumnSetting(activeTable, activeView, activeColumn);
     let addColumnSetting = this.getAddColumnSetting();
     configSettings.push(columnSettings, multiColumnSettings, addColumnSetting);
@@ -121,105 +133,105 @@ class App extends React.Component {
   }
 
   updateSelectedSettings = (type, option, multiColumnIndex) => {
+    const tables = window.dtableSDK.getTables();
     if (type === 'table') {
-      let currentTable = this.dtable.getTableByName(option.name);
-      let currentView = this.dtable.getNonArchiveViews(currentTable)[0];
+      const currentTable = getTableByName(tables, option.name);
+      const currentView = getNonArchiveViews(currentTable.views)[0];
 
-      let tableSettings = this.getTableSettings(currentTable);
-      let viewSettings = this.getViewSettings(currentTable);
-      let columnSettings = this.getColumnSettings(currentTable, currentView);
-      let multiColumnSettings = this.initMultiDeduplicationColumnSetting(currentTable, currentView);
-      let addColumnSetting = this.getAddColumnSetting();
-      let configSettings = [tableSettings, viewSettings, columnSettings, multiColumnSettings, addColumnSetting];
-      return configSettings;
+      const tableSettings = this.getTableSettings(currentTable);
+      const viewSettings = this.getViewSettings(currentTable);
+      const columnSettings = this.getColumnSettings(currentTable, currentView);
+      const multiColumnSettings = this.initMultiDeduplicationColumnSetting(currentTable, currentView);
+      const addColumnSetting = this.getAddColumnSetting();
+      return [tableSettings, viewSettings, columnSettings, multiColumnSettings, addColumnSetting];
     }
+
+    const { configSettings } = this.state;
+    const tableName = configSettings[0].active;
+    const currentTable = getTableByName(tables, tableName);
+    let updatedConfigSettings = [...configSettings];
 
     if (type === 'view') {
-      let { configSettings } = this.state;
-      const tableName = configSettings[0].active;
-      let currentTable = this.dtable.getTableByName(tableName);
-      let currentView = this.dtable.getViewByName(currentTable, option.name);
-      let viewSettings = this.getViewSettings(currentTable, currentView);
-      let columnSettings = this.getColumnSettings(currentTable, currentView);
-      let multiColumnSettings = this.initMultiDeduplicationColumnSetting(currentTable, currentView, );
-      let addColumnSetting = this.getAddColumnSetting();
-      configSettings.splice(1, 4, viewSettings, columnSettings, multiColumnSettings, addColumnSetting);
-      return configSettings;
+      const currentView = getViewByName(currentTable.views, option.name);
+      const viewSettings = this.getViewSettings(currentTable, currentView);
+      const columnSettings = this.getColumnSettings(currentTable, currentView);
+      const multiColumnSettings = this.initMultiDeduplicationColumnSetting(currentTable, currentView, );
+      const addColumnSetting = this.getAddColumnSetting();
+      updatedConfigSettings.splice(1, 4, viewSettings, columnSettings, multiColumnSettings, addColumnSetting);
+      return updatedConfigSettings;
     }
 
+    const viewName = configSettings[1].active;
+    const currentView = getViewByName(currentTable.views, viewName);
+    const selectedColumns = configSettings[3];
     if (type === 'column') {
-      let { configSettings } = this.state;
-      const tableName = configSettings[0].active;
-      const viewName = configSettings[1].active;
-      const selectedColumns = configSettings[3];
-      let currentTable = this.dtable.getTableByName(tableName);
-      let currentView = this.dtable.getViewByName(currentTable, viewName);
-      let currentColumn = this.dtable.getColumnByName(currentTable, option.name);
-      let columnSettings = this.getColumnSettings(currentTable, currentView, currentColumn);
+      const currentColumn = getTableColumnByName(currentTable, option.name);
+      const columnSettings = this.getColumnSettings(currentTable, currentView, currentColumn);
       const columnSelections = this.getMultiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
-      const activeColumns = selectedColumns.active.filter((column) => {
-        return column !== option.name;
-      });
+      const activeColumns = selectedColumns.active.filter((column) => column !== option.name);
       selectedColumns.active = activeColumns;
       selectedColumns.settings = columnSelections;
-      configSettings.splice(2, 2, columnSettings, selectedColumns);
-      return configSettings;
+      updatedConfigSettings.splice(2, 2, columnSettings, selectedColumns);
+      return updatedConfigSettings;
     }
 
     if (type === 'add_column') {
-      let { configSettings } = this.state;
-      const tableName = configSettings[0].active;
-      const viewName = configSettings[1].active;
       const columnName = configSettings[2].active;
-      let currentTable = this.dtable.getTableByName(tableName);
-      let currentView = this.dtable.getViewByName(currentTable, viewName);
-      let currentColumn = this.dtable.getColumnByName(currentTable, columnName);
-      const deduplicationColumnSetting = configSettings[3];
-      const activeDeduplicationColumns = deduplicationColumnSetting.active;
+      const currentColumn = getTableColumnByName(currentTable, columnName);
+      const activeDeduplicationColumns = selectedColumns.active;
       const newDeduplicationColumnSetting = this.getMultiDeduplicationColumnSetting(currentTable, currentView, currentColumn, activeDeduplicationColumns);
-      configSettings.splice(3, 1, newDeduplicationColumnSetting);
-      return configSettings;
+      updatedConfigSettings.splice(3, 1, newDeduplicationColumnSetting);
+      return updatedConfigSettings;
     }
 
     if (type === 'multi_deduplication_column') {
-      let { configSettings } = this.state;
-      const multiDeduplicationColumns = configSettings[3].active;
+      const multiDeduplicationColumns = selectedColumns.active;
       if (!option) {
         // delete the column
         multiDeduplicationColumns.splice(multiColumnIndex, 1);
       } else {
         multiDeduplicationColumns.splice(multiColumnIndex, 1, option.name);
       }
-      configSettings[3].active = multiDeduplicationColumns;
-      return configSettings;
+      updatedConfigSettings[3].active = multiDeduplicationColumns;
+      return updatedConfigSettings;
     }
   }
 
   getTableSettings = (activeTable = null) => {
-    let tables = this.dtable.getTables();
-    let tableSettings = tables.map(table => {
-      return {id: table._id, name: table.name};
+    const tables = window.dtableSDK.getTables();
+    const tableSettings = tables.map((table) => {
+      return { id: table._id, name: table.name };
     });
-    let active = activeTable ? activeTable.name : tables[0].name;
-    return {type: 'table', name: intl.get('Table'), active: active, settings: tableSettings};
+    return {
+      type: 'table',
+      name: intl.get('Table'),
+      active: activeTable.name,
+      settings: tableSettings,
+    };
   }
 
   getViewSettings = (currentTable, activeView = null) => {
-    let views = this.dtable.getNonArchiveViews(currentTable);
-    let viewSettings = views.map(view => {
-      return {id: view._id, name: view.name};
+    const views = getNonArchiveViews(currentTable.views);
+    const viewSettings = views.map(view => {
+      return { id: view._id, name: view.name };
     });
 
-    let active = activeView ? activeView.name : views[0].name;
-    return {type: 'view', name: intl.get('View'), active: active, settings: viewSettings};
+    const active = activeView ? activeView.name : views[0].name;
+    return {
+      type: 'view',
+      name: intl.get('View'),
+      settings: viewSettings,
+      active,
+    };
   }
 
   getColumnSettings = (currentTable, currentView, activeColumn = null) => {
-    let columns = this.dtable.getViewShownColumns(currentView, currentTable);
+    let columns = getViewShownColumns(currentView, currentTable.columns);
+
     // need options: checkout map column
     columns = columns.filter(column => {
       const { type } = column;
-      if (FORMULA_COLUMN_TYPES.includes(type) || type === CELL_TYPE.LINK) {
+      if (FORMULA_COLUMN_TYPES.includes(type) || type === CellType.LINK) {
         const { data } = column;
         const { array_type, result_type } = data;
         return DEDUPLICATION_LIST.includes(result_type) ||
@@ -229,13 +241,21 @@ class App extends React.Component {
       return DEDUPLICATION_LIST.includes(type);
     });
 
-    let columnSettings = columns.map(column => {
+    const columnSettings = columns.map(column => {
       return {id: column.key, name: column.name};
     });
+
     // need options: checkout map column
-    let active = activeColumn ? activeColumn.name : columnSettings[0].name;
+    const active = activeColumn ? activeColumn.name : null;
+
     // need options: checkout map column
-    return {type: 'column', name: intl.get('Column'), active: active, settings: columnSettings};
+    return {
+      type: 'column',
+      name: intl.get('Column'),
+      settings: columnSettings,
+      placeholder: intl.get('Select_a_column'),
+      active,
+    };
   }
 
   getAddColumnSetting = () => {
@@ -256,7 +276,8 @@ class App extends React.Component {
   }
 
   getMultiDeduplicationColumnSelections = (currentTable, currentView, currentColumn = {}) => {
-    let columns = this.dtable.getViewShownColumns(currentView, currentTable);
+    const columns = getViewShownColumns(currentView, currentTable.columns);
+
     // need options: checkout map column
     return columns.filter(column => { //eslint-disable-line
       if (DEDUPLICATION_LIST.includes(column.type) && currentColumn.key !== column.key) {
@@ -266,8 +287,8 @@ class App extends React.Component {
   }
 
   initMultiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}) => {
-    let columnSettings = this.getMultiDeduplicationColumnSelections(currentTable, currentView, currentColumn = {});
-    return {type: 'multi_deduplication_column', active: [], settings: columnSettings};
+    const columnSettings = this.getMultiDeduplicationColumnSelections(currentTable, currentView, currentColumn = {});
+    return { type: 'multi_deduplication_column', active: [], settings: columnSettings };
   }
 
   onSelectChange = (type, option, multiColumnIndex) => {
@@ -279,33 +300,23 @@ class App extends React.Component {
     });
   }
 
-  getOptionColors = () => {
-    return this.dtable.getOptionColors();
-  }
-
   getCellValueDisplayString = (cellValue, column, {tables = [], collaborators = []} = {}) => {
     return this.cellValueUtils.getCellValueDisplayString(cellValue, column, { tables, collaborators });
   }
 
   getUserCommonInfo = (email, avatar_size) => {
-    const dtableWebAPI = window.dtableWebAPI || this.dtable.dtableWebAPI;
-    return dtableWebAPI.getUserCommonInfo(email, avatar_size);
+    return window.dtableWebAPI.getUserCommonInfo(email, avatar_size);
   }
 
-  getColumnsByName = (table, columns) => {
-    return columns.map((column) => {
-      return this.dtable.getColumnByName(table, column);
-    });
-  }
-
-  getMediaUrl = () => {
-    return window.dtable ? window.dtable.mediaUrl : window.dtablePluginConfig.mediaUrl;
+  getColumnsByName = (table, columnsNames) => {
+    return columnsNames.map((columnName) => getTableColumnByName(table, columnName)).filter(Boolean);
   }
 
   getDeduplicationData = (configSettings) => {
-    const table = this.dtable.getTableByName(configSettings[0].active);
-    const view = this.dtable.getViewByName(table, configSettings[1].active);
-    const selectedColumn = this.dtable.getColumnByName(table, configSettings[2].active);
+    const tables = window.dtableSDK.getTables();
+    const table = getTableByName(tables, configSettings[0].active);
+    const view = getViewByName(table.views, configSettings[1].active);
+    const selectedColumn = getTableColumnByName(table, configSettings[2].active);
     if (!selectedColumn) {
       this.setState({
         duplicationRows: [],
@@ -314,8 +325,8 @@ class App extends React.Component {
       });
       return;
     }
-    const rows = this.dtable.getViewRows(view, table);
-    const formulaRows = this.dtable.getTableFormulaResults(table, rows);
+    const rows = window.dtableSDK.getViewRows(view, table);
+    const formulaRows = window.dtableSDK.getTableFormulaResults(table, rows);
     const deDuplicationColumnNames = [...configSettings[3].active];
     const deDuplicationColumns = this.getColumnsByName(table, deDuplicationColumnNames);
     const allDeDuplicationColumns = [selectedColumn, ...deDuplicationColumns];
@@ -323,7 +334,7 @@ class App extends React.Component {
     let rowValueMap = {};
     let selectColumnKey2OptionMap = {};
     allDeDuplicationColumns.forEach(column => {
-      if (column.type === CELL_TYPE.SINGLE_SELECT) {
+      if (column.type === CellType.SINGLE_SELECT) {
         selectColumnKey2OptionMap[column.key] = getSelectColumnOptionMap(column);
       }
     });
@@ -338,7 +349,7 @@ class App extends React.Component {
             cellValue = '';
           }
           rowValueKey += String(cellValue);
-        } else if (type === CELL_TYPE.LINK) {
+        } else if (type === CellType.LINK) {
           const linkCellItem = formulaRows[item._id] ? formulaRows[item._id][key] : null;
 
           cellValue = Array.isArray(linkCellItem) ? linkCellItem.map(link => link.display_value) : null;
@@ -382,15 +393,15 @@ class App extends React.Component {
   sortDuplicationRows = (duplicationRows, column, formulaRows) => {
     const { type, key, data = {} } = column;
     const optionsMap = {};
-    if (type === CELL_TYPE.SINGLE_SELECT) {
+    if (type === CellType.SINGLE_SELECT) {
       const { options } = column.data;
       options.forEach(option => {
         optionsMap[option.id] = option.name;
       });
     }
-    // DEDUPLICATION_LIST support five types: CELL_TYPE.TEXT, CELL_TYPE.DATE, CELL_TYPE.NUMBER, CELL_TYPE.SINGLE_SELECT, CELL_TYPE.EMAIL
+    // DEDUPLICATION_LIST support five types: CellType.TEXT, CellType.DATE, CellType.NUMBER, CellType.SINGLE_SELECT, CellType.EMAIL
     switch (type) {
-      case CELL_TYPE.NUMBER:
+      case CellType.NUMBER:
         duplicationRows.sort((currRow, nextRow) => {
           const currCellValue = currRow.item[key];
           const nextCellValue = nextRow.item[key];
@@ -398,7 +409,7 @@ class App extends React.Component {
           return currCellValue > nextCellValue ? 1 : -1;
         });
         break;
-      case CELL_TYPE.SINGLE_SELECT:
+      case CellType.SINGLE_SELECT:
         duplicationRows.sort((currRow, nextRow) => {
           const currCellValue = currRow.item[key];
           const nextCellValue = nextRow.item[key];
@@ -406,29 +417,29 @@ class App extends React.Component {
           return compareString(optionsMap[currCellValue], optionsMap[nextCellValue]);
         });
         break;
-      case CELL_TYPE.LINK_FORMULA:
-      case CELL_TYPE.FORMULA: {
+      case CellType.LINK_FORMULA:
+      case CellType.FORMULA: {
         duplicationRows.sort((currRow, nextRow) => {
           const currCellValue = formulaRows[currRow.item._id] ? formulaRows[currRow.item._id][key] : null;
           const nextCellValue = formulaRows[nextRow.item._id] ? formulaRows[nextRow.item._id][key] : null;
-          return this.dtable.sortFormula(currCellValue, nextCellValue, 'up', {columnData: data, value: {}});
+          return sortFormula(currCellValue, nextCellValue, SORT_TYPE.UP, { columnData: data, value: {} });
         });
         break;
       }
-      case CELL_TYPE.LINK: {
+      case CellType.LINK: {
         duplicationRows.sort((currRow, nextRow) => {
           const currCellVal = formulaRows[currRow.item._id] ? formulaRows[currRow.item._id][key] : null;
           const nextCellVal = formulaRows[nextRow.item._id] ? formulaRows[nextRow.item._id][key] : null;
           let currDisplayValues = Array.isArray(currCellVal) ? currCellVal.map(link => link.display_value) : null;
           let nextDisplayValues = Array.isArray(nextCellVal) ? nextCellVal.map(link => link.display_value) : null;
-          return this.dtable.sortFormula(currDisplayValues, nextDisplayValues, 'up', {columnData: data, value: {}});
+          return sortFormula(currDisplayValues, nextDisplayValues, 'up', {columnData: data, value: {}});
         });
         break;
       }
       // Text and date column values are all string
-      case CELL_TYPE.DATE:
-      case CELL_TYPE.TEXT:
-      case CELL_TYPE.EMAIL:
+      case CellType.DATE:
+      case CellType.TEXT:
+      case CellType.EMAIL:
         duplicationRows.sort((currRow, nextRow) => {
           const currCellValue = currRow.item[key];
           const nextCellValue = nextRow.item[key];
@@ -467,17 +478,13 @@ class App extends React.Component {
   }
 
   onDeleteRow = (rowId) => {
-    const { configSettings } = this.state;
-    const tableName = configSettings[0].active;
-    const currentTable = this.dtable.getTableByName(tableName);
-    this.dtable.deleteRowById(currentTable, rowId);
+    const currentTable = this.getCurrentTable();
+    window.dtableSDK.deleteRowById(currentTable, rowId);
   }
 
   deleteRowsByIds = (all_row_ids) => {
-    const { configSettings } = this.state;
-    const tableName = configSettings[0].active;
-    const currentTable = this.dtable.getTableByName(tableName);
-    this.dtable.deleteRowsByIds(currentTable, all_row_ids);
+    const currentTable = this.getCurrentTable();
+    window.dtableSDK.deleteRowsByIds(currentTable, all_row_ids);
   };
 
   deleteAllDuplicationRows = (kept) => {
@@ -588,7 +595,6 @@ class App extends React.Component {
                         setTableHeight={this.setTableHeight}
                         formulaRows={this.state.formulaRows}
                         getUserCommonInfo={this.getUserCommonInfo}
-                        getMediaUrl={this.getMediaUrl}
                       />
                     </div>
                   </div>
@@ -604,15 +610,12 @@ class App extends React.Component {
                 onHideExpandRow={this.onHideExpandRow}
                 configSettings={configSettings}
                 collaborators={this.collaborators}
-                dtable={this.dtable}
                 onDeleteRow={this.onDeleteRow}
                 onDeleteSelectedRows={this.deleteRowsByIds}
                 setTableHeight={this.setTableHeight}
                 formulaRows={this.state.formulaRows}
                 getUserCommonInfo={this.getUserCommonInfo}
-                getOptionColors={this.getOptionColors}
                 getCellValueDisplayString={this.getCellValueDisplayString}
-                getMediaUrl={this.getMediaUrl}
               />
             )}
           </ModalBody>

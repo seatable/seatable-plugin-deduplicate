@@ -1,11 +1,10 @@
-import { CELL_TYPE, FORMULA_RESULT_TYPE } from 'dtable-sdk';
+import {
+  CellType, FORMULA_RESULT_TYPE, getNumberDisplayString, getDateDisplayString,
+  getGeolocationDisplayString, getDurationDisplayString,
+} from 'dtable-utils';
 import { convertValueToDtableLongTextValue, isArrayFormalColumn } from './common-utils';
 
 class CellValueUtils {
-
-  constructor({ dtable }) {
-    this.dtable = dtable;
-  }
 
   getCollaboratorsName = (collaborators, cellVal) => {
     if (cellVal) {
@@ -34,19 +33,20 @@ class CellValueUtils {
   getNumberDisplayString = (cellValue, columnData) => {
     if (Array.isArray(cellValue)) {
       if (cellValue.length === 0) return '';
-      return cellValue.map(item => this.dtable.getNumberDisplayString(item, columnData)).join(', ');
+      return cellValue.map(item => getNumberDisplayString(item, columnData)).join(', ');
     }
-    return this.dtable.getNumberDisplayString(cellValue, columnData);
+    return getNumberDisplayString(cellValue, columnData);
   }
 
   getDateDisplayString = (cellValue, columnData) => {
     if (Array.isArray(cellValue)) {
       if (cellValue.length === 0) return '';
       const validCellValue = cellValue.filter(item => item && typeof item === 'string');
-      return validCellValue.map(item => this.dtable.getDateDisplayString(item.replace('T', ' ').replace('Z', ''), columnData));
+      return validCellValue.map(item => getDateDisplayString(item.replace('T', ' ').replace('Z', ''), columnData));
     }
     if (!cellValue || typeof cellValue !== 'string') return '';
-    return this.dtable.getDateDisplayString(cellValue.replace('T', ' ').replace('Z', ''), columnData);
+    const format = columnData && columnData.format;
+    return getDateDisplayString(cellValue.replace('T', ' ').replace('Z', ''), format);
   }
 
   getFormulaDisplayString = (cellValue, column, { tables = [], collaborators = [] } = {}) => {
@@ -85,14 +85,14 @@ class CellValueUtils {
     const { type, data } = column;
     const newData = data || {};
     switch (type) {
-      case CELL_TYPE.GEOLOCATION: {
+      case CellType.GEOLOCATION: {
         if (Array.isArray(cellValue)) {
           if (cellValue.length === 0) return '';
-          return cellValue.map(item => this.dtable.getGeolocationDisplayString(item, data)).join(', ');
+          return cellValue.map(item => getGeolocationDisplayString(item, data)).join(', ');
         }
-        return this.dtable.getGeolocationDisplayString(cellValue, data);
+        return getGeolocationDisplayString(cellValue, data);
       }
-      case CELL_TYPE.SINGLE_SELECT: {
+      case CellType.SINGLE_SELECT: {
         if (!newData) return '';
         const { options } = newData;
         if (!cellValue || !options || !Array.isArray(options)) return '';
@@ -105,7 +105,7 @@ class CellValueUtils {
         const option = options.find(option => option.id === cellValue);
         return option ? option.name : '';
       }
-      case CELL_TYPE.MULTIPLE_SELECT: {
+      case CellType.MULTIPLE_SELECT: {
         if (!newData) return '';
         let { options } = newData;
         if (!cellValue || !options || !Array.isArray(options)) return '';
@@ -113,39 +113,39 @@ class CellValueUtils {
         if (selectedOptions.length === 0) return '';
         return selectedOptions.map((option) => option.name).join(', ');
       }
-      case CELL_TYPE.FORMULA:
-      case CELL_TYPE.LINK_FORMULA: {
+      case CellType.FORMULA:
+      case CellType.LINK_FORMULA: {
         return this.getFormulaDisplayString(cellValue, column, { tables, collaborators });
       }
-      case CELL_TYPE.LONG_TEXT: {
+      case CellType.LONG_TEXT: {
         if (Array.isArray(cellValue)) {
           if (cellValue.length === 0) return '';
           return cellValue.map(item => this.getLongTextDisplayString(item)).join(', ');
         }
         return this.getLongTextDisplayString(cellValue);
       }
-      case CELL_TYPE.NUMBER: {
+      case CellType.NUMBER: {
         if (Array.isArray(cellValue)) {
           return cellValue.map(item => this.getNumberDisplayString(item, newData)).join(', ');
         }
         return this.getNumberDisplayString(cellValue, newData);
       }
-      case CELL_TYPE.DATE: {
+      case CellType.DATE: {
         if (Array.isArray(cellValue)) {
           return cellValue.map(item => this.getDateDisplayString(item, newData)).join(', ');
         }
         return this.getDateDisplayString(cellValue, newData);
       }
-      case CELL_TYPE.CTIME:
-      case CELL_TYPE.MTIME: {
+      case CellType.CTIME:
+      case CellType.MTIME: {
         const formatObject = { format: 'YYYY-MM-DD HH:mm' };
         if (Array.isArray(cellValue)) {
           return cellValue.map(item => this.getDateDisplayString(item, formatObject)).join(', ');
         }
         return this.getDateDisplayString(cellValue, formatObject);
       }
-      case CELL_TYPE.CREATOR:
-      case CELL_TYPE.LAST_MODIFIER: {
+      case CellType.CREATOR:
+      case CellType.LAST_MODIFIER: {
         if (!cellValue) return '';
         if (Array.isArray(cellValue)) {
           if (cellValue.length === 0) return '';
@@ -153,37 +153,37 @@ class CellValueUtils {
         }
         return cellValue === 'anonymous' ? cellValue : this.getCollaboratorsName(collaborators, [cellValue]);
       }
-      case CELL_TYPE.COLLABORATOR: {
+      case CellType.COLLABORATOR: {
         return this.getCollaboratorsName(collaborators, cellValue);
       }
-      case CELL_TYPE.DURATION: {
+      case CellType.DURATION: {
         if (!cellValue && cellValue !== 0) return '';
         if (Array.isArray(cellValue)) {
           if (cellValue.length === 0) return '';
-          return cellValue.map(item => this.dtable.getDurationDisplayString(item, newData)).join(', ');
+          return cellValue.map(item => getDurationDisplayString(item, newData)).join(', ');
         }
-        return this.dtable.getDurationDisplayString(cellValue, newData);
+        return getDurationDisplayString(cellValue, newData);
       }
-      case CELL_TYPE.LINK: {
+      case CellType.LINK: {
         if (!Array.isArray(cellValue) || cellValue.length === 0) return '';
         const { data } = column;
         const { display_column_key, array_type, array_data } = data;
         const display_column = {
           key: display_column_key || '0000',
-          type: array_type || CELL_TYPE.TEXT,
+          type: array_type || CellType.TEXT,
           data: array_data || null
         };
         return this.getCellValueDisplayString(cellValue, display_column, { tables, collaborators });
       }
-      case CELL_TYPE.RATE: {
+      case CellType.RATE: {
         if (Array.isArray(cellValue)) {
           if (cellValue.length === 0) return '';
           return cellValue.map(item => item || item === 0).join(', ');
         }
         return cellValue;
       }
-      case CELL_TYPE.IMAGE:
-      case CELL_TYPE.FILE: {
+      case CellType.IMAGE:
+      case CellType.FILE: {
         return '';
       }
       case FORMULA_RESULT_TYPE.BOOL: {

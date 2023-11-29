@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { CELL_TYPE, FORMULA_RESULT_TYPE } from 'dtable-sdk';
+import { CellType, FORMULA_RESULT_TYPE } from 'dtable-utils';
 import {
   MultipleSelectFormatter,
   NumberFormatter,
@@ -22,17 +22,17 @@ function LinkFormatter(props) {
   const { display_column_key, array_type, array_data } = data;
   const displayColumn = {
     key: display_column_key || '0000',
-    type: array_type || CELL_TYPE.TEXT,
+    type: array_type || CellType.TEXT,
     data: array_data || null
   };
   const { type: displayColumnType , data: displayColumnData } = displayColumn;
   const cellValue = getFormulaArrayValue(value, !isArrayFormalColumn(displayColumnType));
   if (!Array.isArray(cellValue) || cellValue.length === 0) return props.renderEmptyFormatter();
   switch(displayColumnType) {
-    case CELL_TYPE.TEXT:
-    case CELL_TYPE.AUTO_NUMBER:
-    case CELL_TYPE.EMAIL:
-    case CELL_TYPE.URL: {
+    case CellType.TEXT:
+    case CellType.AUTO_NUMBER:
+    case CellType.EMAIL:
+    case CellType.URL: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -46,7 +46,7 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.NUMBER: {
+    case CellType.NUMBER: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -61,7 +61,7 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.DATE: {
+    case CellType.DATE: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -77,7 +77,7 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.CTIME: {
+    case CellType.CTIME: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -91,7 +91,7 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.MTIME: {
+    case CellType.MTIME: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -105,7 +105,7 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.DURATION: {
+    case CellType.DURATION: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -117,8 +117,8 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.CREATOR:
-    case CELL_TYPE.LAST_MODIFIER: {
+    case CellType.CREATOR:
+    case CellType.LAST_MODIFIER: {
       return (
         <div className="dtable-ui cell-formatter-container collaborator-formatter deduplicate-collaborator-formatter">
           {cellValue.map((value, index) => {
@@ -132,12 +132,12 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.SINGLE_SELECT: {
+    case CellType.SINGLE_SELECT: {
       if (!cellValue || cellValue.length === 0) return props.renderEmptyFormatter();
       const options = displayColumnData && Array.isArray(displayColumnData.options) ? displayColumnData.options : [];
       return <MultipleSelectFormatter value={cellValue} options={options || []} containerClassName={`deduplicate-${displayColumnType}-formatter`} />;
     }
-    case CELL_TYPE.MULTIPLE_SELECT: {
+    case CellType.MULTIPLE_SELECT: {
       if (!cellValue || cellValue.length === 0) return props.renderEmptyFormatter();
       return (
         <div className={containerClassName}>
@@ -156,7 +156,7 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.COLLABORATOR: {
+    case CellType.COLLABORATOR: {
       if (!cellValue || cellValue.length === 0) return props.renderEmptyFormatter();
       return (
         <div className={containerClassName}>
@@ -175,7 +175,7 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.CHECKBOX: {
+    case CellType.CHECKBOX: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -188,7 +188,7 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.GEOLOCATION: {
+    case CellType.GEOLOCATION: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -202,7 +202,7 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.LONG_TEXT: {
+    case CellType.LONG_TEXT: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -218,8 +218,8 @@ function LinkFormatter(props) {
         </div>
       );
     }
-    case CELL_TYPE.FORMULA:
-    case CELL_TYPE.LINK_FORMULA: {
+    case CellType.FORMULA:
+    case CellType.LINK_FORMULA: {
       return (
         <div className={containerClassName}>
           {cellValue.map((value, index) => {
@@ -272,7 +272,6 @@ LinkFormatter.propTypes = {
   collaborators: PropTypes.array,
   containerClassName: PropTypes.string,
   renderEmptyFormatter: PropTypes.func,
-  getOptionColors: PropTypes.func,
   getCellValueDisplayString: PropTypes.func,
 };
 

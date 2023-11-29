@@ -350,11 +350,11 @@
   background: transparent;
   color: #666;
   font-weight: 400;
-  cursor: pointer;
-} 
+}
 
 .add-column:hover {
   color: #212529;
+  cursor: pointer;
 }
 
 .add-column:focus {

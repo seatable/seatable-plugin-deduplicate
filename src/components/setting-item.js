@@ -32,7 +32,7 @@ class SettingItem extends Component {
 
   render() {
     let { configSetting } = this.props;
-    let { name, active, settings } = configSetting;
+    let { name, active, settings, placeholder } = configSetting;
     let activeOption = settings.find(setting => setting.name === active);
     return (
       <>
@@ -40,9 +40,10 @@ class SettingItem extends Component {
           <div className={styles['dtable-plugin-settings-title']}>{name}</div>
           <DtableSelect
             classNamePrefix="dtable-plugin-select"
-            value={this.createOption(activeOption)}
+            value={active ? this.createOption(activeOption) : null}
             options={this.createOptions()}
             onChange={this.onSelectChange}
+            placeholder={placeholder || ''}
           />
         </div>
         {configSetting.type === 'view' && (

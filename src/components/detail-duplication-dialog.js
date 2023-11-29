@@ -1,11 +1,11 @@
 import React, { Fragment } from 'react';
 import { Button } from 'reactstrap';
 import intl from 'react-intl-universal';
-import { CELL_TYPE } from 'dtable-sdk';
+import { getTableByName } from 'dtable-utils';
 import RecordItem from './record';
+import Formatter from './formatter';
 
 import styles from '../css/plugin-layout.module.css';
-import Formatter from './formatter';
 
 const UNSHOWN_COLUMN_KEY_LIST = ['0000'];
 
@@ -101,10 +101,11 @@ class DetailDuplicationDialog extends React.Component {
   }
 
   renderDetailData = () => {
-    const { dtable, configSettings, selectedItem } = this.props;
+    const { configSettings, selectedItem } = this.props;
     const { isArrowShown, isCheckboxesShown, pageSize } = this.state;
     let rows = (selectedItem.rows || []).slice(0, pageSize * 20);
-    const table = dtable.getTableByName(configSettings[0].active);
+    const tables = window.dtableSDK.getTables();
+    const table = getTableByName(tables, configSettings[0].active);
     return (
       <Fragment>
         <div className={`${styles['column-names-container']} position-relative`}>
@@ -170,7 +171,6 @@ class DetailDuplicationDialog extends React.Component {
                   rowIdx={index}
                   scrollLeftAll={this.scrollLeftAll}
                   table={table}
-                  dtable={dtable}
                 />
               </div>
             );
@@ -252,13 +252,10 @@ class DetailDuplicationDialog extends React.Component {
       <Formatter
         column={column}
         row={row}
-        CellType={CELL_TYPE}
         collaborators={this.props.collaborators}
         formulaRows={this.props.formulaRows}
         getUserCommonInfo={this.props.getUserCommonInfo}
-        getOptionColors={this.props.getOptionColors}
         getCellValueDisplayString={this.props.getCellValueDisplayString}
-        getMediaUrl={this.props.getMediaUrl}
       />;
       return this.getCellRecord(displayValue, rowId, column);
     }

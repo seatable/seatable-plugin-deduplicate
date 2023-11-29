@@ -14,6 +14,8 @@ const propTypes = {
 class Settings extends Component {
   render() {
     const { configSettings, onSelectChange } = this.props;
+    const firstColumnSetting = configSettings && configSettings[2];
+    const hasSelectedFirstColumn = !!(firstColumnSetting && firstColumnSetting.active);
     return (
       <div className={styles['dtable-plugin-settings']} onClick={this.props.hideDetailDialog}>
         <div className={styles['dtable-plugin-settings-header']}>
@@ -24,6 +26,7 @@ class Settings extends Component {
             if (configSetting.type === 'add_column') {
               return (
                 <AddColumn
+                  readonly={!hasSelectedFirstColumn}
                   onSelectChange={onSelectChange}
                   key={configSetting.type}
                   configSettings={configSettings}

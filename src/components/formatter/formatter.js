@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
+import { CellType, SELECT_OPTION_COLORS } from 'dtable-utils';
 import {
   TextFormatter,
   NumberFormatter,
@@ -34,14 +35,11 @@ const propTypes = {
   type: PropTypes.string,
   column: PropTypes.object.isRequired,
   row: PropTypes.object.isRequired,
-  CellType: PropTypes.object,
   collaborators: PropTypes.array,
   getLinkCellValue: PropTypes.func,
   getRowsByID: PropTypes.func,
   getTableById: PropTypes.func,
   getUserCommonInfo: PropTypes.func,
-  getMediaUrl: PropTypes.func,
-  getOptionColors: PropTypes.func,
   getCellValueDisplayString: PropTypes.func,
 };
 
@@ -64,7 +62,7 @@ class Formatter extends React.Component {
   }
 
   calculateCollaboratorData = (props) => {
-    const { row, column, CellType } = props;
+    const { row, column } = props;
     if (column.type === CellType.LAST_MODIFIER) {
       this.getCollaborator(row._last_modifier);
     } else if (column.type === CellType.CREATOR) {
@@ -85,8 +83,7 @@ class Formatter extends React.Component {
       return;
     }
     if (!isValidEmail(value)) {
-      let mediaUrl = this.props.getMediaUrl();
-      let defaultAvatarUrl = `${mediaUrl}/avatars/default.png`;
+      let defaultAvatarUrl = `${window.dtable.mediaUrl}/avatars/default.png`;
       collaborator = {
         name: value,
         avatar_url: defaultAvatarUrl,
@@ -99,8 +96,7 @@ class Formatter extends React.Component {
       collaborator = res.data;
       this.setState({isDataLoaded: true, collaborator: collaborator});
     }).catch(() => {
-      let mediaUrl = this.props.getMediaUrl();
-      let defaultAvatarUrl = `${mediaUrl}/avatars/default.png`;
+      const defaultAvatarUrl = `${window.dtable.mediaUrl}/avatars/default.png`;
       collaborator = {
         name: value,
         avatar_url: defaultAvatarUrl,
@@ -114,7 +110,7 @@ class Formatter extends React.Component {
   }
 
   renderFormatter = () => {
-    const { column, row, collaborators, CellType } = this.props;
+    const { column, row, collaborators } = this.props;
     const { type: columnType, key: columnKey } = column;
     const { isDataLoaded, collaborator } = this.state;
     const containerClassName = `deduplicate-${columnType}-formatter`;
@@ -214,7 +210,6 @@ class Formatter extends React.Component {
             column={column}
             collaborators={collaborators}
             renderEmptyFormatter={this.renderEmptyFormatter}
-            getOptionColors={this.props.getOptionColors}
             getCellValueDisplayString={this.props.getCellValueDisplayString}
             containerClassName={containerClassName}
           />
@@ -242,9 +237,8 @@ class Formatter extends React.Component {
       }
       case CellType.BUTTON: {
         const { data = {} } = column;
-        const optionColors = this.props.getOptionColors();
         if (!data.button_name) return this.renderEmptyFormatter();
-        return <ButtonFormatter data={data} optionColors={optionColors} containerClassName={containerClassName} />;
+        return <ButtonFormatter data={data} optionColors={SELECT_OPTION_COLORS} containerClassName={containerClassName} />;
       }
       default:
         return null;
