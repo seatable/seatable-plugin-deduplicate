@@ -1,8 +1,4 @@
-import { JSDOM } from 'jsdom';
 import { getImageThumbnailUrl, compareString, throttle, getSelectColumnOptionMap } from '../src/utils';
-
-const { window } = new JSDOM('<!doctype html><html><body></body></html>');
-global.window = window;
 
 test('test getImageThumbnailUrl function', () => {
   window.dtable = {};
