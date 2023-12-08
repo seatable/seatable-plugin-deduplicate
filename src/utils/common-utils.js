@@ -1,4 +1,4 @@
-import { CELL_TYPE } from 'dtable-sdk';
+import { CellType } from 'dtable-utils';
 import getPreviewContent from 'dtable-ui-component/lib/SimpleLongTextFormatter/normalize-long-text-value';
 
 export const isValidEmail = (email) => {
@@ -9,10 +9,10 @@ export const isValidEmail = (email) => {
 
 export const isArrayFormalColumn = (columnType) => {
   return [
-    CELL_TYPE.IMAGE,
-    CELL_TYPE.FILE,
-    CELL_TYPE.MULTIPLE_SELECT,
-    CELL_TYPE.COLLABORATOR
+    CellType.IMAGE,
+    CellType.FILE,
+    CellType.MULTIPLE_SELECT,
+    CellType.COLLABORATOR
   ].includes(columnType);
 };
 

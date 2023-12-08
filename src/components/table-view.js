@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
-import { CELL_TYPE } from 'dtable-sdk';
+import { CellType } from 'dtable-utils';
 import { getSelectColumnOptionMap } from '../utils';
 import Formatter from './formatter';
 
@@ -54,7 +54,7 @@ class TableView extends React.Component {
     let singleSelectsOptionsMap = {};
     allDeDuplicationColumns.forEach(column => {
       const { type } = column;
-      if (type === CELL_TYPE.SINGLE_SELECT) {
+      if (type === CellType.SINGLE_SELECT) {
         singleSelectsOptionsMap[column.key] = getSelectColumnOptionMap(column);
       }
     });
@@ -71,11 +71,9 @@ class TableView extends React.Component {
                 <Formatter
                   column={column}
                   row={item}
-                  CellType={CELL_TYPE}
                   collaborators={this.props.collaborators}
                   formulaRows={this.props.formulaRows}
                   getUserCommonInfo={this.props.getUserCommonInfo}
-                  getMediaUrl={this.props.getMediaUrl}
                 />
               </td>
             );
@@ -119,7 +117,6 @@ TableView.propTypes = {
   collaborators: PropTypes.array,
   setTableHeight: PropTypes.func,
   getUserCommonInfo: PropTypes.func,
-  getMediaUrl: PropTypes.func
 };
 
 export default TableView;
