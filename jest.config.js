@@ -1,15 +1,52 @@
-const path = require('path');
-
 module.exports = {
-  rootDir: path.resolve(__dirname, './'),
-  roots: ['<rootDir>/tests/'],
-  testMatch: [ '<rootDir>/tests/**/(*.)+(spec|test).[jt]s?(x)'],
+  roots: [
+    '<rootDir>/tests/',
+  ],
+  collectCoverageFrom: [
+    'tests/**/*.{js,jsx,ts,tsx}',
+    '!tests/**/*.d.ts',
+  ],
+  setupFiles: [
+    'react-app-polyfill/jsdom',
+  ],
+  setupFilesAfterEnv: [
+    '<rootDir>/tests/setupTests.js',
+  ],
+  testMatch: [
+    '<rootDir>/tests/**/__tests__/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/**/*.{spec,test}.{js,jsx,ts,tsx}',
+  ],
+  testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx|mjs)$': '<rootDir>/node_modules/babel-jest',
-    '^.+\\.(css|less)$': '<rootDir>/config/jest/cssTransform.js',
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': '<rootDir>/config/jest/fileTransform.js',
+    '^.+\\.(js|jsx|mjs|cjs|ts|tsx)$': '<rootDir>/config/jest/babelTransform.js',
+    '^.+\\.css$': '<rootDir>/config/jest/cssTransform.js',
+    '^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)': '<rootDir>/config/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
-    '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$',
+    '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$',
+    '^.+\\.module\\.(css|sass|scss)$',
   ],
+  modulePaths: [],
+  moduleNameMapper: {
+    '^react-native$': 'react-native-web',
+    '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
+    '^axios$': require.resolve('axios'),
+  },
+  moduleFileExtensions: [
+    'web.js',
+    'js',
+    'web.ts',
+    'ts',
+    'web.tsx',
+    'tsx',
+    'json',
+    'web.jsx',
+    'jsx',
+    'node',
+  ],
+  watchPlugins: [
+    'jest-watch-typeahead/filename',
+    'jest-watch-typeahead/testname',
+  ],
+  resetMocks: true,
 };
