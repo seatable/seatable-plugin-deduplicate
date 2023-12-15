@@ -68,7 +68,7 @@ class Formatter extends React.Component {
     } else if (column.type === CellType.CREATOR) {
       this.getCollaborator(row._creator);
     }
-  }
+  };
 
   getCollaborator = (value) => {
     if (!value) {
@@ -103,11 +103,11 @@ class Formatter extends React.Component {
       };
       this.setState({isDataLoaded: true, collaborator: collaborator});
     });
-  }
+  };
 
   renderEmptyFormatter = () => {
     return <span className={styles['row-cell-value-empty']}></span>;
-  }
+  };
 
   renderFormatter = () => {
     const { column, row, collaborators } = this.props;
@@ -243,7 +243,7 @@ class Formatter extends React.Component {
       default:
         return null;
     }
-  }
+  };
 
   render() {
     return(

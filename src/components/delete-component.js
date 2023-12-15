@@ -16,7 +16,7 @@ class DeleteRowDropdownMenu extends React.Component {
     e.preventDefault();
     e.stopPropagation();
     this.setState({isItemMenuShow: !this.state.isItemMenuShow});
-  }
+  };
 
   render() {
     return(

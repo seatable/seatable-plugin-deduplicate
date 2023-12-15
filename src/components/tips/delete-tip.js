@@ -22,11 +22,11 @@ class DeleteTip extends React.Component {
     this.setState({
       checked: e.target.value
     });
-  }
+  };
 
   onDelete = () => {
     this.props.onDelete(this.state.checked);
-  }
+  };
 
   render() {
     const { checked } = this.state;

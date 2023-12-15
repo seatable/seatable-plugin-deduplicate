@@ -36,25 +36,25 @@ class DeDuplicationColumns extends React.Component {
     return configSetting.settings.map(option => {
       return this.createOption(option);
     });
-  }
+  };
 
   createOption = (option) => {
     return ({
       label: (<span className='select-option-name'>{option.name}</span>),
       value: option.name,
     });
-  }
+  };
 
   onSelectChange = (option, index) => {
     let { configSetting } = this.props;
     const selectedOption = { name: option.value };
     this.props.onSelectChange(configSetting.type, selectedOption, index);
-  }
+  };
 
   deleteColumn = (index) => {
     let { configSetting } = this.props;
     this.props.onSelectChange(configSetting.type, '', index);
-  }
+  };
 
   render() {
     return(

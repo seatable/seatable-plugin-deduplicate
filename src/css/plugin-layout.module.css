@@ -77,12 +77,11 @@
   font-size: 13px;
  }
 
- .dtable-plugin-settings {
+.dtable-plugin-settings {
   height: 100%;
   width: 30%;
   background-color: #f8f8f8;
   border-left: 1px solid #e9ecef;
-  color: #000000;
   overflow: hidden;
 }
 
@@ -164,6 +163,7 @@
   box-shadow: 0 1px 6px rgba(0,0,0, 0.1);
   margin: 0 0 3px;
 }
+
 .scroll-arrow {
   display: inline-block;
   top: 10px;
@@ -175,24 +175,30 @@
   color: #bdbdbd;
   text-align: center;
 }
+
 .scroll-arrow-active {
-  color: #333333;
+  color: #212529;
   cursor: pointer;
 }
+
 .scroll-arrow-active:hover {
   background: #f0f0f0;
 }
+
 .scroll-left {
   left: 3px;
 }
+
 .scroll-right {
   right: 3px;
 }
+
 .column-name-list {
   overflow-x: auto;
   scrollbar-width: none;
   ms-overflow-style: none;  /* IE and Edge */
 }
+
 .column-name-list::-webkit-scrollbar {
   display: none;
 }
@@ -348,12 +354,10 @@
 
 .add-column {
   background: transparent;
-  color: #666;
   font-weight: 400;
 }
 
 .add-column:hover {
-  color: #212529;
   cursor: pointer;
 }
 
@@ -424,9 +428,11 @@
   color: #999999;
   cursor: pointer;
 }
+
 .column-delete-icon:hover {
-  color: #333333;
+  color: #212529;
 }
+
 .column-delete-icon:focus {
   outline: none;
 }

@@ -15,7 +15,7 @@ class AddColumn extends React.Component {
       return;
     }
     this.props.onSelectChange(configSetting.type);
-  }
+  };
 
   render() {
     const {readonly} = this.props;

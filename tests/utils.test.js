@@ -53,7 +53,7 @@ test('test getSelectColumnOptionMap function', () => {
           'name': '23',
           'id': '492183',
           'color': '#D8FAFF',
-          'textColor': '#202428'
+          'textColor': '#212529'
         }
       ]
     },
