@@ -27,7 +27,7 @@ class TableView extends React.Component {
     setTimeout(() => {
       this.props.setTableHeight(this.tableContainer.offsetHeight);
     }, 0);
-  }
+  };
 
   renderHeader = () => {
     const { allDeDuplicationColumns } = this.props;
@@ -43,7 +43,7 @@ class TableView extends React.Component {
         </tr>
       </thead>
     );
-  }
+  };
 
   renderBody = () => {
     const { duplicationRows, allDeDuplicationColumns } = this.props;
@@ -87,11 +87,11 @@ class TableView extends React.Component {
         </tr>
       );
     });
-  }
+  };
 
   onExpandDuplicationRow = (rowIndex) => {
     this.props.setExpandedRowIndex(rowIndex);
-  }
+  };
 
   render() {
     const { duplicationRows } = this.props;

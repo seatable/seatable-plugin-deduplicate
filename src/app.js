@@ -93,7 +93,7 @@ class App extends React.Component {
     const { tableName, viewName, columnName } = this.initPluginSettings();
     const configSettings = this.initSelectedSettings(tableName, viewName, columnName);
     this.setState({ configSettings });
-  }
+  };
 
   initPluginSettings = () => {
     const activeTable = window.dtableSDK.getActiveTable();
@@ -103,14 +103,14 @@ class App extends React.Component {
       viewName: activeView.name,
       columnName: null,
     };
-  }
+  };
 
   getCurrentTable = () => {
     const { configSettings } = this.state;
     const tables = window.dtableSDK.getTables();
     const tableName = configSettings[0].active;
     return getTableByName(tables, tableName);
-  }
+  };
 
   initSelectedSettings = (tableName, viewName, columnName) => {
     const tables = window.dtableSDK.getTables();
@@ -130,7 +130,7 @@ class App extends React.Component {
     let addColumnSetting = this.getAddColumnSetting();
     configSettings.push(columnSettings, multiColumnSettings, addColumnSetting);
     return configSettings;
-  }
+  };
 
   updateSelectedSettings = (type, option, multiColumnIndex) => {
     const tables = window.dtableSDK.getTables();
@@ -195,7 +195,7 @@ class App extends React.Component {
       updatedConfigSettings[3].active = multiDeduplicationColumns;
       return updatedConfigSettings;
     }
-  }
+  };
 
   getTableSettings = (activeTable = null) => {
     const tables = window.dtableSDK.getTables();
@@ -208,7 +208,7 @@ class App extends React.Component {
       active: activeTable.name,
       settings: tableSettings,
     };
-  }
+  };
 
   getViewSettings = (currentTable, activeView = null) => {
     const views = getNonArchiveViews(currentTable.views);
@@ -223,7 +223,7 @@ class App extends React.Component {
       settings: viewSettings,
       active,
     };
-  }
+  };
 
   getColumnSettings = (currentTable, currentView, activeColumn = null) => {
     let columns = getViewShownColumns(currentView, currentTable.columns);
@@ -256,11 +256,11 @@ class App extends React.Component {
       placeholder: intl.get('Select_a_column'),
       active,
     };
-  }
+  };
 
   getAddColumnSetting = () => {
     return { type: 'add_column' };
-  }
+  };
 
   getMultiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}, activeColumns = []) => {
     let columnSettings = this.getMultiDeduplicationColumnSelections(currentTable, currentView, currentColumn);
@@ -273,7 +273,7 @@ class App extends React.Component {
     if (!option) return {type: 'multi_deduplication_column', active: currentActiveColumns, settings: columnSettings};
     currentActiveColumns.push(option.name);
     return {type: 'multi_deduplication_column', active: currentActiveColumns, settings: columnSettings};
-  }
+  };
 
   getMultiDeduplicationColumnSelections = (currentTable, currentView, currentColumn = {}) => {
     const columns = getViewShownColumns(currentView, currentTable.columns);
@@ -284,12 +284,12 @@ class App extends React.Component {
         return {id: column.key, name: column.name};
       }
     });
-  }
+  };
 
   initMultiDeduplicationColumnSetting = (currentTable, currentView, currentColumn = {}) => {
     const columnSettings = this.getMultiDeduplicationColumnSelections(currentTable, currentView, currentColumn = {});
     return { type: 'multi_deduplication_column', active: [], settings: columnSettings };
-  }
+  };
 
   onSelectChange = (type, option, multiColumnIndex) => {
     let configSettings = [];
@@ -298,19 +298,19 @@ class App extends React.Component {
     this.setState({
       configSettings: configSettings
     });
-  }
+  };
 
   getCellValueDisplayString = (cellValue, column, {tables = [], collaborators = []} = {}) => {
     return this.cellValueUtils.getCellValueDisplayString(cellValue, column, { tables, collaborators });
-  }
+  };
 
   getUserCommonInfo = (email, avatar_size) => {
     return window.dtableWebAPI.getUserCommonInfo(email, avatar_size);
-  }
+  };
 
   getColumnsByName = (table, columnsNames) => {
     return columnsNames.map((columnName) => getTableColumnByName(table, columnName)).filter(Boolean);
-  }
+  };
 
   getDeduplicationData = (configSettings) => {
     const tables = window.dtableSDK.getTables();
@@ -388,7 +388,7 @@ class App extends React.Component {
       pageSize: 1,
       formulaRows
     });
-  }
+  };
 
   sortDuplicationRows = (duplicationRows, column, formulaRows) => {
     const { type, key, data = {} } = column;
@@ -458,29 +458,29 @@ class App extends React.Component {
       default:
         break;
     }
-  }
+  };
 
   onDTableChanged = () => {
     this.resetData();
-  }
+  };
 
   resetData = () => {
     if (this.state.configSettings) {
       this.getDeduplicationData(this.state.configSettings);
     }
-  }
+  };
 
   onPluginToggle = () => {
     this.setState({showDialog: false});
     if (window.app.onClosePlugin) {
       window.app.onClosePlugin();
     }
-  }
+  };
 
   onDeleteRow = (rowId) => {
     const currentTable = this.getCurrentTable();
     window.dtableSDK.deleteRowById(currentTable, rowId);
-  }
+  };
 
   deleteRowsByIds = (all_row_ids) => {
     const currentTable = this.getCurrentTable();
@@ -501,17 +501,17 @@ class App extends React.Component {
       });
     }
     this.deleteRowsByIds(all_row_ids);
-  }
+  };
 
   openDeleteTip = () => {
     this.setState({ isDeleteTipShow: true });
-  }
+  };
 
   closeDeleteTip = (e) => {
     e.preventDefault();
     e.stopPropagation();
     this.setState({ isDeleteTipShow: false });
-  }
+  };
 
   onScroll = () => {
     const deleteContainerHeight = 41;
@@ -520,11 +520,11 @@ class App extends React.Component {
     if ((offsetHeight + scrollTop) >= (this.innerTableHeight + deleteContainerHeight + marginTop)) {
       this.setState({ pageSize: this.state.pageSize + 1 });
     }
-  }
+  };
 
   setTableHeight = (height) => {
     this.innerTableHeight = height;
-  }
+  };
 
   getExpandRowItem = () => {
     const { expandedRowIndex, duplicationRows } = this.state;
@@ -537,15 +537,15 @@ class App extends React.Component {
       value: rows.length,
       isAllSelected: false,
     };
-  }
+  };
 
   onHideExpandRow = () => {
     this.setState({expandedRowIndex: -1});
-  }
+  };
 
   setExpandedRowIndex = (index) => {
     this.setState({expandedRowIndex: index});
-  }
+  };
 
   render() {
     let { expandedRowIndex, showDialog, configSettings, duplicationRows, allDeDuplicationColumns, isDeleteTipShow, pageSize } = this.state;

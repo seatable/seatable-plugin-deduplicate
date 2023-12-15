@@ -29,12 +29,12 @@ class RecordItem extends PureComponent {
     if (el) {
       el.scrollLeft = scrollLeft;
     }
-  }
+  };
 
   handleHorizontalScroll = (e) => {
     this.scrollLeft = e.target.scrollLeft;
     this.props.scrollLeftAll(this.scrollLeft);
-  }
+  };
 
   expandRecord = () => {
     if (window.app.expandRow) {
@@ -42,7 +42,7 @@ class RecordItem extends PureComponent {
       const targetRow = getRowById(table, rowID);
       window.app.expandRow(targetRow, table);
     }
-  }
+  };
 
   render() {
     return (

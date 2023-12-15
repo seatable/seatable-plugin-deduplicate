@@ -33,7 +33,7 @@ class DetailDuplicationDialog extends React.Component {
     if (this.detailDuplicationDialog && event && !this.detailDuplicationDialog.contains(event.target)) {
       this.props.onHideExpandRow();
     }
-  }
+  };
 
   checkArrows = () => {
     const { offsetWidth, scrollWidth } = this.columnNameList;
@@ -42,7 +42,7 @@ class DetailDuplicationDialog extends React.Component {
       isArrowShown: isScrollable,
       canScrollViaClick: isScrollable
     });
-  }
+  };
 
   componentWillUnmount() {
     this.recordItems = null;
@@ -57,11 +57,11 @@ class DetailDuplicationDialog extends React.Component {
     if ((offsetHeight + scrollTop) >= (this.state.pageSize * 20 * recordHeight - recordHeight)) {
       this.setState({ pageSize: this.state.pageSize + 1 });
     }
-  }
+  };
 
   onRef = (ref, rowIdx) => {
     this.recordItems[rowIdx] = ref;
-  }
+  };
 
   scrollViaClick = (direction) => {
     const { offsetWidth, scrollWidth, scrollLeft } = this.columnNameList;
@@ -98,7 +98,7 @@ class DetailDuplicationDialog extends React.Component {
         }
       }, 15);
     }
-  }
+  };
 
   renderDetailData = () => {
     const { configSettings, selectedItem } = this.props;
@@ -178,13 +178,13 @@ class DetailDuplicationDialog extends React.Component {
         </div>
       </Fragment>
     );
-  }
+  };
 
   isAllRowsSelected = () => {
     const { selectedItem } = this.props;
     const { selectedRows } = this.state;
     return selectedItem.rows.every((rowId) => selectedRows.includes(rowId));
-  }
+  };
 
   toggleRowSelected = (rowId) => {
     const { selectedRows } = this.state;
@@ -195,7 +195,7 @@ class DetailDuplicationDialog extends React.Component {
       selectedRows.push(rowId);
     }
     this.setState({ selectedRows });
-  }
+  };
 
   toggleAllSelected = () => {
     const { selectedItem } = this.props;
@@ -205,7 +205,7 @@ class DetailDuplicationDialog extends React.Component {
       newSelectedRows = [...selectedItem.rows];
     }
     this.setState({ selectedRows: newSelectedRows });
-  }
+  };
 
   onDeleteRow = (rowId) => {
     const { selectedRows } = this.state;
@@ -215,23 +215,23 @@ class DetailDuplicationDialog extends React.Component {
       this.setState({ selectedRows });
     }
     this.props.onDeleteRow(rowId);
-  }
+  };
 
   onDeleteSelectedRows = () => {
     this.props.onDeleteSelectedRows(this.state.selectedRows);
     this.setState({selectedRows: []});
-  }
+  };
 
   getRowName = (rowId, table) => {
     const row = table['id_row_map'][rowId];
     return row['0000'] || '';
-  }
+  };
 
   getRecord = (rowIdx, table) => {
     let { columns } = table;
     const row = table['id_row_map'][rowIdx];
     return this.getRowRecord(row, columns, UNSHOWN_COLUMN_KEY_LIST);
-  }
+  };
 
   getRowRecord = (row, columns, unShownColumnKeyList) => {
     let displayRow = [];
@@ -249,17 +249,17 @@ class DetailDuplicationDialog extends React.Component {
     let displayValue;
     if (!unShownColumnKeyList.includes(key)) {
       displayValue =
-      <Formatter
-        column={column}
-        row={row}
-        collaborators={this.props.collaborators}
-        formulaRows={this.props.formulaRows}
-        getUserCommonInfo={this.props.getUserCommonInfo}
-        getCellValueDisplayString={this.props.getCellValueDisplayString}
-      />;
+        <Formatter
+          column={column}
+          row={row}
+          collaborators={this.props.collaborators}
+          formulaRows={this.props.formulaRows}
+          getUserCommonInfo={this.props.getUserCommonInfo}
+          getCellValueDisplayString={this.props.getCellValueDisplayString}
+        />;
       return this.getCellRecord(displayValue, rowId, column);
     }
-  }
+  };
 
   getCellRecord = (displayValue, rowId, column) => {
     let { key } = column;
@@ -269,7 +269,7 @@ class DetailDuplicationDialog extends React.Component {
         {displayValue ? displayValue : <span className={styles['row-cell-value-empty']}></span>}
       </div>
     );
-  }
+  };
 
   getCellRecordWidth = (column) => {
     let { type, data } = column;
@@ -297,31 +297,31 @@ class DetailDuplicationDialog extends React.Component {
         return 100;
       }
     }
-  }
+  };
 
   handleHorizontalScroll = (e) => {
     let scrollLeft = e.target.scrollLeft;
     this.scrollLeft = scrollLeft;
     this.scrollLeftAllItems(scrollLeft);
-  }
+  };
 
   scrollLeftAll = (scrollLeft) => {
     this.columnNameList.scrollLeft = scrollLeft;
     this.scrollLeftAllItems(scrollLeft);
-  }
+  };
 
   scrollLeftAllItems = (scrollLeft) => {
     this.recordItems.forEach(item => {
       item.scrollLeftItem(scrollLeft);
     });
-  }
+  };
 
   toggleShowCheckboxes = () => {
     this.setState({
       isCheckboxesShown: !this.state.isCheckboxesShown,
       selectedRows: [],
     }, this.checkArrows);
-  }
+  };
 
   render() {
     const { selectedItem } = this.props;

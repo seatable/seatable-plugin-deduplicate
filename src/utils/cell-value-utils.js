@@ -21,14 +21,14 @@ class CellValueUtils {
       return collaboratorsName.join(', ');
     }
     return '';
-  }
+  };
 
   getLongTextDisplayString = (cellValue) => {
     const value = convertValueToDtableLongTextValue(cellValue);
     let { text } = value || {};
     if (!text) return '';
     return text;
-  }
+  };
 
   getNumberDisplayString = (cellValue, columnData) => {
     if (Array.isArray(cellValue)) {
@@ -36,7 +36,7 @@ class CellValueUtils {
       return cellValue.map(item => getNumberDisplayString(item, columnData)).join(', ');
     }
     return getNumberDisplayString(cellValue, columnData);
-  }
+  };
 
   getDateDisplayString = (cellValue, columnData) => {
     if (Array.isArray(cellValue)) {
@@ -47,7 +47,7 @@ class CellValueUtils {
     if (!cellValue || typeof cellValue !== 'string') return '';
     const format = columnData && columnData.format;
     return getDateDisplayString(cellValue.replace('T', ' ').replace('Z', ''), format);
-  }
+  };
 
   getFormulaDisplayString = (cellValue, column, { tables = [], collaborators = [] } = {}) => {
     if (!column) return '';
@@ -79,7 +79,7 @@ class CellValueUtils {
       return cellValue.join(', ');
     }
     return cellValue;
-  }
+  };
 
   getCellValueDisplayString = (cellValue, column, {tables = [], collaborators = []} = {}) => {
     const { type, data } = column;
@@ -196,7 +196,7 @@ class CellValueUtils {
         return Array.isArray(cellValue) ? cellValue.map(item => item + '').filter(item => item).join(', ') : cellValue + '';
       }
     }
-  }
+  };
 
 }
 

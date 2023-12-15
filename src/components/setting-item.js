@@ -15,20 +15,20 @@ class SettingItem extends Component {
     return configSetting.settings.map(option => {
       return this.createOption(option);
     });
-  }
+  };
 
   createOption = (option) => {
     return ({
       label: (<span className='select-option-name' style={(option && option.style) || {}}>{option && option.name}</span>),
       value: option && option.name,
     });
-  }
+  };
 
   onSelectChange = (option) => {
     let { configSetting } = this.props;
     const selectedOption = { name: option.value };
     this.props.onSelectChange(configSetting.type, selectedOption);
-  }
+  };
 
   render() {
     let { configSetting } = this.props;
