@@ -1,6 +1,6 @@
 import React from 'react';
 import intl from 'react-intl-universal';
-import DtableSelect from 'dtable-ui-component/lib/DTableSelect';
+import { DTableSelect } from 'dtable-ui-component';
 import styles from '../css/plugin-layout.module.css';
 
 class DeDuplicationColumns extends React.Component {
@@ -14,7 +14,7 @@ class DeDuplicationColumns extends React.Component {
       return (
         <div key={'deduplication-' + index} className={`${styles['deduplication-columns-select-item']} d-flex`}>
           <div className='w-100'>
-            <DtableSelect
+            <DTableSelect
               classNamePrefix="deduplicate-column"
               value={this.createOption(activeOption)}
               options={this.createOptions()}

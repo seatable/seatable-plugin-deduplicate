@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import DtableSelect from 'dtable-ui-component/lib/DTableSelect';
+import { DTableSelect } from 'dtable-ui-component';
 import styles from '../css/plugin-layout.module.css';
 
 const propTypes = {
@@ -38,7 +38,7 @@ class SettingItem extends Component {
       <>
         <div className={styles['dtable-plugin-settings-option']}>
           <div className={styles['dtable-plugin-settings-title']}>{name}</div>
-          <DtableSelect
+          <DTableSelect
             classNamePrefix="dtable-plugin-select"
             value={active ? this.createOption(activeOption) : null}
             options={this.createOptions()}
