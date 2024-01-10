@@ -7,10 +7,13 @@ import DeleteRowDropdownMenu from './delete-component';
 const propTypes = {
   rowName: PropTypes.string.isRequired,
   row: PropTypes.string.isRequired,
+  table: PropTypes.object,
+  width: PropTypes.string,
   onDeleteRow: PropTypes.func.isRequired,
   rowIdx: PropTypes.number.isRequired,
   values: PropTypes.array.isRequired,
-  onRef: PropTypes.func.isRequired
+  onRef: PropTypes.func.isRequired,
+  scrollLeftAll: PropTypes.func,
 };
 
 class RecordItem extends PureComponent {

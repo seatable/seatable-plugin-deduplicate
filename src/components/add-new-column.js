@@ -31,6 +31,8 @@ class AddColumn extends React.Component {
 
 AddColumn.propTypes = {
   readonly: PropTypes.bool,
+  configSetting: PropTypes.object,
+  onSelectChange: PropTypes.func,
 };
 
 export default AddColumn;

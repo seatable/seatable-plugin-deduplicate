@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import intl from 'react-intl-universal';
 import styles from '../css/plugin-layout.module.css';
@@ -34,5 +35,9 @@ class DeleteRowDropdownMenu extends React.Component {
   }
 }
 
+DeleteRowDropdownMenu.propTypes = {
+  style: PropTypes.object,
+  onDeleteRow: PropTypes.func,
+};
 
 export default DeleteRowDropdownMenu;

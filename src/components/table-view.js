@@ -24,8 +24,9 @@ class TableView extends React.Component {
 
   setTableHeight = () => {
     if (!this.tableContainer) return;
+    const tableHeight = this.tableContainer.offsetHeight;
     setTimeout(() => {
-      this.props.setTableHeight(this.tableContainer.offsetHeight);
+      this.props.setTableHeight(tableHeight);
     }, 0);
   };
 
@@ -117,6 +118,7 @@ TableView.propTypes = {
   collaborators: PropTypes.array,
   setTableHeight: PropTypes.func,
   getUserCommonInfo: PropTypes.func,
+  setExpandedRowIndex: PropTypes.func,
 };
 
 export default TableView;

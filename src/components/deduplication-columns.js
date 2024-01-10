@@ -1,5 +1,6 @@
 import React from 'react';
 import intl from 'react-intl-universal';
+import PropTypes from 'prop-types';
 import { DTableSelect } from 'dtable-ui-component';
 import styles from '../css/plugin-layout.module.css';
 
@@ -62,5 +63,10 @@ class DeDuplicationColumns extends React.Component {
     );
   }
 }
+
+DeDuplicationColumns.propTypes = {
+  configSetting: PropTypes.object,
+  onSelectChange: PropTypes.func,
+};
 
 export default DeDuplicationColumns;

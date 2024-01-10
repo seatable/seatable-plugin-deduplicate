@@ -36,6 +36,7 @@ const propTypes = {
   column: PropTypes.object.isRequired,
   row: PropTypes.object.isRequired,
   collaborators: PropTypes.array,
+  formulaRows: PropTypes.object,
   getLinkCellValue: PropTypes.func,
   getRowsByID: PropTypes.func,
   getTableById: PropTypes.func,

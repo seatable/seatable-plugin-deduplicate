@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import PropTypes from 'prop-types';
 import { Button } from 'reactstrap';
 import intl from 'react-intl-universal';
 import { getTableByName } from 'dtable-utils';
@@ -359,5 +360,17 @@ class DetailDuplicationDialog extends React.Component {
     );
   }
 }
+
+DetailDuplicationDialog.propTypes = {
+  collaborators: PropTypes.array,
+  formulaRows: PropTypes.object,
+  configSettings: PropTypes.array,
+  selectedItem: PropTypes.object,
+  onDeleteRow: PropTypes.func,
+  onHideExpandRow: PropTypes.func,
+  onDeleteSelectedRows: PropTypes.func,
+  getUserCommonInfo: PropTypes.func,
+  getCellValueDisplayString: PropTypes.func,
+};
 
 export default DetailDuplicationDialog;
