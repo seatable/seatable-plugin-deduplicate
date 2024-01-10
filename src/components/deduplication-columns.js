@@ -34,9 +34,8 @@ class DeDuplicationColumns extends React.Component {
 
   createOptions = () => {
     let { configSetting } = this.props;
-    return configSetting.settings.map(option => {
-      return this.createOption(option);
-    });
+    const { settings } = configSetting;
+    return Array.isArray(settings) ? settings.map(item => this.createOption(item)) : [];
   };
 
   createOption = (option) => {
@@ -48,8 +47,11 @@ class DeDuplicationColumns extends React.Component {
 
   onSelectChange = (option, index) => {
     let { configSetting } = this.props;
+    const { type, active } = configSetting;
     const selectedOption = { name: option.value };
-    this.props.onSelectChange(configSetting.type, selectedOption, index);
+    // If the column is already in the de-duplication column, do not add
+    if (active.includes(option.value)) return;
+    this.props.onSelectChange(type, selectedOption, index);
   };
 
   deleteColumn = (index) => {
