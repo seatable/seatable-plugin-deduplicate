@@ -22,11 +22,15 @@ class TableView extends React.Component {
     this.setTableHeight();
   }
 
+  componentWillUnmount() {
+    clearTimeout(this.timer);
+    this.timer = null;
+  }
+
   setTableHeight = () => {
     if (!this.tableContainer) return;
-    const tableHeight = this.tableContainer.offsetHeight;
-    setTimeout(() => {
-      this.props.setTableHeight(tableHeight);
+    this.timer = setTimeout(() => {
+      this.props.setTableHeight(this.tableContainer.offsetHeight);
     }, 0);
   };
 
