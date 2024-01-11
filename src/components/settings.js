@@ -9,6 +9,7 @@ import styles from '../css/plugin-layout.module.css';
 const propTypes = {
   configSettings: PropTypes.array,
   onSelectChange: PropTypes.func,
+  hideDetailDialog: PropTypes.func,
 };
 
 class Settings extends Component {

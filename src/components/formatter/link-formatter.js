@@ -270,6 +270,7 @@ LinkFormatter.propTypes = {
   column: PropTypes.object.isRequired,
   value: PropTypes.any,
   collaborators: PropTypes.array,
+  tables: PropTypes.array,
   containerClassName: PropTypes.string,
   renderEmptyFormatter: PropTypes.func,
   getCellValueDisplayString: PropTypes.func,
