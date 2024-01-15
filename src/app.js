@@ -4,8 +4,8 @@ import intl from 'react-intl-universal';
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
 import {
   CellType, FORMULA_RESULT_TYPE, SORT_TYPE, getTableByName, getViewByName,
-  getTableColumnByName, getNonArchiveViews, getViewShownColumns, sortFormula,
-  compareString,
+  getTableColumnByName, getNonArchiveViews, getNonPrivateViews, getViewShownColumns,
+  sortFormula, compareString,
 } from 'dtable-utils';
 import Settings from './components/settings';
 import TableView from './components/table-view';
@@ -136,7 +136,7 @@ class App extends React.Component {
     const tables = window.dtableSDK.getTables();
     if (type === 'table') {
       const currentTable = getTableByName(tables, option.name);
-      const currentView = getNonArchiveViews(currentTable.views)[0];
+      const currentView = getNonPrivateViews(getNonArchiveViews(currentTable.views))[0];
 
       const tableSettings = this.getTableSettings(currentTable);
       const viewSettings = this.getViewSettings(currentTable);
@@ -211,7 +211,7 @@ class App extends React.Component {
   };
 
   getViewSettings = (currentTable, activeView = null) => {
-    const views = getNonArchiveViews(currentTable.views);
+    const views = getNonPrivateViews(getNonArchiveViews(currentTable.views));
     const viewSettings = views.map(view => {
       return { id: view._id, name: view.name };
     });
