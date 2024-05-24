@@ -334,7 +334,7 @@ class DetailDuplicationDialog extends React.Component {
           <div>
             {selectedRows.length > 0 &&
               <Button
-                className={`border-0 p-0 text-primary ${styles['records-op-btn']}`}
+                className={`border-0 p-0 seatable-text-orange ${styles['records-op-btn']}`}
                 onClick={this.onDeleteSelectedRows}
               >
                 {intl.get('Delete')}
@@ -342,7 +342,7 @@ class DetailDuplicationDialog extends React.Component {
             }
             {selectedItem.rows.length > 0 &&
               <Button
-                className={`border-0 p-0 ml-2 text-primary ${styles['records-op-btn']}`}
+                className={`border-0 p-0 ml-2 seatable-text-orange ${styles['records-op-btn']}`}
                 onClick={this.toggleShowCheckboxes}
               >
                 {isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}
