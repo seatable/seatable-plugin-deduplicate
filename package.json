@@ -1,6 +1,6 @@
 {
   "name": "seatable-plugin-duplicate",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": true,
   "dependencies": {
     "dtable-ui-component": "4.4.34",
