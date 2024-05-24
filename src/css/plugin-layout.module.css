@@ -207,7 +207,7 @@
   width: 120px;
   margin: 0 8px;
   flex-shrink: 0;
-  color: #999;
+  color: #666666;
   font-weight: 500;
   font-size: .875rem;
 }
@@ -387,14 +387,14 @@
 
 .delete-all-containers .delete-all-button {
   padding: 10px;
-  background: #eee;
+  background: #F5F5F5;
   border-radius: 4px;
   font-size: 14px;
   width: fit-content;
 }
 
 .delete-all-containers .delete-all-highlight-msg {
-  color: #ff8000;
+  color: #E16C0A; /* Background color is gray F5F5F5, and in order to achieve contrast 3, the text color is E16C0A */
   margin-left: .5rem;
   cursor: pointer;
 }
