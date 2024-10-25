@@ -24,12 +24,12 @@ module.exports = {
   },
   transformIgnorePatterns: [
     '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$',
-    '^.+\\.module\\.(css|sass|scss)$',
+    '^.+\\.module\\.(css)$',
   ],
   modulePaths: [],
   moduleNameMapper: {
     '^react-native$': 'react-native-web',
-    '^.+\\.module\\.(css|sass|scss)$': 'identity-obj-proxy',
+    '^.+\\.module\\.(css)$': 'identity-obj-proxy',
     '^axios$': require.resolve('axios'),
   },
   moduleFileExtensions: [
