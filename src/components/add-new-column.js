@@ -23,7 +23,7 @@ class AddColumn extends React.Component {
     return (
       <button onClick={this.addColumn} className={`border-0 p-0 ${styles['add-column']} plugin-deduplicate-btn-add-column ${readonly ? 'readonly' : ''}`}>
         <span className={`dtable-font dtable-icon-add-table mr-1 ${styles['add-column-icon']}`}></span>
-        <span>{intl.get('Add_column')}</span>
+        <span>{intl.get('Add_new_column')}</span>
       </button>
     );
   }
