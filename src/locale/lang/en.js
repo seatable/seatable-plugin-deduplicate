@@ -11,7 +11,7 @@ const en = {
   "Delete": "Delete",
   "Settings": "Settings",
   "Select_a_column": "Select a column",
-  "Add_column": "Add column",
+  "Add_new_column": "Add new column",
   "amount_records": "{amount} records",
   "Select": "Select",
   "Cancel": "Cancel",
