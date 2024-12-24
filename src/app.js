@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
-import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Modal, ModalBody } from 'reactstrap';
+import { DTableModalHeader } from 'dtable-ui-component';
 import {
   CellType, FORMULA_RESULT_TYPE, SORT_TYPE, getTableByName, getViewByName,
   getTableColumnByName, getNonArchiveViews, getNonPrivateViews, getViewShownColumns,
@@ -559,12 +560,12 @@ class App extends React.Component {
           size="lg"
           zIndex="1048"
         >
-          <ModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>
+          <DTableModalHeader className={styles['deduplication-plugin-header']} toggle={this.onPluginToggle}>
             <div className="d-flex align-items-center">
               <img src={logo} width="24" alt="logo"/>
               <span className={styles['deduplication-plugin-title']}>{intl.get('Deduplication')}</span>
             </div>
-          </ModalHeader>
+          </DTableModalHeader>
           <ModalBody className={styles['deduplication-plugin-content']}>
             {(window.dtable && window.dtable.permission === 'r') ?
               <p className="h-100 d-flex align-items-center justify-content-center text-red">{intl.get('This_plugin_is_not_available_now')}</p> : (
