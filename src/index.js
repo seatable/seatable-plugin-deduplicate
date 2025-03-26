@@ -24,6 +24,7 @@ class TaskList {
   }
 
   static async execute() {
+    await this.init()
     const root = createRoot(document.getElementById('root'));
     root.render(<App isDevelopment showDialog />);
   }
