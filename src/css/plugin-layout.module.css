@@ -19,7 +19,7 @@
 }
 
 .deduplication-plugin-content {
-  padding: 0;
+  padding: 0 !important;
   height: calc(100% - 56px);
   overflow: hidden;
 }
