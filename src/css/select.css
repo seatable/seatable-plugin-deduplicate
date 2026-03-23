@@ -22,7 +22,7 @@
 .dtable-select .dtable-icon-drop-down {
   display: inline-block;
   font-size: 12px;
-  color: rgba(116, 116, 116, 1);
+  color: #666;
   transform: scale(.8) translateY(2px);
   transition: all .1s;
 }
@@ -86,5 +86,5 @@
 .dtable-select .select-placeholder {
   line-height: 1;
   font-size: 14px;
-  color: #949494;
+  color: #666;
 }
