@@ -324,7 +324,7 @@
 }
 
 .more-level-font {
-  color: #999;
+  color: #666;
   cursor: pointer;
 }
 
@@ -425,7 +425,7 @@
   background: transparent;
   font-weight: 400;
   font-size: 0.75rem;
-  color: #999999;
+  color: #666;
   cursor: pointer;
 }
 
