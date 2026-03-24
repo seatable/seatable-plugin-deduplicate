@@ -1,6 +1,6 @@
 {
   "name": "deduplication",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "display_name": {
     "de": "Datendeduplizierung",
     "en": "Deduplication",
