@@ -1,8 +1,14 @@
 
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styles from '../../css/plugin-layout.module.css';
 
 class CollaboratorFormatter extends Component {
+
+  static propTypes = {
+    value: PropTypes.array,
+    collaborators: PropTypes.array,
+  };
 
   getCollaboratorsList = () => {
     let { value, collaborators } = this.props;
@@ -21,7 +27,7 @@ class CollaboratorFormatter extends Component {
       }
     });
     return validCollaborators;
-  }
+  };
 
   render() {
     let collaboratorList = this.getCollaboratorsList();
