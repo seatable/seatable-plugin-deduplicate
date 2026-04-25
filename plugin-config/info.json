@@ -8,9 +8,9 @@
     "zh-cn": "数据去重"
   },
   "description": {
-    "de": "Entfernen Sie doppelte Datensätze in einer Tabelle",
-    "en": "Remove duplicated records in a table",
-    "fr": "Supprimer les enregistrements dupliqués dans une table",
-    "zh-cn": "删除表格中的重复数据"
+    "de": "Entfernen Sie doppelte Datensätze in einer Tabelle.",
+    "en": "Remove duplicated records in a table.",
+    "fr": "Supprimer les enregistrements dupliqués dans une table.",
+    "zh-cn": "删除表格中的重复数据。"
   }
 }
