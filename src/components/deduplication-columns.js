@@ -1,7 +1,7 @@
 import React from 'react';
 import intl from 'react-intl-universal';
 import PropTypes from 'prop-types';
-import { DTableSelect } from 'dtable-ui-component';
+import { DTableSelect, IconButton } from 'dtable-ui-component';
 import styles from '../css/plugin-layout.module.css';
 
 class DeDuplicationColumns extends React.Component {
@@ -22,11 +22,12 @@ class DeDuplicationColumns extends React.Component {
               onChange={(option) => this.onSelectChange(option, index)}
             />
           </div>
-          <button type="button"
-            aria-label={intl.get('Delete')}
+          <IconButton
+            icon='fork-number'
             title={intl.get('Delete')}
             onClick={() => this.deleteColumn(index)}
-            className={`border-0 p-0 ml-2 dtable-font dtable-icon-fork-number ${styles['column-delete-icon']}`}></button>
+            className='border-0 p-0 ml-2 mt-2'
+          />
         </div>
       );
     });

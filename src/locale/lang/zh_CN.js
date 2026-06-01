@@ -6,6 +6,7 @@ const zh_CN = {
   "Column": "列",
   "Name": "名称",
   "Count": "出现次数",
+  "Close": "关闭",
   "Empty": "空",
   "No_duplication": "无重复项",
   "Delete": "删除",

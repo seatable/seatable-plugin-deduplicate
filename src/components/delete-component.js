@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import intl from 'react-intl-universal';
-import styles from '../css/plugin-layout.module.css';
+import { IconButton } from 'dtable-ui-component';
 
 class DeleteRowDropdownMenu extends React.Component {
 
@@ -23,7 +23,7 @@ class DeleteRowDropdownMenu extends React.Component {
     return(
       <Dropdown isOpen={this.state.isItemMenuShow} toggle={this.onDropdownToggleClick} style={this.props.style || {}} className="align-middle">
         <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={this.state.isItemMenuShow}>
-          <i className={'dtable-font dtable-icon-more-level delete-row-font ' + styles['more-level-font']}></i>
+          <IconButton icon='dtable-icon-more-level' title={intl.get('Close')} />
         </DropdownToggle>
         <DropdownMenu right={true}>
           <DropdownItem onClick={this.props.onDeleteRow}>

@@ -6,6 +6,7 @@ const en = {
   "Column": "Column",
   "Name": "Name",
   "Count": "Count",
+  "Close": "Close",
   "Empty": "Empty",
   "No_duplication": "No duplication",
   "Delete": "Delete",
