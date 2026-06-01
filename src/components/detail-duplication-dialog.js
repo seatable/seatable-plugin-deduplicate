@@ -334,16 +334,19 @@ class DetailDuplicationDialog extends React.Component {
           <div>
             {selectedRows.length > 0 &&
               <Button
-                className={`border-0 p-0 seatable-text-orange ${styles['records-op-btn']}`}
                 onClick={this.onDeleteSelectedRows}
+                color='light'
+                size='sm'
               >
                 {intl.get('Delete')}
               </Button>
             }
             {selectedItem.rows.length > 0 &&
               <Button
-                className={`border-0 p-0 ml-2 seatable-text-orange ${styles['records-op-btn']}`}
+                className='ml-2'
                 onClick={this.toggleShowCheckboxes}
+                color='light'
+                size='sm'
               >
                 {isCheckboxesShown ? intl.get('Cancel') : intl.get('Select')}
               </Button>

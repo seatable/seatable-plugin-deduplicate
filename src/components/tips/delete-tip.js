@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
 import { FormGroup, Label, Input } from 'reactstrap';
+import { Button } from 'reactstrap';
+
 import styles from '../../css/plugin-layout.module.css';
 
 const propTypes = {
@@ -45,8 +47,8 @@ class DeleteTip extends React.Component {
           </Label>
         </FormGroup>
         <div className={styles['delete-tip-footer']}>
-          <button className="btn btn-secondary mr-2" onClick={this.props.toggle}>{intl.get('Cancel')}</button>
-          <button className="btn btn-primary" onClick={this.onDelete}>{intl.get('Delete')}</button>
+          <Button color="secondary" className="mr-2" onClick={this.props.toggle}>{intl.get('Cancel')}</Button>
+          <Button color="primary" onClick={this.onDelete}>{intl.get('Delete')}</Button>
         </div>
       </div>
     );
