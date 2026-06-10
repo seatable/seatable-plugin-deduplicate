@@ -22,11 +22,14 @@ class DeDuplicationColumns extends React.Component {
               onChange={(option) => this.onSelectChange(option, index)}
             />
           </div>
-          <button type="button"
+          <span 
             aria-label={intl.get('Delete')}
             title={intl.get('Delete')}
             onClick={() => this.deleteColumn(index)}
-            className={`border-0 p-0 ml-2 dtable-font dtable-icon-fork-number ${styles['column-delete-icon']}`}></button>
+            className='seatable-icon-btn ml-2 mt-1'
+          >
+            <span className={`dtable-font dtable-icon-fork-number ${styles['column-delete-icon']}`}/>
+          </span>
         </div>
       );
     });

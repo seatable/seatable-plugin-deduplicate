@@ -169,10 +169,10 @@
   top: 10px;
   width: 20px;
   height: 20px;
-  border-radius: 2px;
-  font-size: 10px;
+  border-radius: 4px;
+  font-size: 12px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: #666;
   text-align: center;
 }
 
@@ -182,15 +182,15 @@
 }
 
 .scroll-arrow-active:hover {
-  background: #f0f0f0;
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .scroll-left {
-  left: 3px;
+  left: 4px;
 }
 
 .scroll-right {
-  right: 3px;
+  right: 4px;
 }
 
 .column-name-list {
@@ -328,10 +328,6 @@
   cursor: pointer;
 }
 
-.more-level-font:hover {
-  color: #191919;
-}
-
 .selected-cell::after {
   content: '';
   position: absolute;
@@ -427,10 +423,6 @@
   font-size: 0.75rem;
   color: #666;
   cursor: pointer;
-}
-
-.column-delete-icon:hover {
-  color: #212529;
 }
 
 .column-delete-icon:focus {

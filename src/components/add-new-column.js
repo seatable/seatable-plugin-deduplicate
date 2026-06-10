@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import intl from 'react-intl-universal';
-import styles from '../css/plugin-layout.module.css';
+import { Button } from 'reactstrap';
 
 class AddColumn extends React.Component {
 
@@ -21,10 +21,10 @@ class AddColumn extends React.Component {
     const {readonly} = this.props;
 
     return (
-      <button onClick={this.addColumn} className={`border-0 p-0 ${styles['add-column']} plugin-deduplicate-btn-add-column ${readonly ? 'readonly' : ''}`}>
-        <span className={`dtable-font dtable-icon-add-table mr-1 ${styles['add-column-icon']}`}></span>
+      <Button onClick={this.addColumn} color='filled' disabled={readonly}>
+        <span className='dtable-font dtable-icon-add-table'></span>
         <span>{intl.get('Add_new_column')}</span>
-      </button>
+      </Button>
     );
   }
 }
