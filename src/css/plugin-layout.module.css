@@ -172,7 +172,7 @@
   border-radius: 4px;
   font-size: 12px;
   line-height: 20px;
-  color: #666;
+  color: var(--bs-icon-color);
   text-align: center;
 }
 
