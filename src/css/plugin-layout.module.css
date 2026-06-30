@@ -182,15 +182,15 @@
 }
 
 .scroll-arrow-active:hover {
-  background: rgba(0, 0, 0, 0.04);
+  background-color: var(--bs-btn-background-hover);
 }
 
 .scroll-left {
-  left: 4px;
+  left: 3px;
 }
 
 .scroll-right {
-  right: 4px;
+  right: 3px;
 }
 
 .column-name-list {
