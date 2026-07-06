@@ -169,10 +169,10 @@
   top: 10px;
   width: 20px;
   height: 20px;
-  border-radius: 2px;
+  border-radius: 4px;
   font-size: 10px;
   line-height: 20px;
-  color: #bdbdbd;
+  color: var(--bs-icon-color);
   text-align: center;
 }
 
@@ -182,7 +182,7 @@
 }
 
 .scroll-arrow-active:hover {
-  background: #f0f0f0;
+  background-color: var(--bs-btn-background-hover);
 }
 
 .scroll-left {
@@ -328,10 +328,6 @@
   cursor: pointer;
 }
 
-.more-level-font:hover {
-  color: #191919;
-}
-
 .selected-cell::after {
   content: '';
   position: absolute;
@@ -427,10 +423,6 @@
   font-size: 0.75rem;
   color: #666;
   cursor: pointer;
-}
-
-.column-delete-icon:hover {
-  color: #212529;
 }
 
 .column-delete-icon:focus {

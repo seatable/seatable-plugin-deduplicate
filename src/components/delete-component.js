@@ -23,7 +23,9 @@ class DeleteRowDropdownMenu extends React.Component {
     return(
       <Dropdown isOpen={this.state.isItemMenuShow} toggle={this.onDropdownToggleClick} style={this.props.style || {}} className="align-middle">
         <DropdownToggle tag="span" data-toggle="dropdown" aria-expanded={this.state.isItemMenuShow}>
-          <i className={'dtable-font dtable-icon-more-level delete-row-font ' + styles['more-level-font']}></i>
+          <span className='seatable-icon-btn'>
+            <i className={'dtable-font dtable-icon-more-level delete-row-font ' + styles['more-level-font']}></i>
+          </span>
         </DropdownToggle>
         <DropdownMenu right={true}>
           <DropdownItem onClick={this.props.onDeleteRow}>
